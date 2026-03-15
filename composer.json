@@ -1,0 +1,7 @@
+{
+  "name": "ewl1/mini-cms-pro",
+  "description": "Procedural PHP Mini CMS scaffold",
+  "require": {
+    "phpmailer/phpmailer": "^6.9"
+  }
+}
