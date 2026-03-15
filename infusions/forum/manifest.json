@@ -1,0 +1,35 @@
+{
+  "name": "Forumas",
+  "description": "Pavyzdinė forumo infusion.",
+  "version": "1.0.0",
+  "author": "OpenAI",
+  "admin": true,
+  "bootstrap": false,
+  "panel": true,
+  "schema": true,
+  "upgrade": false,
+  "default_position": "right",
+  "default_panel_name": "Forumo panelė",
+  "min_core_version": "1.0.0",
+  "dependencies": [],
+  "permissions": [
+    {
+      "name": "Forumo infusion peržiūra",
+      "slug": "forum.view",
+      "description": "Leidžia matyti forumo infusion duomenis"
+    },
+    {
+      "name": "Forumo infusion administravimas",
+      "slug": "forum.admin",
+      "description": "Leidžia valdyti forumo infusion"
+    }
+  ],
+  "admin_menu": [
+    {
+      "title": "Forumas",
+      "slug": "forum-admin",
+      "permission": "forum.admin",
+      "sort_order": 110
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "name": "Naujienos",
+  "description": "Pavyzdinė naujienų infusion.",
+  "version": "1.1.0",
+  "author": "OpenAI",
+  "admin": true,
+  "bootstrap": false,
+  "panel": true,
+  "schema": true,
+  "upgrade": true,
+  "default_position": "left",
+  "default_panel_name": "Naujienų panelė",
+  "min_core_version": "1.0.0",
+  "dependencies": [],
+  "permissions": [
+    {
+      "name": "Naujienų infusion peržiūra",
+      "slug": "news.view",
+      "description": "Leidžia matyti naujienų infusion duomenis"
+    },
+    {
+      "name": "Naujienų infusion administravimas",
+      "slug": "news.admin",
+      "description": "Leidžia valdyti naujienų infusion"
+    }
+  ],
+  "admin_menu": [
+    {
+      "title": "Naujienos",
+      "slug": "news-admin",
+      "permission": "news.admin",
+      "sort_order": 100
+    }
+  ]
+}

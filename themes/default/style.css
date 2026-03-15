@@ -1,0 +1,145 @@
+:root {
+    --site-bg: #f5f7fb;
+    --site-surface: #ffffff;
+    --site-border: #e5e7eb;
+    --site-text: #1f2937;
+    --site-muted: #6b7280;
+    --site-primary: #2563eb;
+    --site-primary-soft: rgba(37, 99, 235, 0.12);
+    --site-radius: 16px;
+    --site-shadow: 0 14px 34px rgba(15, 23, 42, 0.07);
+}
+
+html, body {
+    background: linear-gradient(180deg, #f8fbff 0%, var(--site-bg) 100%);
+    color: var(--site-text);
+}
+
+body {
+    min-height: 100vh;
+    font-size: 0.98rem;
+}
+
+.navbar {
+    box-shadow: 0 6px 24px rgba(15, 23, 42, 0.08);
+}
+
+.navbar-brand {
+    font-weight: 800;
+    letter-spacing: 0.3px;
+}
+
+.card {
+    background: var(--site-surface);
+    border: 1px solid var(--site-border);
+    border-radius: var(--site-radius);
+    box-shadow: var(--site-shadow);
+    overflow: hidden;
+}
+
+.card-header {
+    background: #fff;
+    border-bottom: 1px solid var(--site-border);
+    font-weight: 700;
+}
+
+.list-group-item {
+    border-color: var(--site-border);
+}
+
+.table > :not(caption) > * > * {
+    vertical-align: middle;
+}
+
+.table thead th {
+    color: var(--site-muted);
+    font-size: 0.9rem;
+    background: #f8fafc;
+}
+
+.form-control,
+.form-select,
+.btn,
+.dropdown-menu,
+.page-link,
+.badge,
+.alert {
+    border-radius: 12px;
+}
+
+.form-control,
+.form-select {
+    border-color: var(--site-border);
+    min-height: 44px;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--site-primary);
+    box-shadow: 0 0 0 0.2rem var(--site-primary-soft);
+}
+
+.btn {
+    font-weight: 700;
+    letter-spacing: 0.1px;
+}
+
+.btn-primary {
+    background: var(--site-primary);
+    border-color: var(--site-primary);
+}
+
+code {
+    color: #be185d;
+    background: #fff1f2;
+    padding: 0.15rem 0.4rem;
+    border-radius: 0.45rem;
+}
+
+footer {
+    background: transparent;
+}
+
+.sortable-panel-list {
+    min-height: 120px;
+}
+
+.panel-item {
+    cursor: grab;
+}
+
+.panel-item:active {
+    cursor: grabbing;
+}
+
+.panel-item .card-body {
+    background: #fff;
+}
+
+.empty-state {
+    border: 1px dashed var(--site-border);
+    border-radius: var(--site-radius);
+    background: #fff;
+    color: var(--site-muted);
+    padding: 2rem;
+    text-align: center;
+}
+
+.hero-strip {
+    background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
+    border: 1px solid #dbeafe;
+    border-radius: var(--site-radius);
+    padding: 1.25rem;
+    box-shadow: var(--site-shadow);
+}
+
+.public-sidebar .card {
+    position: sticky;
+    top: 1rem;
+}
+
+@media (max-width: 991.98px) {
+    .card {
+        border-radius: 14px;
+    }
+}

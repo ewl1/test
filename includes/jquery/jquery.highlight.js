@@ -1,0 +1,1 @@
+/* Placeholder jquery.highlight.js */
