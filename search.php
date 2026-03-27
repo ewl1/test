@@ -3,7 +3,14 @@ require_once __DIR__ . '/includes/bootstrap.php';
 
 function search_like_term($query)
 {
-    return '%' . trim((string)$query) . '%';
+    $query = trim((string)$query);
+    $query = strtr($query, [
+        '!' => '!!',
+        '%' => '!%',
+        '_' => '!_',
+    ]);
+
+    return '%' . $query . '%';
 }
 
 function search_excerpt($text, $length = 220)
@@ -26,11 +33,14 @@ function search_navigation_results(PDO $pdo, $term)
         SELECT id, title, url
         FROM navigation_links
         WHERE is_active = 1
-          AND (title LIKE :term OR url LIKE :term)
+          AND (title LIKE :title_term ESCAPE '!' OR url LIKE :url_term ESCAPE '!')
         ORDER BY parent_id IS NOT NULL, sort_order ASC, id ASC
         LIMIT 8
     ");
-    $stmt->execute([':term' => $term]);
+    $stmt->execute([
+        ':title_term' => $term,
+        ':url_term' => $term,
+    ]);
     return $stmt->fetchAll();
 }
 
@@ -40,9 +50,12 @@ function search_navigation_count(PDO $pdo, $term)
         SELECT COUNT(*)
         FROM navigation_links
         WHERE is_active = 1
-          AND (title LIKE :term OR url LIKE :term)
+          AND (title LIKE :title_term ESCAPE '!' OR url LIKE :url_term ESCAPE '!')
     ");
-    $stmt->execute([':term' => $term]);
+    $stmt->execute([
+        ':title_term' => $term,
+        ':url_term' => $term,
+    ]);
     return (int)$stmt->fetchColumn();
 }
 
@@ -56,11 +69,15 @@ function search_shoutbox_results(PDO $pdo, $term)
         SELECT m.id, m.user_id, m.message, m.created_at, u.username
         FROM infusion_shoutbox_messages m
         LEFT JOIN users u ON u.id = m.user_id
-        WHERE m.message LIKE :term OR COALESCE(u.username, '') LIKE :term
+        WHERE m.message LIKE :message_term ESCAPE '!'
+           OR COALESCE(u.username, '') LIKE :username_term ESCAPE '!'
         ORDER BY m.created_at DESC, m.id DESC
         LIMIT 8
     ");
-    $stmt->execute([':term' => $term]);
+    $stmt->execute([
+        ':message_term' => $term,
+        ':username_term' => $term,
+    ]);
     return $stmt->fetchAll();
 }
 
@@ -74,9 +91,13 @@ function search_shoutbox_count(PDO $pdo, $term)
         SELECT COUNT(*)
         FROM infusion_shoutbox_messages m
         LEFT JOIN users u ON u.id = m.user_id
-        WHERE m.message LIKE :term OR COALESCE(u.username, '') LIKE :term
+        WHERE m.message LIKE :message_term ESCAPE '!'
+           OR COALESCE(u.username, '') LIKE :username_term ESCAPE '!'
     ");
-    $stmt->execute([':term' => $term]);
+    $stmt->execute([
+        ':message_term' => $term,
+        ':username_term' => $term,
+    ]);
     return (int)$stmt->fetchColumn();
 }
 
@@ -100,9 +121,12 @@ if ($searched) {
         SELECT COUNT(*)
         FROM posts
         WHERE status = 'published'
-          AND (title LIKE :term OR content LIKE :term)
+          AND (title LIKE :title_term ESCAPE '!' OR content LIKE :content_term ESCAPE '!')
     ");
-    $countStmt->execute([':term' => $term]);
+    $countStmt->execute([
+        ':title_term' => $term,
+        ':content_term' => $term,
+    ]);
     $postTotal = (int)$countStmt->fetchColumn();
 
     $pager = paginate($postTotal, $perPage, $page);
@@ -116,11 +140,14 @@ if ($searched) {
         SELECT id, user_id, title, content, created_at
         FROM posts
         WHERE status = 'published'
-          AND (title LIKE :term OR content LIKE :term)
+          AND (title LIKE :title_term ESCAPE '!' OR content LIKE :content_term ESCAPE '!')
         ORDER BY created_at DESC, id DESC
         LIMIT {$perPage} OFFSET {$offset}
     ");
-    $postStmt->execute([':term' => $term]);
+    $postStmt->execute([
+        ':title_term' => $term,
+        ':content_term' => $term,
+    ]);
     $postResults = $postStmt->fetchAll();
 
     $navigationResults = search_navigation_results($pdo, $term);

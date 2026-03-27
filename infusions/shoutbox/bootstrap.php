@@ -146,11 +146,12 @@ function shoutbox_message_path($messageId)
     $stmt = $GLOBALS['pdo']->prepare("
         SELECT COUNT(*)
         FROM " . shoutbox_table_name() . "
-        WHERE created_at {$operator} :created_at
-           OR (created_at = :created_at AND id {$operator} :id)
+        WHERE created_at {$operator} :created_at_compare
+           OR (created_at = :created_at_exact AND id {$operator} :id)
     ");
     $stmt->execute([
-        ':created_at' => $message['created_at'],
+        ':created_at_compare' => $message['created_at'],
+        ':created_at_exact' => $message['created_at'],
         ':id' => (int)$message['id'],
     ]);
 

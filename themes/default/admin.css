@@ -113,12 +113,17 @@ small {
 .table > :not(caption) > * > * {
     border-bottom-color: var(--admin-border);
     vertical-align: middle;
+    color: var(--admin-text);
 }
 
 .table thead th {
     color: var(--admin-muted);
     background: rgba(255,255,255,0.03);
     font-size: 0.88rem;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+    background-color: rgba(255,255,255,0.025);
 }
 
 .form-control,
@@ -225,6 +230,29 @@ footer {
 .pre-wrap-log {
     white-space: pre-wrap;
     word-break: break-word;
+}
+
+.admin-log-table td {
+    background: transparent;
+}
+
+.admin-log-entry {
+    color: #f8fafc;
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 12px;
+    padding: 0.75rem 0.9rem;
+    line-height: 1.55;
+}
+
+.audit-details summary {
+    color: #f8fbff;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.audit-details[open] summary {
+    margin-bottom: 0.65rem;
 }
 
 .sortable-panel-list {
