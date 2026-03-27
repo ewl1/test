@@ -21,6 +21,39 @@ function shoutbox_allowed_tags()
     return ['b', 'i', 'u', 'quote', 'code', 'url'];
 }
 
+function shoutbox_default_order()
+{
+    return 'desc';
+}
+
+function shoutbox_normalize_order($value = null)
+{
+    $order = strtolower((string)($value ?? shoutbox_default_order()));
+    return $order === 'asc' ? 'asc' : 'desc';
+}
+
+function shoutbox_message_order()
+{
+    return shoutbox_normalize_order(setting('shoutbox_order', shoutbox_default_order()));
+}
+
+function shoutbox_messages_per_page()
+{
+    $value = (int)setting('shoutbox_messages_per_page', '20');
+    return max(5, min(100, $value));
+}
+
+function shoutbox_panel_messages_limit()
+{
+    $value = (int)setting('shoutbox_panel_messages', '5');
+    return max(3, min(20, $value));
+}
+
+function shoutbox_count_messages()
+{
+    return (int)$GLOBALS['pdo']->query('SELECT COUNT(*) FROM ' . shoutbox_table_name())->fetchColumn();
+}
+
 function shoutbox_bbcode_buttons()
 {
     return [
@@ -71,17 +104,22 @@ function shoutbox_escape_and_format($message)
     return nl2br($message);
 }
 
-function shoutbox_get_messages($limit = 50)
+function shoutbox_get_messages($limit = 50, $offset = 0, $order = null)
 {
+    $limit = max(1, (int)$limit);
+    $offset = max(0, (int)$offset);
+    $sqlOrder = strtoupper(shoutbox_normalize_order($order));
+
     $stmt = $GLOBALS['pdo']->prepare("
         SELECT m.*, u.username
         FROM " . shoutbox_table_name() . " m
         LEFT JOIN users u ON u.id = m.user_id
-        ORDER BY m.created_at DESC
-        LIMIT " . (int)$limit
-    );
+        ORDER BY m.created_at {$sqlOrder}, m.id {$sqlOrder}
+        LIMIT {$limit} OFFSET {$offset}
+    ");
     $stmt->execute();
-    return array_reverse($stmt->fetchAll());
+
+    return $stmt->fetchAll();
 }
 
 function shoutbox_create_message($message)
@@ -111,7 +149,7 @@ function shoutbox_create_message($message)
 
 function shoutbox_delete_message($id)
 {
-    $stmt = $GLOBALS['pdo']->prepare("DELETE FROM " . shoutbox_table_name() . " WHERE id = :id");
+    $stmt = $GLOBALS['pdo']->prepare('DELETE FROM ' . shoutbox_table_name() . ' WHERE id = :id');
     $stmt->execute([':id' => (int)$id]);
     audit_log(current_user()['id'] ?? null, 'shoutbox_delete', 'infusion_shoutbox_messages', (int)$id);
 }
@@ -180,12 +218,33 @@ function shoutbox_handle_request()
     flash(shoutbox_flash_key($context, $ok ? 'success' : 'error'), $message);
 
     $fallback = $context === 'panel' ? 'index.php' : 'shoutbox.php';
-    redirect(redirect_target_url($_POST['redirect_to'] ?? '', $fallback));
+    $redirectPath = normalize_local_path($_POST['redirect_to'] ?? '', $fallback);
+
+    if ($ok && $context === 'page') {
+        if (shoutbox_message_order() === 'desc') {
+            $redirectPath = 'shoutbox.php';
+        } else {
+            $lastPage = max(1, (int)ceil(shoutbox_count_messages() / shoutbox_messages_per_page()));
+            $redirectPath = $lastPage > 1 ? 'shoutbox.php?page=' . $lastPage : 'shoutbox.php';
+        }
+    }
+
+    redirect(redirect_target_url($redirectPath, $fallback));
 }
 
 function render_shoutbox_page()
 {
-    $messages = shoutbox_get_messages(100);
+    $perPage = shoutbox_messages_per_page();
+    $page = max(1, (int)($_GET['page'] ?? 1));
+    $total = shoutbox_count_messages();
+    $pager = paginate($total, $perPage, $page);
+
+    if (($pager['pages'] ?? 0) > 0 && $page > (int)$pager['pages']) {
+        $page = (int)$pager['pages'];
+        $pager = paginate($total, $perPage, $page);
+    }
+
+    $messages = shoutbox_get_messages($perPage, (int)$pager['offset']);
     include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
     ?>
     <div class="row justify-content-center">
@@ -214,6 +273,11 @@ function render_shoutbox_page()
                             <div class="mt-2"><?= shoutbox_escape_and_format($message['message']) ?></div>
                         </div>
                     <?php endforeach; ?>
+
+                    <?php $pagination = render_pagination(public_path('shoutbox.php'), $pager); ?>
+                    <?php if ($pagination !== ''): ?>
+                        <div class="mt-3"><?= $pagination ?></div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

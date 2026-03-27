@@ -9,8 +9,8 @@
 </div>
 </div>
 </footer>
-<script src="<?= public_path('includes/jquery/jquery-3.7.1.min.js') ?>"></script>
-<script src="<?= public_path('includes/js/bootstrap.bundle.min.js') ?>"></script>
-<script src="<?= public_path('includes/js/Sortable.min.js') ?>"></script>
-<script src="<?= public_path('includes/js/app.js') ?>"></script>
+<script src="<?= asset_path('includes/jquery/jquery-3.7.1.min.js') ?>"></script>
+<script src="<?= asset_path('includes/js/bootstrap.bundle.min.js') ?>"></script>
+<script src="<?= asset_path('includes/js/Sortable.min.js') ?>"></script>
+<script src="<?= asset_path('includes/js/app.js') ?>"></script>
 </body></html>

@@ -118,6 +118,27 @@ function redirect_target_url($path, $fallback = 'index.php')
     return public_path(normalize_local_path($path, $fallback));
 }
 
+function asset_path($path = '')
+{
+    $relativePath = ltrim((string)$path, '/');
+    $url = public_path($relativePath);
+    if ($relativePath === '') {
+        return $url;
+    }
+
+    $absolutePath = rtrim(BASEDIR, '/\\') . DIRECTORY_SEPARATOR . str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $relativePath);
+    if (!is_file($absolutePath)) {
+        return $url;
+    }
+
+    $version = @filemtime($absolutePath);
+    if (!$version) {
+        return $url;
+    }
+
+    return $url . (str_contains($url, '?') ? '&' : '?') . 'v=' . rawurlencode((string)$version);
+}
+
 function user_avatar_url($user)
 {
     if (!empty($user['avatar'])) {

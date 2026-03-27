@@ -1,5 +1,5 @@
 <?php
-$panelMessages = shoutbox_get_messages(5);
+$panelMessages = shoutbox_get_messages(shoutbox_panel_messages_limit());
 $redirectPath = normalize_local_path($_SERVER['REQUEST_URI'] ?? 'index.php', 'index.php');
 ?>
 

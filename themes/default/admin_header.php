@@ -1,5 +1,7 @@
 <?php
-if (!defined('IN_ADMIN')) define('IN_ADMIN', true);
+if (!defined('IN_ADMIN')) {
+    define('IN_ADMIN', true);
+}
 $siteTitle = setting('site_name', 'Mini CMS');
 $me = current_user();
 $can = function ($permission) use ($me) {
@@ -15,9 +17,9 @@ $canDiagnostics = $can('settings.manage') || $can('logs.view');
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?= e($siteTitle) ?> - Administracija</title>
 
-<link rel="stylesheet" href="<?= public_path('themes/default/bootstrap.min.css') ?>">
-<link rel="stylesheet" href="<?= public_path('themes/default/admin.css') ?>">
-<link rel="stylesheet" href="<?= public_path('themes/default/css/all.min.css') ?>">
+<link rel="stylesheet" href="<?= asset_path('themes/default/bootstrap.min.css') ?>">
+<link rel="stylesheet" href="<?= asset_path('themes/default/admin.css') ?>">
+<link rel="stylesheet" href="<?= asset_path('themes/default/css/all.min.css') ?>">
 </head>
 <body>
 
