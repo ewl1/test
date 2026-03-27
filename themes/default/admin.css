@@ -229,6 +229,35 @@ footer {
     min-height: 100%;
 }
 
+.admin-dashboard-hero {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.12), rgba(37, 99, 235, 0.08));
+    border: 1px solid rgba(125, 211, 252, 0.18);
+    border-radius: var(--admin-radius);
+    padding: 1.25rem 1.4rem;
+    box-shadow: var(--admin-shadow);
+}
+
+.admin-dashboard-title {
+    color: #f8fbff;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+}
+
+.admin-dashboard-subtitle {
+    color: #d6e6f8;
+    font-size: 0.95rem;
+}
+
+.admin-dashboard-card .list-group-item {
+    color: #edf5ff;
+}
+
+.admin-dashboard-card .list-group-item-action:hover,
+.admin-dashboard-card .list-group-item-action:focus {
+    background: rgba(125, 211, 252, 0.08);
+    color: #ffffff;
+}
+
 .admin-stat-chip {
     display: inline-flex;
     align-items: center;
