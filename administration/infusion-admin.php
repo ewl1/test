@@ -2,16 +2,14 @@
 require_once __DIR__ . '/_guard.php';
 require_permission('infusions.manage');
 
-$folder = trim($_GET['folder'] ?? '');
+$folder = trim((string)($_GET['folder'] ?? ''));
 if ($folder === '') {
-    http_response_code(404);
-    die('Nenurodyta infusion.');
+    abort_http(404, 'Nenurodyta infusion.');
 }
 
 $installed = get_installed_infusion_by_folder($folder);
 if (!$installed) {
-    http_response_code(404);
-    die('Infusion neįdiegta.');
+    abort_http(404, 'Infusion neįdiegta.');
 }
 
 include THEMES . 'default/admin_header.php';

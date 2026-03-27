@@ -10,7 +10,7 @@
 <link rel="icon" type="image/x-icon" href="<?= public_path('images/favicons/favicon.ico') ?>">
 <link rel="icon" type="image/png" sizes="32x32" href="<?= public_path('images/favicons/favicon-32x32.png') ?>">
 <link rel="apple-touch-icon" href="<?= public_path('images/favicons/apple-touch-icon.png') ?>">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="<?= public_path('themes/default/bootstrap.min.css') ?>">
 <?php $themeCss = defined('IN_ADMIN') ? 'themes/default/admin.css' : 'themes/default/style.css'; ?>
 <link rel="stylesheet" href="<?= public_path($themeCss) ?>">
 </head>
@@ -28,30 +28,31 @@ try {
     $stmt = $GLOBALS['pdo']->query("SELECT * FROM navigation_links WHERE is_active = 1 AND parent_id IS NULL ORDER BY sort_order ASC, id ASC");
     foreach ($stmt->fetchAll() as $link):
         $childrenStmt = $GLOBALS['pdo']->prepare("SELECT * FROM navigation_links WHERE parent_id=:pid AND is_active=1 ORDER BY sort_order ASC, id ASC");
-        $childrenStmt->execute([':pid'=>$link['id']]);
+        $childrenStmt->execute([':pid' => $link['id']]);
         $children = $childrenStmt->fetchAll();
 ?>
 <?php if ($children && setting('show_sublinks', '1') === '1'): ?>
 <li class="nav-item dropdown">
 <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"><?= e($link['title']) ?></a>
-<ul class="dropdown-menu"><?php foreach ($children as $child): ?><li><a class="dropdown-item" href="<?= e($child['url']) ?>"><?= e($child['title']) ?></a></li><?php endforeach; ?></ul>
+<ul class="dropdown-menu"><?php foreach ($children as $child): ?><li><a class="dropdown-item" href="<?= escape_url($child['url']) ?>"><?= e($child['title']) ?></a></li><?php endforeach; ?></ul>
 </li>
 <?php else: ?>
-<li class="nav-item"><a class="nav-link" href="<?= e($link['url']) ?>"><?= e($link['title']) ?></a></li>
+<li class="nav-item"><a class="nav-link" href="<?= escape_url($link['url']) ?>"><?= e($link['title']) ?></a></li>
 <?php endif; endforeach; } catch (Throwable $e) {} ?>
 <?php if ($me && has_permission($GLOBALS['pdo'], $me['id'], 'admin.access')): ?>
 <li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Administracija</a>
     <ul class="dropdown-menu">
         <li><a class="dropdown-item" href="<?= public_path('administration/index.php') ?>">Dashboard</a></li>
-        <li><a class="dropdown-item" href="<?= public_path('administration/settings.php') ?>">Svetainės nustatymai</a></li>
-        <li><a class="dropdown-item" href="<?= public_path('administration/themes.php') ?>">Temos</a></li>
-        <li><a class="dropdown-item" href="<?= public_path('administration/navigation.php') ?>">Navigacija</a></li>
-        <li><a class="dropdown-item" href="<?= public_path('administration/infusions.php') ?>">Infusions</a></li>
-        <li><a class="dropdown-item" href="<?= public_path('administration/panels.php') ?>">Panelės</a></li>
-        <li><a class="dropdown-item" href="<?= public_path('administration/roles.php') ?>">Rolės</a></li>
-        <li><a class="dropdown-item" href="<?= public_path('administration/permissions.php') ?>">Leidimai</a></li>
-        <li><a class="dropdown-item" href="<?= public_path('administration/users.php') ?>">Nariai</a></li>
+        <?php if (has_permission($GLOBALS['pdo'], $me['id'], 'settings.manage')): ?><li><a class="dropdown-item" href="<?= public_path('administration/settings.php') ?>">Svetainės nustatymai</a></li><?php endif; ?>
+        <?php if (has_permission($GLOBALS['pdo'], $me['id'], 'themes.manage')): ?><li><a class="dropdown-item" href="<?= public_path('administration/themes.php') ?>">Temos</a></li><?php endif; ?>
+        <?php if (has_permission($GLOBALS['pdo'], $me['id'], 'navigation.manage')): ?><li><a class="dropdown-item" href="<?= public_path('administration/navigation.php') ?>">Navigacija</a></li><?php endif; ?>
+        <?php if (has_permission($GLOBALS['pdo'], $me['id'], 'infusions.manage')): ?><li><a class="dropdown-item" href="<?= public_path('administration/infusions.php') ?>">Infusions</a></li><?php endif; ?>
+        <?php if (has_permission($GLOBALS['pdo'], $me['id'], 'panels.manage')): ?><li><a class="dropdown-item" href="<?= public_path('administration/panels.php') ?>">Panelės</a></li><?php endif; ?>
+        <?php if (has_permission($GLOBALS['pdo'], $me['id'], 'roles.manage')): ?><li><a class="dropdown-item" href="<?= public_path('administration/roles.php') ?>">Rolės</a></li><?php endif; ?>
+        <?php if (has_permission($GLOBALS['pdo'], $me['id'], 'permissions.manage')): ?><li><a class="dropdown-item" href="<?= public_path('administration/permissions.php') ?>">Leidimai</a></li><?php endif; ?>
+        <?php if (has_permission($GLOBALS['pdo'], $me['id'], 'users.view') || has_permission($GLOBALS['pdo'], $me['id'], 'users.manage')): ?><li><a class="dropdown-item" href="<?= public_path('administration/users.php') ?>">Nariai</a></li><?php endif; ?>
+        <?php if (has_permission($GLOBALS['pdo'], $me['id'], 'settings.manage') || has_permission($GLOBALS['pdo'], $me['id'], 'logs.view')): ?><li><a class="dropdown-item" href="<?= public_path('administration/diagnostics.php') ?>">Diagnostika</a></li><?php endif; ?>
         <?php foreach (get_infusion_admin_menu_items() as $adminItem): ?>
             <?php
             $allowed = empty($adminItem['permission_slug']) || has_permission($GLOBALS['pdo'], $me['id'], $adminItem['permission_slug']);
@@ -68,14 +69,16 @@ try {
 <?php endif; ?>
 </ul>
 <div class="d-flex gap-2 align-items-center">
-<?= showMemoryUsage() ?>
-<?= showcounter() ?>
 <?php if ($me): ?>
 <span class="navbar-text text-white"><?= e($me['username']) ?></span>
-<a class="btn btn-sm btn-outline-light" href="<?= public_path('logout.php') ?>">Atsijungti</a>
+<form method="post" action="<?= public_path('logout.php') ?>" class="d-inline mb-0">
+<?= csrf_field() ?>
+<button class="btn btn-sm btn-outline-light" type="submit">Atsijungti</button>
+</form>
 <?php else: ?>
 <a class="btn btn-sm btn-outline-light" href="<?= public_path('login.php') ?>">Prisijungti</a>
 <a class="btn btn-sm btn-light" href="<?= public_path('register.php') ?>">Registracija</a>
+<a class="btn btn-sm btn-outline-warning" href="<?= public_path('administration/login.php') ?>">Admin</a>
 <?php endif; ?>
 </div>
 </div></div></nav>

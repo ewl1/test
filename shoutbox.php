@@ -1,1 +1,11 @@
-<?php require_once __DIR__ . '/includes/bootstrap.php'; include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php'; ?><div class='card'><div class='card-body'><h1 class='h4'>Šaukykla</h1><p class='mb-0'>Placeholder.</p></div></div><?php include THEMES . setting('current_theme', CURRENT_THEME) . '/footer.php'; ?>
+<?php
+require_once __DIR__ . '/includes/bootstrap.php';
+
+if (!function_exists('render_shoutbox_page')) {
+    include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
+    echo '<div class="alert alert-warning">Šaukyklos infusion dar neįdiegta arba išjungta.</div>';
+    include THEMES . setting('current_theme', CURRENT_THEME) . '/footer.php';
+    return;
+}
+
+render_shoutbox_page();

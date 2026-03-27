@@ -6,6 +6,9 @@ try {
     ]);
     $GLOBALS['pdo'] = $pdo;
 } catch (Throwable $e) {
-    @error_log($e->getMessage() . PHP_EOL, 3, BASEDIR . 'logs/error.log');
+    error_log('DB connection error: ' . $e->getMessage());
+    if (function_exists('abort_http')) {
+        abort_http(502, 'Nepavyko prisijungti prie duomenų bazės.');
+    }
     die('DB connection error');
 }

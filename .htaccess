@@ -1,0 +1,28 @@
+Options -Indexes
+DirectoryIndex index.php
+ErrorDocument 400 /minicms/errors/400.php
+ErrorDocument 401 /minicms/errors/401.php
+ErrorDocument 403 /minicms/errors/403.php
+ErrorDocument 404 /minicms/errors/404.php
+ErrorDocument 408 /minicms/errors/408.php
+ErrorDocument 500 /minicms/errors/500.php
+ErrorDocument 502 /minicms/errors/502.php
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^post/([0-9]+)$ post.php?id=$1 [QSA,L]
+RewriteRule ^(?:config\.php|composer\.(json|lock)|\.env|logs/.*)$ - [F,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+    Header always unset X-Powered-By
+    Header always setifempty X-Content-Type-Options "nosniff"
+    Header always setifempty X-Frame-Options "SAMEORIGIN"
+    Header always setifempty Referrer-Policy "strict-origin-when-cross-origin"
+    Header always setifempty Permissions-Policy "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()"
+    Header always setifempty X-Permitted-Cross-Domain-Policies "none"
+</IfModule>
+
+<FilesMatch "\.(log|sql|ini|sh)$">
+    Require all denied
+</FilesMatch>

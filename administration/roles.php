@@ -5,10 +5,13 @@ require_permission('roles.manage');
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf();
     $action = $_POST['action'] ?? '';
+    $name = trim((string)($_POST['name'] ?? ''));
+    $slug = normalize_slug($_POST['slug'] ?? '');
+    $level = (int)($_POST['level'] ?? 0);
 
     if ($action === 'create') {
-        $errors = validate_role_payload($_POST['name'] ?? '', $_POST['slug'] ?? '', $_POST['level'] ?? 0);
-        if (role_slug_exists($_POST['slug'] ?? '')) $errors[] = 'Toks rolės slug jau egzistuoja.';
+        $errors = validate_role_payload($name, $slug, $level);
+        if (role_slug_exists($slug)) $errors[] = 'Toks rolės slug jau egzistuoja.';
         if ($errors) {
             flash('error', implode(' ', $errors));
             redirect('roles.php');
@@ -16,9 +19,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $stmt = $GLOBALS['pdo']->prepare("INSERT INTO roles (name, slug, level) VALUES (:name, :slug, :level)");
         $stmt->execute([
-            ':name' => trim($_POST['name'] ?? ''),
-            ':slug' => trim($_POST['slug'] ?? ''),
-            ':level' => (int)($_POST['level'] ?? 0),
+            ':name' => $name,
+            ':slug' => $slug,
+            ':level' => $level,
         ]);
         audit_log(current_user()['id'], 'role_create', 'roles', $GLOBALS['pdo']->lastInsertId());
         flash('success', 'Rolė sukurta.');
@@ -27,8 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($action === 'update') {
         $id = (int)($_POST['id'] ?? 0);
-        $errors = validate_role_payload($_POST['name'] ?? '', $_POST['slug'] ?? '', $_POST['level'] ?? 0);
-        if (role_slug_exists($_POST['slug'] ?? '', $id)) $errors[] = 'Toks rolės slug jau egzistuoja.';
+        $errors = validate_role_payload($name, $slug, $level);
+        if (role_slug_exists($slug, $id)) $errors[] = 'Toks rolės slug jau egzistuoja.';
         if ($id <= 0) $errors[] = 'Neteisingas rolės ID.';
         if ($errors) {
             flash('error', implode(' ', $errors));
@@ -38,9 +41,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $GLOBALS['pdo']->prepare("UPDATE roles SET name=:name, slug=:slug, level=:level WHERE id=:id");
         $stmt->execute([
             ':id' => $id,
-            ':name' => trim($_POST['name'] ?? ''),
-            ':slug' => trim($_POST['slug'] ?? ''),
-            ':level' => (int)($_POST['level'] ?? 0),
+            ':name' => $name,
+            ':slug' => $slug,
+            ':level' => $level,
         ]);
         audit_log(current_user()['id'], 'role_update', 'roles', $id);
         flash('success', 'Rolė atnaujinta.');
@@ -77,61 +80,62 @@ include THEMES . 'default/admin_header.php';
 <?php if ($msg = flash('error')): ?><div class="alert alert-danger"><?= e($msg) ?></div><?php endif; ?>
 
 <div class="row g-4">
-  <div class="col-lg-4">
-    <div class="card">
-      <div class="card-header">Nauja rolė</div>
-      <div class="card-body">
-        <form method="post">
-          <?= csrf_field() ?>
-          <input type="hidden" name="action" value="create">
-          <div class="mb-3"><label class="form-label">Pavadinimas</label><input class="form-control" name="name" required></div>
-          <div class="mb-3"><label class="form-label">Slug</label><input class="form-control" name="slug" required></div>
-          <div class="mb-3"><label class="form-label">Lygis</label><input class="form-control" type="number" name="level" value="10" required></div>
-          <button class="btn btn-primary">Sukurti</button>
-        </form>
-      </div>
-    </div>
-  </div>
-  <div class="col-lg-8">
-    <div class="card">
-      <div class="card-header">Esamos rolės</div>
-      <div class="table-responsive">
-        <table class="table align-middle mb-0">
-          <thead><tr><th>ID</th><th>Pavadinimas</th><th>Slug</th><th>Lygis</th><th>Nariai</th><th></th></tr></thead>
-          <tbody>
-          <?php foreach ($roles as $role): ?>
-            <tr>
-              <td><?= (int)$role['id'] ?></td>
-              <td><?= e($role['name']) ?></td>
-              <td><code><?= e($role['slug']) ?></code></td>
-              <td><?= (int)$role['level'] ?></td>
-              <td><?= (int)$role['users_count'] ?></td>
-              <td><button class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#role-<?= (int)$role['id'] ?>">Redaguoti</button></td>
-            </tr>
-            <tr class="collapse" id="role-<?= (int)$role['id'] ?>">
-              <td colspan="6">
-                <form method="post" class="row g-2 align-items-end">
-                  <?= csrf_field() ?>
-                  <input type="hidden" name="action" value="update">
-                  <input type="hidden" name="id" value="<?= (int)$role['id'] ?>">
-                  <div class="col-md-3"><label class="form-label">Pavadinimas</label><input class="form-control" name="name" value="<?= e($role['name']) ?>"></div>
-                  <div class="col-md-3"><label class="form-label">Slug</label><input class="form-control" name="slug" value="<?= e($role['slug']) ?>"></div>
-                  <div class="col-md-2"><label class="form-label">Lygis</label><input class="form-control" type="number" name="level" value="<?= (int)$role['level'] ?>"></div>
-                  <div class="col-md-4 d-flex gap-2">
-                    <button class="btn btn-primary">Išsaugoti</button>
-                    <a class="btn btn-outline-dark" href="permissions.php?role_id=<?= (int)$role['id'] ?>">Leidimai</a>
-                    <?php if ((int)$role['id'] > 5): ?>
-                    <button class="btn btn-outline-danger" type="submit" name="action" value="delete" onclick="return confirm('Tikrai trinti rolę?')">Trinti</button>
-                    <?php endif; ?>
-                  </div>
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">Nauja rolė</div>
+            <div class="card-body">
+                <form method="post">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="action" value="create">
+                    <div class="mb-3"><label class="form-label">Pavadinimas</label><input class="form-control" name="name" required></div>
+                    <div class="mb-3"><label class="form-label">Slug</label><input class="form-control" name="slug" required></div>
+                    <div class="mb-3"><label class="form-label">Lygis</label><input class="form-control" type="number" name="level" value="10" required></div>
+                    <button class="btn btn-primary">Sukurti</button>
                 </form>
-              </td>
-            </tr>
-          <?php endforeach; ?>
-          </tbody>
-        </table>
-      </div>
+            </div>
+        </div>
     </div>
-  </div>
+
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">Esamos rolės</div>
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead><tr><th>ID</th><th>Pavadinimas</th><th>Slug</th><th>Lygis</th><th>Nariai</th><th></th></tr></thead>
+                    <tbody>
+                    <?php foreach ($roles as $role): ?>
+                        <tr>
+                            <td><?= (int)$role['id'] ?></td>
+                            <td><?= e($role['name']) ?></td>
+                            <td><code><?= e($role['slug']) ?></code></td>
+                            <td><?= (int)$role['level'] ?></td>
+                            <td><?= (int)$role['users_count'] ?></td>
+                            <td><button class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#role-<?= (int)$role['id'] ?>">Redaguoti</button></td>
+                        </tr>
+                        <tr class="collapse" id="role-<?= (int)$role['id'] ?>">
+                            <td colspan="6">
+                                <form method="post" class="row g-2 align-items-end">
+                                    <?= csrf_field() ?>
+                                    <input type="hidden" name="action" value="update">
+                                    <input type="hidden" name="id" value="<?= (int)$role['id'] ?>">
+                                    <div class="col-md-3"><label class="form-label">Pavadinimas</label><input class="form-control" name="name" value="<?= e($role['name']) ?>"></div>
+                                    <div class="col-md-3"><label class="form-label">Slug</label><input class="form-control" name="slug" value="<?= e($role['slug']) ?>"></div>
+                                    <div class="col-md-2"><label class="form-label">Lygis</label><input class="form-control" type="number" name="level" value="<?= (int)$role['level'] ?>"></div>
+                                    <div class="col-md-4 d-flex gap-2">
+                                        <button class="btn btn-primary">Išsaugoti</button>
+                                        <a class="btn btn-outline-dark" href="permissions.php?role_id=<?= (int)$role['id'] ?>">Leidimai</a>
+                                        <?php if ((int)$role['id'] > 5): ?>
+                                            <button class="btn btn-outline-danger" type="submit" name="action" value="delete" onclick="return confirm('Tikrai trinti rolę?')">Trinti</button>
+                                        <?php endif; ?>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 <?php include THEMES . 'default/admin_footer.php'; ?>

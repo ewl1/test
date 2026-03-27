@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/include/bootstrap.php';
+require_once __DIR__ . '/includes/bootstrap.php';
 require_login_page();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -23,17 +23,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $user = current_user();
-include __DIR__ . '/theme/header.php';
+include __DIR__ . '/themes/default/header.php';
 ?>
 <h1>Profilis</h1>
 <div class="row">
     <div class="col-md-4">
         <div class="card card-body">
-            <img src="<?= e(user_avatar_url($user)) ?>" alt="" class="img-fluid rounded mb-3">
+            <img src="<?= escape_url(user_avatar_url($user)) ?>" alt="" class="img-fluid rounded mb-3">
             <div><strong><?= e($user['username']) ?></strong></div>
             <div class="text-muted"><?= e($user['email']) ?></div>
             <div class="text-muted small"><?= e($user['role_name']) ?></div>
-            <a class="btn btn-outline-secondary mt-3" href="change-password.php">Keisti slaptažodį</a>
+            <a class="btn btn-outline-secondary mt-3" href="<?= public_path('change-password.php') ?>">Keisti slaptažodį</a>
         </div>
     </div>
     <div class="col-md-8">
@@ -41,9 +41,9 @@ include __DIR__ . '/theme/header.php';
             <?= csrf_input() ?>
             <div class="mb-3"><label class="form-label">Vartotojo vardas</label><input class="form-control" name="username" value="<?= e($user['username']) ?>"></div>
             <div class="mb-3"><label class="form-label">El. paštas</label><input class="form-control" name="email" value="<?= e($user['email']) ?>"></div>
-            <div class="mb-3"><label class="form-label">Avataras</label><input class="form-control" type="file" name="avatar"></div>
+            <div class="mb-3"><label class="form-label">Avataras</label><input class="form-control" type="file" name="avatar" accept=".jpg,.jpeg,.png,.gif,.webp,image/jpeg,image/png,image/gif,image/webp"></div>
             <button class="btn btn-primary">Išsaugoti</button>
         </form>
     </div>
 </div>
-<?php include __DIR__ . '/theme/footer.php'; ?>
+<?php include __DIR__ . '/themes/default/footer.php'; ?>

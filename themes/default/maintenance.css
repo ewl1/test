@@ -1,0 +1,31 @@
+body {
+    min-height: 100vh;
+    margin: 0;
+    background:
+        radial-gradient(circle at top left, rgba(255, 193, 7, 0.16), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(220, 53, 69, 0.12), transparent 26%),
+        #f8f9fa;
+}
+
+.maintenance-shell {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+}
+
+.maintenance-card {
+    width: 100%;
+    max-width: 760px;
+    border: 0;
+    border-radius: 1.25rem;
+    box-shadow: 0 20px 60px rgba(33, 37, 41, 0.12);
+}
+
+.maintenance-code {
+    font-size: clamp(3rem, 10vw, 6rem);
+    line-height: 1;
+    font-weight: 800;
+    letter-spacing: -0.05em;
+}

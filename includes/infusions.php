@@ -124,7 +124,7 @@ function ensure_infusion_tables()
 
 function get_infusion_core_version()
 {
-    return '1.0.0';
+    return app_version();
 }
 
 function validate_infusion_dependencies(array $manifest)
@@ -397,7 +397,9 @@ function install_infusion_from_folder($folder)
             }
         }
 
-        $GLOBALS['pdo']->commit();
+        if ($GLOBALS['pdo']->inTransaction()) {
+            $GLOBALS['pdo']->commit();
+        }
         return $infusionId;
     } catch (Throwable $e) {
         if ($GLOBALS['pdo']->inTransaction()) $GLOBALS['pdo']->rollBack();
@@ -450,7 +452,9 @@ function upgrade_infusion_by_id($id)
         $stmt = $GLOBALS['pdo']->prepare("INSERT INTO infusion_versions (infusion_id, version) VALUES (:iid,:v)");
         $stmt->execute([':iid' => (int)$id, ':v' => $targetVersion]);
 
-        $GLOBALS['pdo']->commit();
+        if ($GLOBALS['pdo']->inTransaction()) {
+            $GLOBALS['pdo']->commit();
+        }
         return ['upgraded' => true, 'from' => $installedVersion, 'to' => $targetVersion, 'steps' => array_map(fn($s) => $s['version'], $executedSteps)];
     } catch (Throwable $e) {
         if ($GLOBALS['pdo']->inTransaction()) $GLOBALS['pdo']->rollBack();
@@ -480,7 +484,9 @@ function uninstall_infusion_by_id($id)
         $GLOBALS['pdo']->prepare("DELETE FROM infusion_migration_log WHERE infusion_id = :id")->execute([':id' => (int)$id]);
         $GLOBALS['pdo']->prepare("DELETE FROM infusion_rollback_log WHERE infusion_id = :id")->execute([':id' => (int)$id]);
         $GLOBALS['pdo']->prepare("DELETE FROM infusions WHERE id = :id")->execute([':id' => (int)$id]);
-        $GLOBALS['pdo']->commit();
+        if ($GLOBALS['pdo']->inTransaction()) {
+            $GLOBALS['pdo']->commit();
+        }
     } catch (Throwable $e) {
         if ($GLOBALS['pdo']->inTransaction()) $GLOBALS['pdo']->rollBack();
         throw $e;

@@ -1,0 +1,8 @@
+/vendor/
+/logs/*.log
+/images/avatars/*
+!/images/avatars/.gitkeep
+/config.php
+.env
+.DS_Store
+Thumbs.db

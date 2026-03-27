@@ -1,13 +1,33 @@
 <?php
 define('IN_ADMIN', true);
 require_once dirname(__DIR__) . '/includes/bootstrap.php';
-if (current_user()) redirect(public_path('administration/index.php'));
-$error = '';
+
+$user = current_user();
+if ($user) {
+    if (has_permission($GLOBALS['pdo'], $user['id'], 'admin.access')) {
+        redirect(public_path('administration/index.php'));
+    }
+    redirect(public_path('index.php'));
+}
+
+$error = auth_error();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf();
-    if (login(trim($_POST['email'] ?? ''), (string)($_POST['password'] ?? ''))) redirect(public_path('administration/index.php'));
-    $error = 'Prisijungti nepavyko.';
+    if (login(trim($_POST['email'] ?? ''), (string)($_POST['password'] ?? ''))) {
+        $freshUser = current_user() ?: sync_session_user();
+        if ($freshUser && has_permission($GLOBALS['pdo'], $freshUser['id'], 'admin.access')) {
+            redirect(public_path('administration/index.php'));
+        }
+
+        flash('error', 'Ši paskyra neturi administratoriaus teisių.');
+        $_SESSION = [];
+        session_destroy();
+        redirect(public_path('login.php'));
+    }
+
+    $error = auth_error() ?? 'Prisijungti nepavyko.';
 }
+
 include THEMES . 'default/admin_header.php';
 ?>
 <div class="row justify-content-center"><div class="col-lg-5"><div class="card"><div class="card-body">

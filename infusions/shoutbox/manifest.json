@@ -1,0 +1,30 @@
+{
+  "name": "Šaukykla",
+  "description": "Šaukyklos infusion su BBCode ir smailais.",
+  "version": "1.0.0",
+  "author": "OpenAI",
+  "admin": true,
+  "bootstrap": true,
+  "panel": true,
+  "schema": true,
+  "upgrade": false,
+  "default_position": "right",
+  "default_panel_name": "Šaukykla",
+  "min_core_version": "1.0.0",
+  "dependencies": [],
+  "permissions": [
+    {
+      "name": "Šaukyklos moderavimas",
+      "slug": "shoutbox.moderate",
+      "description": "Leidžia moderuoti šaukyklos žinutes"
+    }
+  ],
+  "admin_menu": [
+    {
+      "title": "Šaukykla",
+      "slug": "shoutbox-admin",
+      "permission": "shoutbox.moderate",
+      "sort_order": 120
+    }
+  ]
+}
