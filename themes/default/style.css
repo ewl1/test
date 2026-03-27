@@ -29,6 +29,113 @@ body {
     letter-spacing: 0.3px;
 }
 
+.navbar .nav-link,
+.navbar .navbar-brand {
+    color: #f8fbff !important;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link:focus {
+    color: #dbeafe !important;
+}
+
+.site-search-form {
+    min-width: min(100%, 320px);
+}
+
+.site-search-input {
+    min-width: 210px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: #fff;
+}
+
+.site-search-input::placeholder {
+    color: rgba(255, 255, 255, 0.72);
+}
+
+.site-search-input:focus {
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
+}
+
+.site-search-button {
+    white-space: nowrap;
+}
+
+.member-menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    border-color: rgba(255, 255, 255, 0.22);
+}
+
+.member-menu-avatar,
+.member-panel-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #e2e8f0;
+}
+
+.member-menu-dropdown {
+    min-width: 250px;
+}
+
+.member-menu-header a {
+    color: inherit;
+}
+
+.member-panel .card-header,
+.search-section-card .card-header {
+    color: #0f172a;
+}
+
+.member-panel-name {
+    font-weight: 700;
+    color: var(--site-text);
+}
+
+.member-panel-links .list-group-item {
+    border-left: 0;
+    border-right: 0;
+}
+
+.search-result-card h2 a,
+.search-result-card h3 a {
+    color: var(--site-text);
+}
+
+.search-result-card h2 a:hover,
+.search-result-card h3 a:hover {
+    color: var(--site-primary);
+}
+
+.search-type-badge {
+    letter-spacing: 0.03em;
+}
+
+.user-profile-avatar {
+    width: 112px;
+    height: 112px;
+    border-radius: 28px;
+    object-fit: cover;
+    background: #e2e8f0;
+}
+
+.user-signature {
+    white-space: pre-line;
+}
+
+.user-stat-card {
+    text-align: center;
+    border: 1px solid var(--site-border);
+    border-radius: 14px;
+    padding: 1rem;
+    background: #f8fafc;
+}
+
 .card {
     background: var(--site-surface);
     border: 1px solid var(--site-border);
@@ -141,5 +248,13 @@ footer {
 @media (max-width: 991.98px) {
     .card {
         border-radius: 14px;
+    }
+
+    .site-search-form {
+        width: 100%;
+    }
+
+    .site-search-input {
+        min-width: 0;
     }
 }

@@ -23,6 +23,7 @@
 <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="<?= public_path('index.php') ?>">Pradžia</a></li>
 <li class="nav-item"><a class="nav-link" href="<?= public_path('shoutbox.php') ?>">Šaukykla</a></li>
+<li class="nav-item"><a class="nav-link" href="<?= public_path('search.php') ?>">Paieška</a></li>
 <?php
 try {
     $stmt = $GLOBALS['pdo']->query("SELECT * FROM navigation_links WHERE is_active = 1 AND parent_id IS NULL ORDER BY sort_order ASC, id ASC");
@@ -70,17 +71,42 @@ if (!$allowed) {
 </li>
 <?php endif; ?>
 </ul>
-<div class="d-flex gap-2 align-items-center">
-<?php if ($me): ?>
-<span class="navbar-text text-white"><?= e($me['username']) ?></span>
-<form method="post" action="<?= public_path('logout.php') ?>" class="d-inline mb-0">
-<?= csrf_field() ?>
-<button class="btn btn-sm btn-outline-light" type="submit">Atsijungti</button>
+
+<div class="d-flex flex-column flex-lg-row align-items-lg-center gap-2 ms-lg-3">
+<form method="get" action="<?= public_path('search.php') ?>" class="site-search-form d-flex align-items-center gap-2">
+<input class="form-control form-control-sm site-search-input" type="search" name="q" value="<?= e($_GET['q'] ?? '') ?>" placeholder="Ieškoti..." maxlength="100">
+<button class="btn btn-sm btn-light site-search-button" type="submit">Rasti</button>
 </form>
+
+<?php if ($me): ?>
+<div class="dropdown">
+<button class="btn btn-sm btn-outline-light dropdown-toggle member-menu-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+<img src="<?= escape_url(user_avatar_url($me)) ?>" alt="" class="member-menu-avatar">
+<span class="member-menu-name"><?= e($me['username']) ?></span>
+</button>
+<div class="dropdown-menu dropdown-menu-end member-menu-dropdown">
+<div class="member-menu-header px-3 py-2 border-bottom">
+<div class="fw-semibold"><a class="text-decoration-none" href="<?= user_profile_url((int)$me['id']) ?>"><?= e($me['username']) ?></a></div>
+<div class="small text-secondary"><?= e($me['email']) ?></div>
+</div>
+<a class="dropdown-item" href="<?= public_path('profile.php') ?>">Profilio redagavimas</a>
+<a class="dropdown-item" href="<?= user_profile_url((int)$me['id']) ?>">Viešas profilis</a>
+<?php if (has_permission($GLOBALS['pdo'], $me['id'], 'admin.access')): ?>
+<a class="dropdown-item" href="<?= public_path('administration/index.php') ?>">Admin Dashboard</a>
+<?php endif; ?>
+<div class="dropdown-divider"></div>
+<form method="post" action="<?= public_path('logout.php') ?>" class="px-3 py-2 member-menu-logout">
+<?= csrf_field() ?>
+<button class="btn btn-sm btn-outline-secondary w-100" type="submit">Atsijungti</button>
+</form>
+</div>
+</div>
 <?php else: ?>
+<div class="d-flex gap-2 align-items-center">
 <a class="btn btn-sm btn-outline-light" href="<?= public_path('login.php') ?>">Prisijungti</a>
 <a class="btn btn-sm btn-light" href="<?= public_path('register.php') ?>">Registracija</a>
 <a class="btn btn-sm btn-outline-warning" href="<?= public_path('administration/login.php') ?>">Admin</a>
+</div>
 <?php endif; ?>
 </div>
 </div></div></nav>

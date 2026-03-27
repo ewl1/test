@@ -9,9 +9,15 @@ $redirectPath = normalize_local_path($_SERVER['REQUEST_URI'] ?? 'index.php', 'in
     <hr>
     <?php foreach ($panelMessages as $message): ?>
         <div class="mb-3">
-            <div class="fw-semibold"><?= e($message['username'] ?? 'Svečias') ?></div>
+            <div class="fw-semibold">
+                <?php if (!empty($message['user_id'])): ?>
+                    <a class="text-decoration-none" href="<?= user_profile_url((int)$message['user_id']) ?>"><?= e($message['username'] ?? 'Narys') ?></a>
+                <?php else: ?>
+                    <?= e($message['username'] ?? 'Svečias') ?>
+                <?php endif; ?>
+            </div>
             <div class="small text-secondary mb-1"><?= e(format_dt($message['created_at'])) ?></div>
-            <div class="small"><?= shoutbox_escape_and_format(mb_substr($message['message'], 0, 120)) ?></div>
+            <div class="small"><?= e(shoutbox_plain_excerpt($message['message'], 120)) ?></div>
         </div>
     <?php endforeach; ?>
 <?php else: ?>

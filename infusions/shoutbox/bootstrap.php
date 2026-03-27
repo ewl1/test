@@ -104,6 +104,17 @@ function shoutbox_escape_and_format($message)
     return nl2br($message);
 }
 
+function shoutbox_plain_excerpt($message, $length = 120)
+{
+    $message = preg_replace('/\[(\/?)[a-z]+(?:=[^\]]*)?\]/i', '', (string)$message);
+    $message = trim(preg_replace('/\s+/u', ' ', $message));
+    if (mb_strlen($message) <= $length) {
+        return $message;
+    }
+
+    return rtrim(mb_substr($message, 0, $length - 1)) . '...';
+}
+
 function shoutbox_get_messages($limit = 50, $offset = 0, $order = null)
 {
     $limit = max(1, (int)$limit);
@@ -111,7 +122,7 @@ function shoutbox_get_messages($limit = 50, $offset = 0, $order = null)
     $sqlOrder = strtoupper(shoutbox_normalize_order($order));
 
     $stmt = $GLOBALS['pdo']->prepare("
-        SELECT m.*, u.username
+        SELECT m.*, u.username, u.avatar, u.email
         FROM " . shoutbox_table_name() . " m
         LEFT JOIN users u ON u.id = m.user_id
         ORDER BY m.created_at {$sqlOrder}, m.id {$sqlOrder}
@@ -120,6 +131,42 @@ function shoutbox_get_messages($limit = 50, $offset = 0, $order = null)
     $stmt->execute();
 
     return $stmt->fetchAll();
+}
+
+function shoutbox_message_path($messageId)
+{
+    $stmt = $GLOBALS['pdo']->prepare('SELECT id, created_at FROM ' . shoutbox_table_name() . ' WHERE id = :id LIMIT 1');
+    $stmt->execute([':id' => (int)$messageId]);
+    $message = $stmt->fetch();
+    if (!$message) {
+        return 'shoutbox.php';
+    }
+
+    $operator = shoutbox_message_order() === 'desc' ? '>' : '<';
+    $stmt = $GLOBALS['pdo']->prepare("
+        SELECT COUNT(*)
+        FROM " . shoutbox_table_name() . "
+        WHERE created_at {$operator} :created_at
+           OR (created_at = :created_at AND id {$operator} :id)
+    ");
+    $stmt->execute([
+        ':created_at' => $message['created_at'],
+        ':id' => (int)$message['id'],
+    ]);
+
+    $position = (int)$stmt->fetchColumn() + 1;
+    $page = max(1, (int)ceil($position / shoutbox_messages_per_page()));
+    $path = 'shoutbox.php';
+    if ($page > 1) {
+        $path .= '?page=' . $page;
+    }
+
+    return $path . '#shoutbox-message-' . (int)$messageId;
+}
+
+function shoutbox_message_url($messageId)
+{
+    return public_path(shoutbox_message_path($messageId));
 }
 
 function shoutbox_create_message($message)
@@ -263,10 +310,14 @@ function render_shoutbox_page()
                     <?php endif; ?>
 
                     <?php foreach ($messages as $message): ?>
-                        <div class="border-bottom py-3">
+                        <div class="border-bottom py-3" id="shoutbox-message-<?= (int)$message['id'] ?>">
                             <div class="d-flex justify-content-between gap-3">
                                 <div>
-                                    <strong><?= e($message['username'] ?? 'Svečias') ?></strong>
+                                    <?php if (!empty($message['user_id'])): ?>
+                                        <strong><a class="text-decoration-none" href="<?= user_profile_url((int)$message['user_id']) ?>"><?= e($message['username'] ?? 'Narys') ?></a></strong>
+                                    <?php else: ?>
+                                        <strong><?= e($message['username'] ?? 'Svečias') ?></strong>
+                                    <?php endif; ?>
                                     <div class="text-secondary small"><?= e(format_dt($message['created_at'])) ?></div>
                                 </div>
                             </div>

@@ -294,6 +294,65 @@ function login($email, $password)
     return true;
 }
 
+function login_admin($email, $password)
+{
+    $email = normalize_email($email);
+    $ip = auth_client_ip();
+    $rateLimit = login_rate_limit_status($email, $ip);
+
+    if ($rateLimit['blocked']) {
+        audit_log(null, 'admin_login_blocked', 'users', null, [
+            'email' => $email,
+            'ip' => $ip,
+            'retry_after_seconds' => $rateLimit['retry_after'],
+        ]);
+        flash('auth_error', 'Per daug nesėkmingų prisijungimų. Bandykite po ' . format_wait_time($rateLimit['retry_after']));
+        return false;
+    }
+
+    $stmt = $GLOBALS['pdo']->prepare("
+        SELECT u.*, r.name AS role_name, r.slug AS role_slug, r.level AS role_level
+        FROM users u
+        LEFT JOIN roles r ON r.id = u.role_id
+        WHERE u.email = ?
+        LIMIT 1
+    ");
+    $stmt->execute([$email]);
+    $user = $stmt->fetch();
+
+    if (!$user || !has_permission($GLOBALS['pdo'], (int)$user['id'], 'admin.access')) {
+        record_failed_login_attempts($email, $ip);
+        audit_log($user['id'] ?? null, 'admin_login_failed', 'users', $user['id'] ?? null, ['email' => $email, 'reason' => 'missing_admin_access']);
+        flash('auth_error', 'Neteisingi prisijungimo duomenys.');
+        return false;
+    }
+
+    $adminPasswordHash = trim((string)($user['admin_password'] ?? ''));
+    $passwordValid = $adminPasswordHash !== ''
+        ? password_verify((string)$password, $adminPasswordHash)
+        : password_verify((string)$password, (string)$user['password']);
+
+    if (!$passwordValid) {
+        record_failed_login_attempts($email, $ip);
+        audit_log((int)$user['id'], 'admin_login_failed', 'users', (int)$user['id'], ['email' => $email, 'reason' => 'invalid_password']);
+        flash('auth_error', 'Neteisingi prisijungimo duomenys.');
+        return false;
+    }
+
+    if ((int)$user['is_active'] !== 1 || ($user['status'] ?? 'inactive') !== 'active') {
+        record_failed_login_attempts($email, $ip);
+        audit_log((int)$user['id'], 'admin_login_failed', 'users', (int)$user['id'], ['email' => $email, 'reason' => 'inactive_account']);
+        flash('auth_error', 'Paskyra dar neaktyvi arba yra užblokuota.');
+        return false;
+    }
+
+    clear_failed_login_attempts($email, $ip);
+    session_regenerate_id(true);
+    $_SESSION['user'] = $user;
+    audit_log((int)$user['id'], 'admin_login_success', 'users', (int)$user['id']);
+    return true;
+}
+
 function register_user($username, $email, $password)
 {
     $payload = [

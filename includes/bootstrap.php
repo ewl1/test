@@ -109,9 +109,12 @@ require_once INCLUDES . 'password_resets.php';
 require_once INCLUDES . 'bbcode.php';
 require_once INCLUDES . 'permissions.php';
 require_once INCLUDES . 'panels.php';
+require_once INCLUDES . 'user_profiles.php';
 require_once INCLUDES . 'functions/pagination.php';
 require_once INCLUDES . 'functions/output.php';
+require_once INCLUDES . 'functions/posts.php';
 require_once INCLUDES . 'functions/shouts.php';
+require_once INCLUDES . 'functions/users.php';
 
 if ((setting('site_maintenance', MAINTENANCE_MODE ? '1' : '0') === '1') && !defined('IN_ADMIN')) {
     require BASEDIR . 'maintenance.php';
