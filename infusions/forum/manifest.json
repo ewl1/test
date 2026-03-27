@@ -1,10 +1,10 @@
 {
   "name": "Forumas",
-  "description": "Pavyzdinė forumo infusion.",
-  "version": "1.0.0",
+  "description": "Pilnas forumo modulis su kategorijomis, subforumais, temomis ir atsakymais.",
+  "version": "2.0.0",
   "author": "OpenAI",
   "admin": true,
-  "bootstrap": false,
+  "bootstrap": true,
   "panel": true,
   "schema": true,
   "upgrade": false,
@@ -14,14 +14,14 @@
   "dependencies": [],
   "permissions": [
     {
-      "name": "Forumo infusion peržiūra",
+      "name": "Forumo peržiūra",
       "slug": "forum.view",
-      "description": "Leidžia matyti forumo infusion duomenis"
+      "description": "Leidžia matyti forumo turinį"
     },
     {
-      "name": "Forumo infusion administravimas",
+      "name": "Forumo administravimas",
       "slug": "forum.admin",
-      "description": "Leidžia valdyti forumo infusion"
+      "description": "Leidžia valdyti forumo struktūrą"
     }
   ],
   "admin_menu": [
