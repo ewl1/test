@@ -101,6 +101,9 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                                     <?php if ((int)$topic['is_pinned'] === 1): ?>
                                         <span class="badge text-bg-warning">Prisegta</span>
                                     <?php endif; ?>
+                                    <?php if ((int)$topic['is_locked'] === 1): ?>
+                                        <span class="badge text-bg-dark">Uzrakinta</span>
+                                    <?php endif; ?>
                                     <h2 class="h5 mb-0">
                                         <a class="text-decoration-none" href="<?= forum_topic_url((int)$topic['id']) ?>"><?= e($topic['title']) ?></a>
                                     </h2>

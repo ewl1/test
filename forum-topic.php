@@ -14,28 +14,69 @@ if (!$topic) {
     abort_http(404, 'Tema nerasta.');
 }
 
+$currentPage = max(1, (int)($_GET['page'] ?? 1));
+$canModerate = forum_can_moderate_topic($topic);
+$editMode = $canModerate && (string)($_GET['mode'] ?? '') === 'edit';
+$editError = null;
+$editTitle = (string)$topic['title'];
+$editContent = (string)$topic['content'];
 $replyError = null;
 $replyContent = '';
 
-if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && (string)($_POST['forum_action'] ?? '') === 'reply') {
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     verify_csrf();
-    $replyContent = (string)($_POST['content'] ?? '');
-    [$ok, $message, $postId] = forum_create_reply($topic['id'], $replyContent);
-    if ($ok && $postId) {
-        flash('forum_success', $message);
-        $lastPage = forum_topic_last_page($topic['id']);
-        redirect(forum_topic_url($topic['id'], $lastPage) . '#forum-reply-' . (int)$postId);
-    }
+    $action = (string)($_POST['forum_action'] ?? '');
 
-    $replyError = $message;
+    if ($action === 'reply') {
+        $replyContent = (string)($_POST['content'] ?? '');
+        [$ok, $message, $postId] = forum_create_reply($topic['id'], $replyContent);
+        if ($ok && $postId) {
+            flash('forum_success', $message);
+            $lastPage = forum_topic_last_page($topic['id']);
+            redirect(forum_topic_url($topic['id'], $lastPage) . '#forum-reply-' . (int)$postId);
+        }
+
+        $replyError = $message;
+    } elseif ($action === 'toggle_pin') {
+        [$ok, $message] = forum_set_topic_flag($topic['id'], 'is_pinned', (int)$topic['is_pinned'] === 1 ? 0 : 1);
+        if ($ok) {
+            flash('forum_success', $message);
+            redirect(forum_topic_url($topic['id'], $currentPage));
+        }
+        $editError = $message;
+    } elseif ($action === 'toggle_lock') {
+        [$ok, $message] = forum_set_topic_flag($topic['id'], 'is_locked', (int)$topic['is_locked'] === 1 ? 0 : 1);
+        if ($ok) {
+            flash('forum_success', $message);
+            redirect(forum_topic_url($topic['id'], $currentPage));
+        }
+        $editError = $message;
+    } elseif ($action === 'delete_topic') {
+        [$ok, $message, $forumId] = forum_delete_topic($topic['id']);
+        if ($ok && $forumId) {
+            flash('forum_success', $message);
+            redirect(forum_forum_url($forumId));
+        }
+        $editError = $message;
+    } elseif ($action === 'edit_topic') {
+        $editTitle = trim((string)($_POST['title'] ?? ''));
+        $editContent = (string)($_POST['content'] ?? '');
+        [$ok, $message] = forum_update_topic($topic['id'], $editTitle, $editContent);
+        if ($ok) {
+            flash('forum_success', $message);
+            redirect(forum_topic_url($topic['id'], $currentPage));
+        }
+        $editMode = true;
+        $editError = $message;
+    }
 }
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'GET') {
     forum_increment_topic_views($topic['id']);
-    $topic = forum_get_topic($topic['id']);
 }
 
-$page = max(1, (int)($_GET['page'] ?? 1));
+$topic = forum_get_topic($topic['id']);
+$page = $currentPage;
 $perPage = forum_posts_per_page();
 $replyTotal = forum_count_replies($topic['id']);
 $pager = paginate($replyTotal, $perPage, $page);
@@ -48,6 +89,7 @@ $replies = forum_get_replies($topic['id'], $perPage, (int)$pager['offset']);
 $successMessage = flash('forum_success');
 $forum = forum_get_forum((int)$topic['forum_id']);
 $parentForum = $forum && !empty($forum['parent_id']) ? forum_get_forum((int)$forum['parent_id']) : null;
+$canModerate = forum_can_moderate_topic($topic);
 
 include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
 ?>
@@ -97,6 +139,73 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                 </div>
             </div>
         </div>
+
+        <?php if ($canModerate): ?>
+            <div class="card forum-moderation-card mb-4">
+                <div class="card-body d-flex justify-content-between align-items-center gap-3 flex-wrap">
+                    <div>
+                        <strong>Temos moderavimas</strong>
+                        <div class="small text-secondary">Prisegimas, uzrakinimas, redagavimas ir trynimas.</div>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                        <form method="post" class="d-inline">
+                            <?= csrf_field() ?>
+                            <input type="hidden" name="forum_action" value="toggle_pin">
+                            <button class="btn btn-sm btn-outline-warning" type="submit"><?= (int)$topic['is_pinned'] === 1 ? 'Nuimti prisegima' : 'Prisegti tema' ?></button>
+                        </form>
+                        <form method="post" class="d-inline">
+                            <?= csrf_field() ?>
+                            <input type="hidden" name="forum_action" value="toggle_lock">
+                            <button class="btn btn-sm btn-outline-secondary" type="submit"><?= (int)$topic['is_locked'] === 1 ? 'Atrakinti tema' : 'Uzrakinti tema' ?></button>
+                        </form>
+                        <a class="btn btn-sm btn-outline-primary" href="<?= forum_topic_url((int)$topic['id'], $page) . '&mode=edit' ?>">Redaguoti</a>
+                        <form method="post" class="d-inline">
+                            <?= csrf_field() ?>
+                            <input type="hidden" name="forum_action" value="delete_topic">
+                            <button class="btn btn-sm btn-outline-danger" type="submit" data-confirm-message="Ar tikrai norite istrinti sia tema ir visus atsakymus?">Istrinti tema</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($canModerate && $editMode): ?>
+            <div class="card forum-editor-card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center gap-3">
+                    <span>Redaguoti tema</span>
+                    <a class="btn btn-sm btn-outline-secondary" href="<?= forum_topic_url((int)$topic['id'], $page) ?>">Uzdaryti</a>
+                </div>
+                <div class="card-body">
+                    <?php if ($editError): ?>
+                        <div class="alert alert-danger"><?= e($editError) ?></div>
+                    <?php endif; ?>
+                    <form method="post">
+                        <?= csrf_field() ?>
+                        <input type="hidden" name="forum_action" value="edit_topic">
+
+                        <div class="mb-2 d-flex flex-wrap gap-2">
+                            <?php forum_render_editor_toolbar('forum-edit-topic-content'); ?>
+                        </div>
+                        <div class="mb-2 d-flex flex-wrap gap-2">
+                            <?php forum_render_smileys('forum-edit-topic-content'); ?>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="forum-edit-topic-title">Temos pavadinimas</label>
+                            <input class="form-control" id="forum-edit-topic-title" name="title" maxlength="190" value="<?= e($editTitle) ?>" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="forum-edit-topic-content">Turinys</label>
+                            <textarea class="form-control" id="forum-edit-topic-content" name="content" rows="8" maxlength="15000" required><?= e($editContent) ?></textarea>
+                            <div class="form-text">Leidziamas BBCode: [b], [i], [u], [quote], [code], [url=...][/url]</div>
+                        </div>
+
+                        <button class="btn btn-primary">Issaugoti pakeitimus</button>
+                    </form>
+                </div>
+            </div>
+        <?php endif; ?>
 
         <article class="card forum-post-card mb-4">
             <div class="card-body forum-post-layout">

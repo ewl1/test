@@ -801,6 +801,127 @@ function forum_create_reply($topicId, $content)
     return [true, 'Atsakymas paskelbtas.', $postId];
 }
 
+function forum_can_moderate_topic(array $topic)
+{
+    return forum_can_admin();
+}
+
+function forum_update_topic($topicId, $title, $content)
+{
+    forum_ensure_schema();
+
+    $topic = forum_get_topic($topicId);
+    if (!$topic) {
+        return [false, 'Tema nerasta.', null];
+    }
+    if (!forum_can_moderate_topic($topic)) {
+        return [false, 'Nepakanka teisiu redaguoti tema.', null];
+    }
+
+    $title = trim((string)$title);
+    $content = forum_prepare_body($content, 15000);
+
+    if (mb_strlen($title) < 3 || mb_strlen($title) > 190) {
+        return [false, 'Temos pavadinimas turi buti nuo 3 iki 190 simboliu.', null];
+    }
+    if ($content === '') {
+        return [false, 'Temos turinys negali buti tuscias.', null];
+    }
+
+    $slug = forum_unique_slug(forum_table_topics(), $title, 'tema', (int)$topic['id'], 'forum_id = :forum_id', [
+        ':forum_id' => (int)$topic['forum_id'],
+    ]);
+
+    $stmt = $GLOBALS['pdo']->prepare('
+        UPDATE ' . forum_table_topics() . '
+        SET title = :title,
+            slug = :slug,
+            content = :content,
+            updated_at = NOW()
+        WHERE id = :id
+    ');
+    $stmt->execute([
+        ':title' => $title,
+        ':slug' => $slug,
+        ':content' => $content,
+        ':id' => (int)$topic['id'],
+    ]);
+
+    audit_log(current_user()['id'] ?? null, 'forum_topic_update', 'infusion_forum_topics', (int)$topic['id'], [
+        'title' => $title,
+    ]);
+
+    return [true, 'Tema atnaujinta.', (int)$topic['id']];
+}
+
+function forum_set_topic_flag($topicId, $flag, $value)
+{
+    forum_ensure_schema();
+
+    $allowed = ['is_pinned', 'is_locked'];
+    if (!in_array($flag, $allowed, true)) {
+        return [false, 'Nezinomas moderavimo veiksmas.', null];
+    }
+
+    $topic = forum_get_topic($topicId);
+    if (!$topic) {
+        return [false, 'Tema nerasta.', null];
+    }
+    if (!forum_can_moderate_topic($topic)) {
+        return [false, 'Nepakanka teisiu moderuoti tema.', null];
+    }
+
+    $stmt = $GLOBALS['pdo']->prepare('UPDATE ' . forum_table_topics() . ' SET ' . $flag . ' = :value WHERE id = :id');
+    $stmt->execute([
+        ':value' => $value ? 1 : 0,
+        ':id' => (int)$topic['id'],
+    ]);
+
+    audit_log(current_user()['id'] ?? null, $flag === 'is_pinned' ? 'forum_topic_pin_toggle' : 'forum_topic_lock_toggle', 'infusion_forum_topics', (int)$topic['id'], [
+        'value' => $value ? 1 : 0,
+    ]);
+
+    return [true, $flag === 'is_pinned'
+        ? ($value ? 'Tema prisegta.' : 'Temos prisegimas nuimtas.')
+        : ($value ? 'Tema uzrakinta.' : 'Tema atrakinta.'),
+        (int)$topic['forum_id']];
+}
+
+function forum_delete_topic($topicId)
+{
+    forum_ensure_schema();
+
+    $topic = forum_get_topic($topicId);
+    if (!$topic) {
+        return [false, 'Tema nerasta.', null];
+    }
+    if (!forum_can_moderate_topic($topic)) {
+        return [false, 'Nepakanka teisiu istrinti tema.', null];
+    }
+
+    $GLOBALS['pdo']->beginTransaction();
+    try {
+        $deletePosts = $GLOBALS['pdo']->prepare('DELETE FROM ' . forum_table_posts() . ' WHERE topic_id = :topic_id');
+        $deletePosts->execute([':topic_id' => (int)$topic['id']]);
+
+        $deleteTopic = $GLOBALS['pdo']->prepare('DELETE FROM ' . forum_table_topics() . ' WHERE id = :id');
+        $deleteTopic->execute([':id' => (int)$topic['id']]);
+
+        $GLOBALS['pdo']->commit();
+    } catch (Throwable $e) {
+        if ($GLOBALS['pdo']->inTransaction()) {
+            $GLOBALS['pdo']->rollBack();
+        }
+        return [false, 'Nepavyko istrinti temos.', null];
+    }
+
+    audit_log(current_user()['id'] ?? null, 'forum_topic_delete', 'infusion_forum_topics', (int)$topic['id'], [
+        'title' => $topic['title'],
+    ]);
+
+    return [true, 'Tema istrinta.', (int)$topic['forum_id']];
+}
+
 function forum_render_editor_toolbar($textareaId)
 {
     foreach (forum_bbcode_buttons() as $button) {
