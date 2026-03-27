@@ -60,7 +60,16 @@ function user_avatar_url($user)
     if (!empty($user['avatar'])) {
         return 'uploads/avatars/' . rawurlencode($user['avatar']);
     }
-    return 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($user['email'] ?? ''))) . '?d=mp&s=80';
+
+    if (function_exists('asset_path')) {
+        return asset_path('images/avatars/default-avatar.svg');
+    }
+
+    if (function_exists('public_path')) {
+        return public_path('images/avatars/default-avatar.svg');
+    }
+
+    return 'images/avatars/default-avatar.svg';
 }
 
 function random_token($bytes = 32)

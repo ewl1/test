@@ -145,7 +145,7 @@ function user_avatar_url($user)
         return public_path('uploads/avatars/' . rawurlencode((string)$user['avatar']));
     }
 
-    return 'https://www.gravatar.com/avatar/' . md5(strtolower(trim((string)($user['email'] ?? '')))) . '?d=mp&s=80';
+    return asset_path('images/avatars/default-avatar.svg');
 }
 
 function format_dt($value, $fallback = '')

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" role="img" aria-labelledby="avatarTitle avatarDesc">
+  <title id="avatarTitle">Default avatar</title>
+  <desc id="avatarDesc">Stylized default user avatar with a warm gradient background and abstract portrait.</desc>
+  <defs>
+    <linearGradient id="bg" x1="36" y1="24" x2="284" y2="296" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f7b267"/>
+      <stop offset="0.52" stop-color="#f4845f"/>
+      <stop offset="1" stop-color="#5f0f40"/>
+    </linearGradient>
+    <linearGradient id="portrait" x1="110" y1="78" x2="214" y2="246" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff5e6"/>
+      <stop offset="1" stop-color="#ffd6a5"/>
+    </linearGradient>
+  </defs>
+  <rect width="320" height="320" rx="64" fill="url(#bg)"/>
+  <circle cx="160" cy="124" r="56" fill="url(#portrait)"/>
+  <path d="M79 270c8-57 42-88 81-88s73 31 81 88" fill="url(#portrait)"/>
+  <path d="M103 95c7-31 29-49 57-49 34 0 57 25 57 60 0 10-2 19-6 27-8-17-27-30-50-30-18 0-34 8-45 21-9-6-13-16-13-29z" fill="#7b2d26" opacity=".72"/>
+  <circle cx="246" cy="80" r="18" fill="#fff2cc" opacity=".35"/>
+  <circle cx="80" cy="242" r="26" fill="#ffffff" opacity=".08"/>
+</svg>
