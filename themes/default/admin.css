@@ -196,6 +196,19 @@ footer {
     background: transparent;
 }
 
+.min-width-260 {
+    min-width: 260px;
+}
+
+.min-width-320 {
+    min-width: 320px;
+}
+
+.pre-wrap-log {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
 .sortable-panel-list {
     min-height: 150px;
 }

@@ -11,11 +11,14 @@ if (ini_get('session.use_cookies')) {
     setcookie(
         session_name(),
         '',
-        time() - 42000,
-        $params['path'],
-        $params['domain'],
-        (bool)$params['secure'],
-        (bool)$params['httponly']
+        [
+            'expires' => time() - 42000,
+            'path' => $params['path'] ?? '/',
+            'domain' => $params['domain'] ?? '',
+            'secure' => (bool)($params['secure'] ?? false),
+            'httponly' => (bool)($params['httponly'] ?? true),
+            'samesite' => $params['samesite'] ?? 'Lax',
+        ]
     );
 }
 

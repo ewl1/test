@@ -143,12 +143,12 @@ function shoutbox_render_editor($context = 'page', $textareaId = 'shoutbox-messa
 
         <div class="mb-2 d-flex flex-wrap gap-2">
             <?php foreach (shoutbox_bbcode_buttons() as $button): ?>
-                <button type="button" class="btn btn-sm btn-outline-secondary" data-target="<?= e($textareaId) ?>" data-insert="<?= e($button['insert']) ?>"><?= e($button['label']) ?></button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-editor-target="<?= e($textareaId) ?>" data-insert-text="<?= e($button['insert']) ?>"><?= e($button['label']) ?></button>
             <?php endforeach; ?>
         </div>
         <div class="mb-2 d-flex flex-wrap gap-2">
             <?php foreach (shoutbox_smileys() as $code => $emoji): ?>
-                <button type="button" class="btn btn-sm btn-outline-warning" data-target="<?= e($textareaId) ?>" data-smiley="<?= e($code) ?>"><?= $emoji ?></button>
+                <button type="button" class="btn btn-sm btn-outline-warning" data-editor-target="<?= e($textareaId) ?>" data-smiley-code="<?= e($code) ?>"><?= $emoji ?></button>
             <?php endforeach; ?>
         </div>
 
@@ -160,32 +160,6 @@ function shoutbox_render_editor($context = 'page', $textareaId = 'shoutbox-messa
         <button class="btn btn-primary"><?= $compact ? 'Komentuoti' : 'Siųsti' ?></button>
     </form>
 
-    <script>
-    (function () {
-        function insertText(textarea, value) {
-            if (!textarea) return;
-            var start = textarea.selectionStart || 0;
-            var end = textarea.selectionEnd || 0;
-            var current = textarea.value;
-            textarea.value = current.slice(0, start) + value + current.slice(end);
-            textarea.focus();
-            var cursor = start + value.length;
-            textarea.setSelectionRange(cursor, cursor);
-        }
-
-        document.querySelectorAll('[data-target="<?= e($textareaId) ?>"][data-insert]').forEach(function (button) {
-            button.addEventListener('click', function () {
-                insertText(document.getElementById(button.getAttribute('data-target')), button.getAttribute('data-insert'));
-            });
-        });
-
-        document.querySelectorAll('[data-target="<?= e($textareaId) ?>"][data-smiley]').forEach(function (button) {
-            button.addEventListener('click', function () {
-                insertText(document.getElementById(button.getAttribute('data-target')), ' ' + button.getAttribute('data-smiley') + ' ');
-            });
-        });
-    }());
-    </script>
     <?php
 }
 

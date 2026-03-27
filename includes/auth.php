@@ -304,6 +304,36 @@ function register_user($username, $email, $password)
         'status' => 'active',
     ];
 
+    $ip = auth_client_ip();
+    $rateLimitTargets = [
+        [
+            'scope' => 'register_email',
+            'identifier' => $payload['email'],
+            'max_attempts' => 3,
+            'window_seconds' => 30 * 60,
+            'lockout_seconds' => 30 * 60,
+        ],
+        [
+            'scope' => 'register_ip',
+            'identifier' => $ip,
+            'max_attempts' => 10,
+            'window_seconds' => 30 * 60,
+            'lockout_seconds' => 30 * 60,
+        ],
+    ];
+
+    $rateLimit = rate_limit_status($rateLimitTargets);
+    if ($rateLimit['blocked']) {
+        audit_log(null, 'register_blocked', 'users', null, [
+            'email' => $payload['email'],
+            'ip' => $ip,
+            'retry_after_seconds' => $rateLimit['retry_after'],
+        ]);
+        return ['Per daug registracijos bandymų. Bandykite po ' . format_wait_time($rateLimit['retry_after']) . '.'];
+    }
+
+    rate_limit_hit($rateLimitTargets);
+
     $errors = validate_user_payload($payload, 'create');
     if ($errors) {
         return $errors;

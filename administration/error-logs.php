@@ -35,7 +35,7 @@ include THEMES . 'default/admin_header.php';
         <form method="post">
             <?= csrf_field() ?>
             <input type="hidden" name="action" value="clear">
-            <button class="btn btn-outline-danger" onclick="return confirm('Išvalyti klaidų logą?')">Išvalyti</button>
+            <button class="btn btn-outline-danger" data-confirm-message="Išvalyti klaidų logą?">Išvalyti</button>
         </form>
     </div>
 </div>
@@ -55,7 +55,7 @@ include THEMES . 'default/admin_header.php';
                     <?php foreach ($lines as $index => $line): ?>
                         <tr>
                             <td><?= $index + 1 ?></td>
-                            <td><pre class="mb-0 small" style="white-space:pre-wrap"><?= e($line) ?></pre></td>
+                            <td><pre class="mb-0 small pre-wrap-log"><?= e($line) ?></pre></td>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>

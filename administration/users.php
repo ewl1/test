@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/_guard.php';
-require_any_permission(['users.manage','users.view']);
+require_any_permission(['users.manage', 'users.view']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf();
@@ -17,7 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'status' => $_POST['status'] ?? 'inactive',
         ];
         $errors = validate_user_payload($payload, 'create');
-        if (!can_manage_role_id($payload['role_id'])) $errors[] = 'Negalite priskirti aukštesnės rolės už savo.';
+        if (!can_manage_role_id($payload['role_id'])) {
+            $errors[] = 'Negalite priskirti aukštesnės rolės už savo.';
+        }
         if ($errors) {
             flash('error', implode(' ', $errors));
             redirect('users.php');
@@ -28,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             VALUES (:u,:e,:p,:r,:a,:s,NOW())
         ");
         $stmt->execute([
-            ':u' => trim($payload['username']),
+            ':u' => trim((string)$payload['username']),
             ':e' => normalize_email($payload['email']),
             ':p' => password_hash((string)$payload['password'], PASSWORD_DEFAULT),
             ':r' => (int)$payload['role_id'],
@@ -58,7 +60,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'status' => $_POST['status'] ?? 'inactive',
         ];
         $errors = validate_user_payload($payload, 'update', $userId);
-        if (!can_manage_role_id($payload['role_id']) || !can_manage_role_id((int)$existing['role_id'])) $errors[] = 'Negalite valdyti šio vartotojo rolės.';
+        if (!can_manage_role_id($payload['role_id']) || !can_manage_role_id((int)$existing['role_id'])) {
+            $errors[] = 'Negalite valdyti šio vartotojo rolės.';
+        }
         if ($errors) {
             flash('error', implode(' ', $errors));
             redirect('users.php');
@@ -66,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $sql = "UPDATE users SET username=:u, email=:e, role_id=:r, is_active=:a, status=:s";
         $params = [
-            ':u' => trim($payload['username']),
+            ':u' => trim((string)$payload['username']),
             ':e' => normalize_email($payload['email']),
             ':r' => (int)$payload['role_id'],
             ':a' => (int)($_POST['is_active'] ?? 0),
@@ -92,6 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             flash('error', 'Negalite ištrinti savęs.');
             redirect('users.php');
         }
+
         $roleStmt = $GLOBALS['pdo']->prepare("SELECT role_id FROM users WHERE id = :id");
         $roleStmt->execute([':id' => $userId]);
         $targetRoleId = (int)$roleStmt->fetchColumn();
@@ -106,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         redirect('users.php');
     }
 
-    if (in_array($action, ['activate','deactivate','block'], true)) {
+    if (in_array($action, ['activate', 'deactivate', 'block'], true)) {
         require_permission('users.status');
         $roleStmt = $GLOBALS['pdo']->prepare("SELECT role_id FROM users WHERE id = :id");
         $roleStmt->execute([':id' => $userId]);
@@ -145,7 +150,7 @@ include THEMES . 'default/admin_header.php';
       <div class="col-md-3"><label class="form-label">El. paštas</label><input class="form-control" type="email" name="email"></div>
       <div class="col-md-2"><label class="form-label">Slaptažodis</label><input class="form-control" type="password" name="password"></div>
       <div class="col-md-2"><label class="form-label">Rolė</label><select class="form-select" name="role_id"><?php foreach ($roles as $role): ?><option value="<?= (int)$role['id'] ?>"><?= e($role['name']) ?></option><?php endforeach; ?></select></div>
-      <div class="col-md-2"><label class="form-label">Būsena</label><select class="form-select" name="status"><?php foreach (['active','inactive','blocked'] as $status): ?><option value="<?= $status ?>"><?= $status ?></option><?php endforeach; ?></select></div>
+      <div class="col-md-2"><label class="form-label">Būsena</label><select class="form-select" name="status"><?php foreach (['active', 'inactive', 'blocked'] as $status): ?><option value="<?= $status ?>"><?= $status ?></option><?php endforeach; ?></select></div>
       <div class="col-12"><button class="btn btn-primary">Sukurti</button></div>
     </form>
   </div>
@@ -161,7 +166,7 @@ include THEMES . 'default/admin_header.php';
           <td><?= (int)$user['id'] ?></td>
           <td><?= e($user['username']) ?></td>
           <td><?= e($user['email']) ?></td>
-          <td><?= e($user['role_name'] ?? '—') ?></td>
+          <td><?= e($user['role_name'] ?? '-') ?></td>
           <td><span class="badge text-bg-secondary"><?= e($user['status']) ?></span></td>
           <td><?= (int)$user['is_active'] ? 'Taip' : 'Ne' ?></td>
           <td><button class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#user-<?= (int)$user['id'] ?>">Valdyti</button></td>
@@ -184,7 +189,7 @@ include THEMES . 'default/admin_header.php';
               </div>
               <div class="col-md-1"><label class="form-label">Status</label>
                 <select class="form-select" name="status">
-                  <?php foreach (['active','inactive','blocked','deleted'] as $status): ?>
+                  <?php foreach (['active', 'inactive', 'blocked', 'deleted'] as $status): ?>
                     <option value="<?= $status ?>" <?= $user['status'] === $status ? 'selected' : '' ?>><?= $status ?></option>
                   <?php endforeach; ?>
                 </select>
@@ -205,7 +210,7 @@ include THEMES . 'default/admin_header.php';
               <button class="btn btn-sm btn-outline-warning" name="action" value="deactivate">Deaktyvuoti</button>
               <button class="btn btn-sm btn-outline-dark" name="action" value="block">Blokuoti</button>
               <?php if ((int)$user['id'] !== (int)current_user()['id']): ?>
-              <button class="btn btn-sm btn-outline-danger" name="action" value="delete" onclick="return confirm('Tikrai ištrinti vartotoją?')">Ištrinti</button>
+              <button class="btn btn-sm btn-outline-danger" name="action" value="delete" data-confirm-message="Tikrai ištrinti vartotoją?">Ištrinti</button>
               <?php endif; ?>
             </form>
           </td>

@@ -11,14 +11,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         if ($action === 'install_folder') {
-            $folder = trim($_POST['folder'] ?? '');
+            $folder = trim((string)($_POST['folder'] ?? ''));
             $id = install_infusion_from_folder($folder);
             audit_log(current_user()['id'], 'infusion_install', 'infusions', $id, ['folder' => $folder]);
             flash('success', 'Infusion įdiegta iš failų sistemos.');
             redirect('infusions.php');
         }
 
-        if (in_array($action, ['enable','disable'], true)) {
+        if (in_array($action, ['enable', 'disable'], true)) {
             $id = (int)($_POST['id'] ?? 0);
             $enabled = $action === 'enable' ? 1 : 0;
             $GLOBALS['pdo']->prepare("UPDATE infusions SET is_enabled = :e WHERE id = :id")->execute([':e' => $enabled, ':id' => $id]);
@@ -52,7 +52,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $installed = $GLOBALS['pdo']->query("SELECT * FROM infusions ORDER BY id DESC")->fetchAll();
 $installedFolders = [];
-foreach ($installed as $i) $installedFolders[$i['folder']] = $i;
+foreach ($installed as $i) {
+    $installedFolders[$i['folder']] = $i;
+}
 
 include THEMES . 'default/admin_header.php';
 ?>
@@ -138,7 +140,7 @@ include THEMES . 'default/admin_header.php';
                                     <form method="post" class="d-inline">
                                         <?= csrf_field() ?>
                                         <input type="hidden" name="id" value="<?= (int)$inf['id'] ?>">
-                                        <button class="btn btn-sm btn-outline-danger" name="action" value="uninstall" onclick="return confirm('Tikrai pašalinti infusion?')">Uninstall</button>
+                                        <button class="btn btn-sm btn-outline-danger" name="action" value="uninstall" data-confirm-message="Tikrai pašalinti infusion?">Uninstall</button>
                                     </form>
                                 </div>
                             </td>

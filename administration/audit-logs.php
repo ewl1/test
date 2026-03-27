@@ -105,7 +105,7 @@ include THEMES . 'default/admin_header.php';
                     <td><?= e(trim(($log['entity_type'] ?? '') . ' #' . ($log['entity_id'] ?? ''), ' #')) ?></td>
                     <td><?= e($log['ip_text']) ?></td>
                     <td class="text-break"><?= e($log['url'] ?? '') ?></td>
-                    <td style="min-width:260px">
+                    <td class="min-width-260">
                         <?php if (!empty($log['details'])): ?>
                             <details>
                                 <summary>Peržiūrėti</summary>

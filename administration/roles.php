@@ -11,7 +11,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($action === 'create') {
         $errors = validate_role_payload($name, $slug, $level);
-        if (role_slug_exists($slug)) $errors[] = 'Toks rolės slug jau egzistuoja.';
+        if (role_slug_exists($slug)) {
+            $errors[] = 'Toks rolės slug jau egzistuoja.';
+        }
         if ($errors) {
             flash('error', implode(' ', $errors));
             redirect('roles.php');
@@ -31,8 +33,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'update') {
         $id = (int)($_POST['id'] ?? 0);
         $errors = validate_role_payload($name, $slug, $level);
-        if (role_slug_exists($slug, $id)) $errors[] = 'Toks rolės slug jau egzistuoja.';
-        if ($id <= 0) $errors[] = 'Neteisingas rolės ID.';
+        if (role_slug_exists($slug, $id)) {
+            $errors[] = 'Toks rolės slug jau egzistuoja.';
+        }
+        if ($id <= 0) {
+            $errors[] = 'Neteisingas rolės ID.';
+        }
         if ($errors) {
             flash('error', implode(' ', $errors));
             redirect('roles.php');
@@ -125,7 +131,7 @@ include THEMES . 'default/admin_header.php';
                                         <button class="btn btn-primary">Išsaugoti</button>
                                         <a class="btn btn-outline-dark" href="permissions.php?role_id=<?= (int)$role['id'] ?>">Leidimai</a>
                                         <?php if ((int)$role['id'] > 5): ?>
-                                            <button class="btn btn-outline-danger" type="submit" name="action" value="delete" onclick="return confirm('Tikrai trinti rolę?')">Trinti</button>
+                                            <button class="btn btn-outline-danger" type="submit" name="action" value="delete" data-confirm-message="Tikrai trinti rolę?">Trinti</button>
                                         <?php endif; ?>
                                     </div>
                                 </form>

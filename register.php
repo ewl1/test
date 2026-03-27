@@ -56,11 +56,11 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Slaptažodis</label>
-                        <input class="form-control" type="password" name="password" required>
+                        <input class="form-control" type="password" name="password" autocomplete="new-password" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Pakartokite slaptažodį</label>
-                        <input class="form-control" type="password" name="password_confirmation" required>
+                        <input class="form-control" type="password" name="password_confirmation" autocomplete="new-password" required>
                     </div>
                     <button class="btn btn-primary">Sukurti paskyrą</button>
                 </form>

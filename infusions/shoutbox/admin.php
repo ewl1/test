@@ -23,14 +23,14 @@ $messages = shoutbox_get_messages(200);
                     <tr>
                         <td><?= (int)$message['id'] ?></td>
                         <td><?= e($message['username'] ?? 'Svečias') ?></td>
-                        <td style="min-width:320px"><?= shoutbox_escape_and_format($message['message']) ?></td>
+                        <td class="min-width-320"><?= shoutbox_escape_and_format($message['message']) ?></td>
                         <td><?= e($message['created_at']) ?></td>
                         <td>
                             <form method="post">
                                 <?= csrf_field() ?>
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="id" value="<?= (int)$message['id'] ?>">
-                                <button class="btn btn-sm btn-outline-danger" onclick="return confirm('Ištrinti žinutę?')">Trinti</button>
+                                <button class="btn btn-sm btn-outline-danger" data-confirm-message="Ištrinti žinutę?">Trinti</button>
                             </form>
                         </td>
                     </tr>
