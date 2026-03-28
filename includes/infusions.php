@@ -126,6 +126,24 @@ function ensure_infusion_tables()
             message TEXT DEFAULT NULL
         )
     ");
+    $GLOBALS['pdo']->exec("
+        CREATE TABLE IF NOT EXISTS infusion_migration_state (
+            id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            lock_name VARCHAR(191) NOT NULL,
+            operation VARCHAR(32) NOT NULL,
+            resource VARCHAR(191) DEFAULT NULL,
+            infusion_id INT UNSIGNED DEFAULT NULL,
+            folder VARCHAR(120) DEFAULT NULL,
+            admin_user_id INT UNSIGNED DEFAULT NULL,
+            owner_connection_id BIGINT UNSIGNED DEFAULT NULL,
+            started_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            heartbeat_at DATETIME DEFAULT NULL,
+            details TEXT DEFAULT NULL,
+            UNIQUE KEY uniq_infusion_migration_state_lock (lock_name),
+            KEY idx_infusion_migration_state_owner (owner_connection_id),
+            KEY idx_infusion_migration_state_started (started_at)
+        )
+    ");
 }
 
 function infusion_migration_lock_name()
@@ -147,6 +165,186 @@ function infusion_migration_lock_name()
     $databaseName = preg_replace('/[^a-z0-9_:-]+/i', '_', $databaseName);
     $lockName = 'minicms:' . $databaseName . ':infusion-migrations';
     return $lockName;
+}
+
+function current_infusion_db_connection_id()
+{
+    try {
+        return (int)$GLOBALS['pdo']->query('SELECT CONNECTION_ID()')->fetchColumn();
+    } catch (Throwable $e) {
+        return 0;
+    }
+}
+
+function resolve_infusion_migration_resource_context($resource)
+{
+    $resource = trim((string)$resource);
+    $context = [
+        'infusion_id' => null,
+        'folder' => null,
+        'details' => [],
+    ];
+
+    if ($resource === '') {
+        return $context;
+    }
+
+    if (preg_match('/^infusion:(\d+)$/', $resource, $matches)) {
+        $infusionId = (int)$matches[1];
+        $context['infusion_id'] = $infusionId;
+        $infusion = get_installed_infusion($infusionId);
+        if ($infusion) {
+            $context['folder'] = (string)($infusion['folder'] ?? '');
+            $context['details']['infusion_name'] = (string)($infusion['name'] ?? '');
+        }
+        return $context;
+    }
+
+    if (preg_match('/^folder:(.+)$/', $resource, $matches)) {
+        $folder = trim((string)$matches[1]);
+        $context['folder'] = $folder !== '' ? $folder : null;
+        $infusion = $folder !== '' ? get_installed_infusion_by_folder($folder) : null;
+        if ($infusion) {
+            $context['infusion_id'] = (int)$infusion['id'];
+            $context['details']['infusion_name'] = (string)($infusion['name'] ?? '');
+        }
+        return $context;
+    }
+
+    $context['details']['resource'] = $resource;
+    return $context;
+}
+
+function save_infusion_migration_lock_state($lockName, $operation, $resource = '')
+{
+    ensure_infusion_tables();
+
+    $context = resolve_infusion_migration_resource_context($resource);
+    $details = $context['details'] ?? [];
+    if ($resource !== '') {
+        $details['resource'] = $resource;
+    }
+
+    try {
+        $stmt = $GLOBALS['pdo']->prepare("
+            INSERT INTO infusion_migration_state
+                (lock_name, operation, resource, infusion_id, folder, admin_user_id, owner_connection_id, started_at, heartbeat_at, details)
+            VALUES
+                (:lock_name, :operation, :resource, :infusion_id, :folder, :admin_user_id, :owner_connection_id, NOW(), NOW(), :details)
+            ON DUPLICATE KEY UPDATE
+                operation = VALUES(operation),
+                resource = VALUES(resource),
+                infusion_id = VALUES(infusion_id),
+                folder = VALUES(folder),
+                admin_user_id = VALUES(admin_user_id),
+                owner_connection_id = VALUES(owner_connection_id),
+                started_at = VALUES(started_at),
+                heartbeat_at = VALUES(heartbeat_at),
+                details = VALUES(details)
+        ");
+        $stmt->execute([
+            ':lock_name' => (string)$lockName,
+            ':operation' => trim((string)$operation),
+            ':resource' => $resource !== '' ? $resource : null,
+            ':infusion_id' => $context['infusion_id'] !== null ? (int)$context['infusion_id'] : null,
+            ':folder' => $context['folder'] !== null ? (string)$context['folder'] : null,
+            ':admin_user_id' => current_user()['id'] ?? null,
+            ':owner_connection_id' => current_infusion_db_connection_id() ?: null,
+            ':details' => $details ? json_encode($details, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) : null,
+        ]);
+    } catch (Throwable $e) {
+    }
+}
+
+function clear_infusion_migration_lock_state($lockName)
+{
+    ensure_infusion_tables();
+
+    try {
+        $stmt = $GLOBALS['pdo']->prepare('DELETE FROM infusion_migration_state WHERE lock_name = :lock_name');
+        $stmt->execute([':lock_name' => (string)$lockName]);
+    } catch (Throwable $e) {
+    }
+}
+
+function get_infusion_migration_lock_status()
+{
+    ensure_infusion_tables();
+
+    $lockName = infusion_migration_lock_name();
+    $ownerConnectionId = null;
+    try {
+        $stmt = $GLOBALS['pdo']->prepare('SELECT IS_USED_LOCK(:lock_name)');
+        $stmt->execute([':lock_name' => $lockName]);
+        $ownerConnectionId = $stmt->fetchColumn();
+        $ownerConnectionId = $ownerConnectionId !== null ? (int)$ownerConnectionId : null;
+    } catch (Throwable $e) {
+        $ownerConnectionId = null;
+    }
+
+    $state = null;
+    try {
+        $stmt = $GLOBALS['pdo']->prepare("
+            SELECT ims.*, u.username AS admin_username, i.name AS infusion_name
+            FROM infusion_migration_state ims
+            LEFT JOIN users u ON u.id = ims.admin_user_id
+            LEFT JOIN infusions i ON i.id = ims.infusion_id
+            WHERE ims.lock_name = :lock_name
+            LIMIT 1
+        ");
+        $stmt->execute([':lock_name' => $lockName]);
+        $state = $stmt->fetch() ?: null;
+    } catch (Throwable $e) {
+        $state = null;
+    }
+
+    $details = [];
+    if (!empty($state['details'])) {
+        $decoded = json_decode((string)$state['details'], true);
+        if (is_array($decoded)) {
+            $details = $decoded;
+        }
+    }
+
+    return [
+        'lock_name' => $lockName,
+        'active' => $ownerConnectionId !== null,
+        'owner_connection_id' => $ownerConnectionId,
+        'state' => $state,
+        'details' => $details,
+    ];
+}
+
+function get_recent_infusion_migration_activity($limit = 12)
+{
+    ensure_infusion_tables();
+
+    $stmt = $GLOBALS['pdo']->prepare("
+        SELECT iml.*, i.folder, i.name AS infusion_name
+        FROM infusion_migration_log iml
+        LEFT JOIN infusions i ON i.id = iml.infusion_id
+        ORDER BY COALESCE(iml.finished_at, iml.started_at) DESC, iml.id DESC
+        LIMIT :limit
+    ");
+    $stmt->bindValue(':limit', max(1, (int)$limit), PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetchAll();
+}
+
+function get_recent_infusion_rollback_activity($limit = 8)
+{
+    ensure_infusion_tables();
+
+    $stmt = $GLOBALS['pdo']->prepare("
+        SELECT irl.*, i.folder, i.name AS infusion_name
+        FROM infusion_rollback_log irl
+        LEFT JOIN infusions i ON i.id = irl.infusion_id
+        ORDER BY irl.created_at DESC, irl.id DESC
+        LIMIT :limit
+    ");
+    $stmt->bindValue(':limit', max(1, (int)$limit), PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetchAll();
 }
 
 function acquire_infusion_migration_lock($operation = 'upgrade', $resource = '', $timeoutSeconds = 0)
@@ -172,6 +370,7 @@ function acquire_infusion_migration_lock($operation = 'upgrade', $resource = '',
         throw new RuntimeException('Šiuo metu kitas administratorius jau vykdo modulio diegimą, atnaujinimą arba pašalinimą. Palaukite kelias sekundes ir bandykite dar kartą.');
     }
 
+    save_infusion_migration_lock_state($lockName, $operation, $resource);
     return $lockName;
 }
 
@@ -187,6 +386,8 @@ function release_infusion_migration_lock($lockName = null)
         $stmt->execute([':lock_name' => $lockName]);
     } catch (Throwable $e) {
     }
+
+    clear_infusion_migration_lock_state($lockName);
 }
 
 function with_infusion_migration_lock(callable $callback, $operation = 'upgrade', $resource = '', $timeoutSeconds = 0)
@@ -347,16 +548,22 @@ function execute_schema_install($folder, $infusionId, array $manifest)
 
 function log_migration_step($infusionId, $version, $direction, $status, $message = null)
 {
+    $isStarted = (string)$status === 'started';
     $stmt = $GLOBALS['pdo']->prepare("
         INSERT INTO infusion_migration_log (infusion_id, step_version, direction, status, started_at, finished_at, message)
-        VALUES (:iid,:v,:d,:s,NOW(),NOW(),:m)
-        ON DUPLICATE KEY UPDATE status = VALUES(status), finished_at = VALUES(finished_at), message = VALUES(message)
+        VALUES (:iid,:v,:d,:s,NOW(),:finished_at,:m)
+        ON DUPLICATE KEY UPDATE
+            status = VALUES(status),
+            started_at = CASE WHEN VALUES(status) = 'started' THEN VALUES(started_at) ELSE started_at END,
+            finished_at = VALUES(finished_at),
+            message = VALUES(message)
     ");
     $stmt->execute([
         ':iid' => (int)$infusionId,
         ':v' => (string)$version,
         ':d' => (string)$direction,
         ':s' => (string)$status,
+        ':finished_at' => $isStarted ? null : date('Y-m-d H:i:s'),
         ':m' => $message,
     ]);
 }
@@ -491,7 +698,7 @@ function install_infusion_from_folder($folder)
             if ($GLOBALS['pdo']->inTransaction()) $GLOBALS['pdo']->rollBack();
             throw $e;
         }
-    }, 'install', $folder);
+    }, 'install', 'folder:' . $folder);
 }
 
 function upgrade_infusion_by_id($id)

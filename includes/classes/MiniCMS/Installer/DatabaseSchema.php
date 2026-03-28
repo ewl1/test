@@ -200,6 +200,24 @@ CREATE TABLE IF NOT EXISTS infusion_rollback_log (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 SQL,
             <<<'SQL'
+CREATE TABLE IF NOT EXISTS infusion_migration_state (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    lock_name VARCHAR(191) NOT NULL,
+    operation VARCHAR(32) NOT NULL,
+    resource VARCHAR(191) DEFAULT NULL,
+    infusion_id INT UNSIGNED DEFAULT NULL,
+    folder VARCHAR(120) DEFAULT NULL,
+    admin_user_id INT UNSIGNED DEFAULT NULL,
+    owner_connection_id BIGINT UNSIGNED DEFAULT NULL,
+    started_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    heartbeat_at DATETIME DEFAULT NULL,
+    details TEXT DEFAULT NULL,
+    UNIQUE KEY uniq_infusion_migration_state_lock (lock_name),
+    KEY idx_infusion_migration_state_owner (owner_connection_id),
+    KEY idx_infusion_migration_state_started (started_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+SQL,
+            <<<'SQL'
 CREATE TABLE IF NOT EXISTS auth_rate_limits (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     scope VARCHAR(32) NOT NULL,
