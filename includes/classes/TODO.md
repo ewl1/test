@@ -44,9 +44,11 @@
 - [ ] `App\\Notifications\\NotificationCenter`
 - [ ] `App\\Notifications\\NotificationPreferenceService`
 - [ ] `App\\Notifications\\NotificationDeliveryService`
+- [ ] `App\\Notifications\\NotificationDispatchService`
 - [ ] `App\\Notifications\\NotificationTemplateResolver`
 - [ ] `App\\Notifications\\ActivityEventService`
 - [ ] `App\\Notifications\\ActivityFeedQueryService`
+- [ ] `App\\MiniCMS\\Mail\\MailQueueService`
 
 ### Profilis ir naudotojo paskyra
 - [ ] `App\\Profile\\ProfileService`
@@ -64,6 +66,11 @@
 - [ ] `App\\System\\ErrorHandler`
 - [ ] `App\\System\\RequestLogger`
 - [ ] `App\\System\\CronRegistry`
+- [ ] `App\\System\\TaskScheduler`
+- [ ] `App\\System\\ScheduledTaskRegistry`
+- [ ] `App\\System\\ScheduledTaskRunner`
+- [ ] `App\\System\\LogRotationService`
+- [ ] `App\\System\\TemporaryFileCleanupService`
 - [ ] `App\\System\\HookDebugger`
 - [ ] `App\\System\\DependencyGraphService`
 
@@ -76,6 +83,7 @@
 - [ ] `App\\Search\\SearchSuggestionService`
 - [ ] `App\\Search\\SearchAnalyticsService`
 - [ ] `App\\Search\\SearchReindexService`
+- [ ] `App\\Search\\SearchReindexScheduler`
 - [ ] `App\\Search\\SearchPermissionFilter`
 - [ ] `App\\Content\\RevisionService`
 - [ ] `App\\Content\\DraftPreviewService`
@@ -106,6 +114,7 @@
 - [ ] `App\\Performance\\ImageOptimizer`
 - [ ] `App\\Seo\\SeoManager`
 - [ ] `App\\Seo\\SchemaBuilder`
+- [ ] `App\\Seo\\SitemapBuilder`
 - [ ] `App\\Seo\\RedirectManager`
 - [ ] `App\\Seo\\BrokenLinkScanner`
 

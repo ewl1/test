@@ -67,6 +67,8 @@
 - [ ] Prideti failu priedu limitus, MIME tikrinima ir kvotas.
 - [ ] Prideti atskiras taisykles paveiksliukams ir YouTube nuorodoms: limitai, validacija, leidziami domenai.
 - [ ] Paruosti pranesimu centro ivykius: naujas atsakymas, mention, uzrakinta tema, `solved` busena.
+- [ ] Prideti periodini `forum maintenance`: reply count, last post, stale statistikos ir duomenu perskaiciavima.
+- [ ] Prideti periodini neperskaitytu temu ir prenumeratu santraukos darba, jei atsiras digest'ai.
 
 ### UX ir SEO
 - [ ] Prideti `multi-quote` ir greito atsakymo forma temos apacioje.

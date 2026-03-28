@@ -50,6 +50,22 @@
 - [ ] Prideti centralizuota `error handler`.
 - [ ] Prideti `request logger`.
 - [ ] Paruosti `task scheduler / cron registry`.
+- [ ] Paruosti pirmuosius planuoklio darbus: `scheduled publish / unpublish / archive`.
+- [ ] Prideti `password reset cleanup`.
+- [ ] Prideti `rate limit cleanup`.
+- [ ] Prideti `session cleanup`.
+- [ ] Prideti `notification dispatch` darba.
+- [ ] Prideti `email queue sender`.
+- [ ] Prideti `audit / error log rotation`.
+- [ ] Prideti laikinu failu ir pasibaigusiu tokenu valyma.
+- [ ] Prideti `cache warmup`.
+- [ ] Prideti `search reindex`.
+- [ ] Prideti `sitemap rebuild`.
+- [ ] Prideti `broken links` periodini tikrinima.
+- [ ] Prideti `database backup before update`.
+- [ ] Prideti `forum maintenance` ir `news maintenance`.
+- [ ] Prideti `reputation / badges recalculation`.
+- [ ] Prideti `upload quarantine` ir karantino valymo darba.
 - [ ] Prideti `search index abstraction`.
 - [ ] Prideti vieninga paieskos saltiniu registravimo modeli branduoliui ir moduliams.
 - [ ] Prideti `content revision history`.

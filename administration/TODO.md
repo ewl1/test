@@ -49,6 +49,7 @@
 ### Diagnostika ir versijos
 - [ ] Diagnostikoje galutinai suskirstyti pletinius i `butini`, `rekomenduojami`, `pasirenkami`.
 - [ ] Diagnostics puslapyje rodyti MiniCMS versija, PHP versija, update channel ir OPcache busena.
+- [ ] Diagnostics puslapyje rodyti planuoklio / cron busena: paskutinis paleidimas, paskutine klaida, sekantys darbai.
 - [ ] `infusions.php` rodyti `installed version`, `manifest version` ir `available upgrade`.
 - [ ] Paruosti atskira `updates.php` arba panasu puslapi core ir infusion atnaujinimams.
 
@@ -67,6 +68,8 @@
 ### Admin irankiai ir saugumas
 - [ ] Prideti `Clear cache / Clear rate limits / Clear reset tokens` irankius.
 - [ ] Prideti admin action confirmations jautriems veiksmams.
+- [ ] Prideti `scheduled tasks` / `cron` valdymo puslapi: sarasas, paskutinis vykdymas, rankinis paleidimas.
+- [ ] Prideti admin santrauka automatiniams darbams: email queue, log rotation, search reindex, sitemap rebuild, cleanup.
 - [ ] Prideti `captcha` nustatymu puslapi arba skilti: kur ijungta, koks provideris, kada eskaluoti po rate-limit.
 - [ ] Diagnostikoje rodyti, ar `captcha` sluoksnis sukonfiguruotas ir kuriems srautams aktyvus.
 - [ ] Prideti login alerts ir suspicious activity perziuros vieta administracijoje.

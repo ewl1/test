@@ -28,6 +28,7 @@
 - [ ] Prideti `draft / review / scheduled / published / archived` statusus.
 - [ ] Prideti aisku `juodrastis` darba su issaugojimu nepublikuojant.
 - [ ] Prideti `scheduled publish`.
+- [ ] Prideti `scheduled unpublish` ir archyvavimo darba per planuokli.
 - [ ] Prideti publikavimo pabaigos data (`expire / archive after`).
 - [ ] Prideti `sticky / featured / breaking news` busenas.
 - [ ] Prideti seriju arba teminiu kolekciju logika.

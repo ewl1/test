@@ -63,6 +63,11 @@
 - Diagnostikoje aiskiai suskirstyti pletinius i `butini`, `rekomenduojami`, `pasirenkami`.
 - Uzbaigti forumo ir shoutbox flood/spam pagrindus.
 - Sutvarkyti centralizuota klaidu ir saugumo ivykiu registravima.
+- Paruosti pirmuosius automatinius valymo darbus:
+- `password reset cleanup`
+- `rate limit cleanup`
+- `session cleanup`
+- laikinu failu ir pasibaigusiu tokenu valymas
 - Pagerinti `administration/panels.php` ir `administration/infusions.php` darbo eiga: aiskesnes busenos, filtrai, sveikatos patikros ir patikimesni admin veiksmai.
 
 ### Baigtumo kriterijai
@@ -151,6 +156,7 @@
 - redaktoriaus / patvirtintojo rodymai
 - `WYSIWYG` integracija redagavimui
 - dalis naujienos (`excerpt`) ir pilna naujiena (`full body`)
+- automatinis `scheduled publish / unpublish / archive` per planuokli
 - komentarai
 - reitingavimai
 - reakcijos, favorites ir perziuru skaiciavimas
@@ -246,6 +252,21 @@
 - central error handler
 - request logger
 - task scheduler / cron registry
+- pirmieji automatiniai darbai:
+- `scheduled publish / unpublish / archive`
+- `notification dispatch`
+- `email queue sender`
+- `audit / error log rotation`
+- `temporary files cleanup`
+- `cache warmup`
+- `search reindex`
+- `sitemap rebuild`
+- `broken links check`
+- `database backup before update`
+- `forum maintenance`
+- `news maintenance`
+- `reputation / badges recalculation`
+- `upload quarantine` ir karantino valymas
 - search index abstraction
 - search provider registry ir paieskos perindeksavimo sluoksnis
 - content revision history
@@ -293,6 +314,7 @@
 - organization schema
 - `sitemap.xml`
 - `robots.txt`
+- automatinis `sitemap.xml` perstatymas po svarbiu turinio pakeitimu arba pagal grafika
 - SEO audit puslapis admin dalyje
 - redirect manager `301/302`
 - broken links checker
