@@ -44,6 +44,7 @@
 - [ ] Pagerinti drag-drop UX: aiskesni placeholder, `drop zone`, aktyvia zonos busena ir issaugojimo patvirtinima.
 - [ ] Prideti paneles mini perziuros kortele su piktograma, trumpu aprasu ir matomumo badge.
 - [ ] Apsvarstyti responsive `panels` valdyma telefonu ir planseteje: ne tik drag-drop, bet ir alternatyvu perkrovimo/isdestymo rezima.
+- [ ] Suderinti `panels.php` su bendru layout system, kad butu aisku, kuri zona yra `content`, `left sidebar`, `right sidebar`, `full-width`.
 
 ### Diagnostika ir versijos
 - [ ] Diagnostikoje galutinai suskirstyti pletinius i `butini`, `rekomenduojami`, `pasirenkami`.
@@ -80,4 +81,4 @@
 - [ ] Prideti `redirect manager` (`301/302`) administravima.
 - [ ] Prideti `broken links checker` rezultatu perziura.
 - [ ] Jei bus reikalinga, prideti `hook debugger` ir `dependency graph` diagnostikos vaizda.
-- [ ] Atlikti admin responsive audita bent telefonu, planseteje ir 1366px pločio ekrane.
+- [ ] Atlikti admin responsive audita bent telefonu, planseteje ir 1366px plocio ekrane.

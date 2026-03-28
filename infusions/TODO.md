@@ -27,6 +27,7 @@
 - admin veiksmu mygtukai ir sveikatos badge
 - viesu vaizdu antrastes, meta juostos ir turinio tipografija
 - ikonografijos taisykles moduliams: navigacija, statusai, veiksmai ir media tipai
+- layout integracijos taisykles moduliams: kaip modulis isikabina i `content`, `sidebar`, `full-width` ir paneliu zonas
 - [ ] Susitarti, kaip moduliai naudos bendrus temos `design token` ir kada jiems leidziami nuosavi CSS variantai.
 - [ ] Susitarti, kaip moduliai naudos bendra ikon biblioteka ir kada galima papildoma rinkini naudoti lokaliai.
 - [ ] Vienodai rodyti `installed version`, `manifest version` ir `available upgrade`.

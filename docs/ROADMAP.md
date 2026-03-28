@@ -19,6 +19,10 @@
 
 ### Prioritetai
 - Sukurti bendra `design system` pagrinda: spalvu, tipografijos, tarpu, radius, shadow ir badge mygtuku taisykles.
+- Sukurti `layout system` pagrinda:
+- bendri konteineriai: `container`, `content`, `sidebar`, `full-width`
+- pagrindiniai isdestymo sablonai: `home`, `content page`, `forum`, `news`, `profile`, `admin dashboard`, `admin table`, `admin form`
+- vienodos taisykles, kada paneles krenta zemyn, kada turinys pereina i viena stulpeli ir kada meniu tampa mobiliu
 - Suvienodinti korteliu, lenteliu, formu, tusciu busenu, klaidu, sekmes ir info pranesimu isvaizda.
 - Sutvarkyti turinio tipografija ilgam skaitymui: forumui, naujienoms, komentarams, BBCode ir WYSIWYG turiniui.
 - Pagerinti responsive elgsena: mobili navigacija, lankstesnes paneles, admin lenteles ir filtrai mazesniuose ekranuose.
@@ -40,6 +44,7 @@
 - Viesi ir admin dalis naudoja ta pacia komponentu ir spalvu kalba.
 - Kiekvienas pagrindinis modulis turi tvarkinga, lengvai skaitoma ir mobiliuose ekranuose nesubyrejancia isvaizda.
 - Ikonos naudojamos nuosekliai, nepriklausomai nuo puslapio ar modulio.
+- Pagrindiniai puslapiai remiasi aiskiais layout sablonais, o ne atsitiktiniais vienkartiniais isdestymais.
 - Dizaino sprendimai atsispindi ne tik CSS faile, bet ir `TODO` planuose pagal tema, admin ir modulius.
 
 ## v1.1 Stabilumas, admin ir saugumo pagrindai
@@ -317,6 +322,10 @@
 - GEO darbai yra auksto prioriteto tik tada, jei projektas tures lokalaus ar faktinio turinio strategija.
 - `php-class-diagram` verta jungti tada, kai branduolyje ir moduliuose atsiras daugiau realiu klasiu.
 - Pilnas perrasymas i OOP nera tikslas; tikslas yra nuoseklus sluoksniu isgryninimas.
+
+## Artimiausi UI prioritetai
+- Praktinis pirmu darbu sarasas pateiktas `docs/UI-TOP-10.md`.
+- Sis sarasas turi padeti pasirinkti, ka realiai verta pradeti daryti pirmiausia.
 
 ## Rekomenduojama vykdymo seka
 1. Uzbaigti `v1.1`.

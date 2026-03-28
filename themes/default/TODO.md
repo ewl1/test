@@ -24,6 +24,8 @@
 
 ### Design system
 - [ ] Apibrezti bendrus `design token` saltinius: spalvos, tarpai, radius, seseliai, ikonografija, `z-index`.
+- [ ] Apibrezti `layout system` pagrinda: konteineriai, `content/sidebar/full-width`, tarpai tarp sekciju ir bendros grid taisykles.
+- [ ] Paruosti bazinius puslapiu layout sablonus: `home`, vidinis turinys, forumas, naujiena, profilis.
 - [ ] Sukurti tipografijos skale antrastems, turiniui, lentelems, badge ir pagalbiniams tekstams.
 - [ ] Suvienodinti mygtuku, badge, korteliu, lenteliu, formu ir pranesimu komponentu stiliu.
 - [ ] Isgryninti bendras turinio stiliaus taisykles BBCode ir WYSIWYG isvedimui.
@@ -55,7 +57,8 @@
 - [ ] Sutvarkyti mobiliu ekranu elgsena admin lentelese, formose ir paneliu isdestyme.
 - [ ] Pagerinti `panels` drag-drop griztamaji rysi ir `infusions` veiksmu matomuma.
 - [ ] Toliau isskaidyti papildomu moduliu stilius is bendro `style.css`.
-- [ ] Apibrezti breakpoint'us viešai ir admin daliai, kad elgsena butu prognozuojama, o ne atsitiktine.
+- [ ] Apibrezti breakpoint'us viesai ir admin daliai, kad elgsena butu prognozuojama, o ne atsitiktine.
+- [ ] Paruosti admin layout sablonus: `dashboard`, `table view`, `form view`, `split settings` ir `diagnostics`.
 - [ ] Admin lentelese parengti `table-to-card` arba horizontal scroll strategija maziems ekranams.
 
 ### Ikonografija ir prieinamumas
