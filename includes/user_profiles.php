@@ -263,6 +263,15 @@ function profile_comment_smileys()
     ];
 }
 
+function profile_comment_bbcode_buttons()
+{
+    return [
+        ['label' => 'B', 'insert' => '[b][/b]'],
+        ['label' => 'I', 'insert' => '[i][/i]'],
+        ['label' => 'U', 'insert' => '[u][/u]'],
+    ];
+}
+
 function profile_prepare_comment_body($content, $maxLength = 2000)
 {
     $content = sanitize_bbcode_input((string)$content, profile_comment_allowed_tags(), (int)$maxLength);

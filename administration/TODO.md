@@ -15,6 +15,8 @@
 - `diagnostics.php`, `audit-logs.php`, `error-logs.php`: diagnostika ir stebėsena.
 
 ## Likę darbai
+- [x] Šaukyklos modulio nustatymai perkelti iš `settings.php` į `infusions/shoutbox/admin.php`.
+- [~] Antriniai admin puslapiai (`infusions`, `diagnostics`, `users`, `roles`, `permissions`) pervedami į locale ir kontrasto suvienodinimą.
 - [ ] Užbaigti visų administracijos formų tekstų perkėlimą į locale raktus.
 - [ ] Pridėti `Clear cache / Clear rate limits / Clear reset tokens` įrankius.
 - [ ] Suvienodinti tuos pačius filtrus ir paiešką visose administracijos lentelėse.

@@ -72,7 +72,7 @@ include THEMES . 'default/admin_header.php';
                     <tbody>
                     <?php foreach ($scanned as $folder => $meta): ?>
                         <tr>
-                            <td><code class="admin-mono-pill"><?= e($folder) ?></code></td>
+                            <td><code class="admin-mono-pill admin-folder-label"><?= e($folder) ?></code></td>
                             <td>
                                 <div class="fw-semibold"><?= e($meta['name']) ?></div>
                                 <div class="small admin-table-description"><?= e($meta['description'] ?? '') ?></div>
@@ -86,7 +86,7 @@ include THEMES . 'default/admin_header.php';
                                         <?= csrf_field() ?>
                                         <input type="hidden" name="action" value="install_folder">
                                         <input type="hidden" name="folder" value="<?= e($folder) ?>">
-                                        <button class="btn btn-sm btn-primary"><?= e(__('infusions.install')) ?></button>
+                                        <button class="btn btn-sm btn-primary admin-action-button"><?= e(__('infusions.install')) ?></button>
                                     </form>
                                 <?php endif; ?>
                             </td>
@@ -107,40 +107,41 @@ include THEMES . 'default/admin_header.php';
                     <tbody>
                     <?php foreach ($installed as $inf):
                         $manifest = $scanned[$inf['folder']] ?? null;
+                        $displayName = $manifest['name'] ?? $inf['name'];
                         $installedVersion = get_installed_infusion_version((int)$inf['id']) ?: '0.0.0';
                         $manifestVersion = $manifest['version'] ?? $installedVersion;
                     ?>
                         <tr>
-                            <td><?= (int)$inf['id'] ?></td>
-                            <td><span class="fw-semibold"><?= e($inf['name']) ?></span></td>
-                            <td><code class="admin-mono-pill"><?= e($inf['folder']) ?></code></td>
+                            <td class="admin-strong-cell"><?= (int)$inf['id'] ?></td>
+                            <td><span class="fw-semibold admin-strong-cell"><?= e($displayName) ?></span></td>
+                            <td><code class="admin-mono-pill admin-folder-label"><?= e($inf['folder']) ?></code></td>
                             <td><span class="admin-table-note"><?= e($installedVersion) ?></span></td>
                             <td><span class="admin-table-note"><?= e($manifestVersion) ?></span></td>
                             <td>
                                 <div class="d-flex flex-wrap gap-2">
                                     <?php if (!empty($manifest['admin']) && !empty($manifest['has_admin_file'])): ?>
-                                        <a class="btn btn-sm btn-outline-primary" href="infusion-admin.php?folder=<?= urlencode($inf['folder']) ?>">Admin</a>
+                                        <a class="btn btn-sm btn-outline-primary admin-action-button" href="infusion-admin.php?folder=<?= urlencode($inf['folder']) ?>">Admin</a>
                                     <?php endif; ?>
                                     <form method="post" class="d-inline">
                                         <?= csrf_field() ?>
                                         <input type="hidden" name="id" value="<?= (int)$inf['id'] ?>">
                                         <?php if ((int)$inf['is_enabled']): ?>
-                                            <button class="btn btn-sm btn-outline-warning" name="action" value="disable"><?= e(__('infusions.disable')) ?></button>
+                                            <button class="btn btn-sm btn-outline-warning admin-action-button" name="action" value="disable"><?= e(__('infusions.disable')) ?></button>
                                         <?php else: ?>
-                                            <button class="btn btn-sm btn-outline-success" name="action" value="enable"><?= e(__('infusions.enable')) ?></button>
+                                            <button class="btn btn-sm btn-outline-success admin-action-button" name="action" value="enable"><?= e(__('infusions.enable')) ?></button>
                                         <?php endif; ?>
                                     </form>
                                     <?php if (version_compare($manifestVersion, $installedVersion, '>')): ?>
                                         <form method="post" class="d-inline">
                                             <?= csrf_field() ?>
                                             <input type="hidden" name="id" value="<?= (int)$inf['id'] ?>">
-                                            <button class="btn btn-sm btn-outline-primary" name="action" value="upgrade"><?= e(__('infusions.upgrade')) ?></button>
+                                            <button class="btn btn-sm btn-outline-primary admin-action-button" name="action" value="upgrade"><?= e(__('infusions.upgrade')) ?></button>
                                         </form>
                                     <?php endif; ?>
                                     <form method="post" class="d-inline">
                                         <?= csrf_field() ?>
                                         <input type="hidden" name="id" value="<?= (int)$inf['id'] ?>">
-                                        <button class="btn btn-sm btn-outline-danger" name="action" value="uninstall" data-confirm-message="Tikrai pašalinti infusion modulį?"><?= e(__('infusions.uninstall')) ?></button>
+                                        <button class="btn btn-sm btn-outline-danger admin-danger-button" name="action" value="uninstall" data-confirm-message="Tikrai pašalinti infusion modulį?"><?= e(__('infusions.uninstall')) ?></button>
                                     </form>
                                 </div>
                             </td>

@@ -30,7 +30,7 @@ include THEMES . 'default/admin_header.php';
                     <dt class="col-sm-4">Versija</dt>
                     <dd class="col-sm-8"><?= e($diagnostics['application']['version']) ?></dd>
                     <dt class="col-sm-4">SITE_URL</dt>
-                    <dd class="col-sm-8"><code><?= e($diagnostics['application']['site_url']) ?></code></dd>
+                    <dd class="col-sm-8"><code class="admin-path-code"><?= e($diagnostics['application']['site_url']) ?></code></dd>
                     <dt class="col-sm-4">Katalogas</dt>
                     <dd class="col-sm-8"><code class="admin-path-code"><?= e($diagnostics['application']['basedir']) ?></code></dd>
                     <dt class="col-sm-4">Maintenance</dt>
@@ -54,7 +54,7 @@ include THEMES . 'default/admin_header.php';
                     <dt class="col-sm-4">HTTPS</dt>
                     <dd class="col-sm-8"><span class="badge <?= $diagnostics['server']['https'] ? 'text-bg-success' : 'text-bg-secondary' ?>"><?= $diagnostics['server']['https'] ? 'On' : 'Off' ?></span></dd>
                     <dt class="col-sm-4">php.ini</dt>
-                    <dd class="col-sm-8"><code class="admin-path-code"><?= e($diagnostics['php']['loaded_ini']) ?></code></dd>
+                    <dd class="col-sm-8"><code class="admin-path-code admin-path-code-strong"><?= e($diagnostics['php']['loaded_ini']) ?></code></dd>
                     <dt class="col-sm-4">Laiko juosta</dt>
                     <dd class="col-sm-8"><?= e($diagnostics['php']['timezone']) ?></dd>
                 </dl>
@@ -114,7 +114,7 @@ include THEMES . 'default/admin_header.php';
             <div class="card-header">Plėtiniai</div>
             <div class="card-body d-flex flex-wrap gap-2">
                 <?php foreach ($diagnostics['extensions'] as $extension => $enabled): ?>
-                    <span class="badge <?= $enabled ? 'text-bg-success' : 'text-bg-secondary' ?>">
+                    <span class="badge <?= $enabled ? 'text-bg-success' : 'text-bg-secondary' ?> admin-extension-badge">
                         <?= e($extension) ?>
                     </span>
                 <?php endforeach; ?>
@@ -132,7 +132,7 @@ include THEMES . 'default/admin_header.php';
                         <tbody>
                         <?php foreach ($diagnostics['paths'] as $pathInfo): ?>
                             <tr>
-                                <td><code class="admin-path-code"><?= e($pathInfo['path']) ?></code></td>
+                                <td><code class="admin-path-code admin-path-code-strong"><?= e($pathInfo['path']) ?></code></td>
                                 <td><span class="badge <?= $badgeClass($pathInfo['exists']) ?>"><?= $pathInfo['exists'] ? 'Taip' : 'Ne' ?></span></td>
                                 <td><span class="badge <?= $badgeClass($pathInfo['writable']) ?>"><?= $pathInfo['writable'] ? 'Taip' : 'Ne' ?></span></td>
                             </tr>

@@ -169,13 +169,13 @@ include THEMES . 'default/admin_header.php';
       <tbody>
       <?php foreach ($users as $user): ?>
         <tr>
-          <td><?= (int)$user['id'] ?></td>
-          <td><span class="fw-semibold"><?= e($user['username']) ?></span></td>
+          <td class="admin-strong-cell"><?= (int)$user['id'] ?></td>
+          <td><span class="fw-semibold admin-strong-cell"><?= e($user['username']) ?></span></td>
           <td><span class="admin-table-note"><?= e($user['email']) ?></span></td>
-          <td><span class="fw-semibold"><?= e($user['role_name'] ?? '-') ?></span></td>
+          <td><span class="fw-semibold admin-strong-cell"><?= e($user['role_name'] ?? '-') ?></span></td>
           <td><span class="badge text-bg-secondary"><?= e($statusLabels[$user['status']] ?? $user['status']) ?></span></td>
           <td><span class="admin-table-note"><?= (int)$user['is_active'] ? 'Taip' : 'Ne' ?></span></td>
-          <td><button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#user-<?= (int)$user['id'] ?>">Valdyti</button></td>
+          <td><button class="btn btn-sm btn-outline-primary admin-action-button" data-bs-toggle="collapse" data-bs-target="#user-<?= (int)$user['id'] ?>">Valdyti</button></td>
         </tr>
         <tr class="collapse" id="user-<?= (int)$user['id'] ?>">
           <td colspan="7">

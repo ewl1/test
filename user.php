@@ -150,6 +150,16 @@ include __DIR__ . '/themes/default/header.php';
                     <form method="post" class="mb-4">
                         <?= csrf_field() ?>
                         <input type="hidden" name="profile_action" value="comment">
+                        <div class="mb-2 d-flex flex-wrap gap-2">
+                            <?php foreach (profile_comment_bbcode_buttons() as $button): ?>
+                                <button
+                                    class="btn btn-sm btn-outline-secondary"
+                                    type="button"
+                                    data-bbcode-target="profile-comment"
+                                    data-bbcode-insert="<?= e($button['insert']) ?>"
+                                ><?= e($button['label']) ?></button>
+                            <?php endforeach; ?>
+                        </div>
                         <div class="mb-3">
                             <label class="form-label" for="profile-comment"><?= e(__('profile.comment')) ?></label>
                             <textarea class="form-control" id="profile-comment" name="comment" rows="5" maxlength="2000" required><?= e($commentDraft) ?></textarea>

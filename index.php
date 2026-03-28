@@ -15,10 +15,22 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
         </div></div>
         <?= render_panels('l_center') ?>
 
-        <div class="row row-cols-1 row-cols-md-2 g-3">
-            <?php foreach (['Sidebars','Dropdowns','List groups','Modals','Badges','Breadcrumbs','Buttons','Checkout','Navbars','Containers','Grid system','Form control','Form text','Sizing','Select','Color','Datalists','Checks and radios','Inline','Toggle buttons','Outlined styles','Input group','Wrapping','Border radius','Multiple inputs','Custom forms','Floating labels','Textareas','Layout','Tooltips','Accordion','Alerts','Link color','Icons','Progress','Navs and tabs'] as $item): ?>
-                <div class="col"><div class="card h-100"><div class="card-body"><span class="badge text-bg-secondary mb-2">UI</span><div class="fw-semibold"><?= e($item) ?></div></div></div></div>
-            <?php endforeach; ?>
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row g-4 align-items-center">
+                    <div class="col-lg-7">
+                        <h2 class="h4 mb-3">Sveiki atvykę</h2>
+                        <p class="text-secondary mb-0">Pagrindinis puslapis dabar naudoja realų turinį ir paneles vietoje demonstracinių Bootstrap kortelių. Toliau galite pildyti įrašais, forumu, šaukykla ir savo moduliais.</p>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="d-grid gap-2">
+                            <a class="btn btn-primary" href="<?= public_path('forum.php') ?>">Atidaryti forumą</a>
+                            <a class="btn btn-outline-secondary" href="<?= public_path('shoutbox.php') ?>">Atidaryti šaukyklą</a>
+                            <a class="btn btn-outline-secondary" href="<?= public_path('search.php') ?>">Paieška</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <?= render_panels('bl_center') ?>

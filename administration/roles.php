@@ -111,12 +111,12 @@ include THEMES . 'default/admin_header.php';
                     <tbody>
                     <?php foreach ($roles as $role): ?>
                         <tr>
-                            <td><?= (int)$role['id'] ?></td>
-                            <td><span class="fw-semibold"><?= e($role['name']) ?></span></td>
-                            <td><code class="admin-mono-pill"><?= e($role['slug']) ?></code></td>
+                            <td class="admin-strong-cell"><?= (int)$role['id'] ?></td>
+                            <td><span class="fw-semibold admin-strong-cell"><?= e($role['name']) ?></span></td>
+                            <td><code class="admin-mono-pill admin-folder-label"><?= e($role['slug']) ?></code></td>
                             <td><span class="admin-table-note"><?= (int)$role['level'] ?></span></td>
                             <td><span class="admin-table-note"><?= (int)$role['users_count'] ?></span></td>
-                            <td><button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#role-<?= (int)$role['id'] ?>">Redaguoti</button></td>
+                            <td><button class="btn btn-sm btn-outline-primary admin-action-button" data-bs-toggle="collapse" data-bs-target="#role-<?= (int)$role['id'] ?>">Redaguoti</button></td>
                         </tr>
                         <tr class="collapse" id="role-<?= (int)$role['id'] ?>">
                             <td colspan="6">
@@ -129,7 +129,7 @@ include THEMES . 'default/admin_header.php';
                                     <div class="col-md-2"><label class="form-label">Lygis</label><input class="form-control" type="number" name="level" value="<?= (int)$role['level'] ?>"></div>
                                     <div class="col-md-4 d-flex gap-2">
                                         <button class="btn btn-primary">Išsaugoti</button>
-                                        <a class="btn btn-outline-primary" href="permissions.php?role_id=<?= (int)$role['id'] ?>">Leidimai</a>
+                                        <a class="btn btn-outline-primary admin-action-button" href="permissions.php?role_id=<?= (int)$role['id'] ?>">Leidimai</a>
                                         <?php if ((int)$role['id'] > 5): ?>
                                             <button class="btn btn-outline-danger" type="submit" name="action" value="delete" data-confirm-message="Tikrai trinti rolę?">Trinti</button>
                                         <?php endif; ?>

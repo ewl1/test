@@ -19,6 +19,7 @@
 - [x] CSS perkeltas į `assets/css/shoutbox.css`.
 - [x] JS perkeltas į `assets/js/shoutbox.js`.
 - [x] Modulio tekstai perkelti į `locale/lt.php`.
+- [x] Šaukyklos nustatymai perkelti į modulio admin puslapį.
 - [ ] Pridėti flood protection nustatymus per administraciją.
 - [ ] Pridėti moderavimo veiksmus viešame puslapyje pagal teises.
 - [ ] Apsvarstyti realaus laiko atnaujinimą be pilno perkrovimo.

@@ -80,6 +80,9 @@ function send_security_headers()
 send_security_headers();
 
 require_once dirname(__DIR__) . '/maincore.php';
+if (is_file(BASEDIR . 'vendor/autoload.php')) {
+    require_once BASEDIR . 'vendor/autoload.php';
+}
 require_once INCLUDES . 'http.php';
 register_http_error_handlers();
 

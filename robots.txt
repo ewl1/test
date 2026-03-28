@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /administration/
+Disallow: /includes/
+Disallow: /infusions/
+Disallow: /locale/
+Disallow: /logs/
+Disallow: /uploads/
+

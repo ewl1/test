@@ -273,6 +273,11 @@ code {
     font-weight: 600;
 }
 
+.admin-strong-cell {
+    color: #f8fbff !important;
+    font-weight: 700;
+}
+
 .admin-path-code {
     display: inline-block;
     width: 100%;
@@ -283,6 +288,35 @@ code {
 
 .admin-mono-pill {
     color: #fde68a;
+}
+
+.admin-folder-label {
+    font-size: 0.92rem;
+    font-weight: 800;
+}
+
+.admin-path-code-strong {
+    color: #f8fbff;
+    background: rgba(59, 130, 246, 0.16);
+    border-color: rgba(96, 165, 250, 0.3);
+}
+
+.admin-action-button {
+    font-weight: 800;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.04) inset;
+}
+
+.admin-danger-button {
+    font-weight: 800;
+}
+
+.admin-table-strong td {
+    color: #edf5ff;
+}
+
+.admin-extension-badge {
+    font-size: 0.86rem;
+    letter-spacing: 0.02em;
 }
 
 .admin-permission-card {

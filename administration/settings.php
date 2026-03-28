@@ -21,15 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         save_setting($key, $_POST[$key] ?? '');
     }
 
-    $shoutboxOrder = strtolower((string)($_POST['shoutbox_order'] ?? 'desc'));
-    save_setting('shoutbox_order', $shoutboxOrder === 'asc' ? 'asc' : 'desc');
-
-    $shoutboxPerPage = max(5, min(100, (int)($_POST['shoutbox_messages_per_page'] ?? 20)));
-    save_setting('shoutbox_messages_per_page', (string)$shoutboxPerPage);
-
-    $shoutboxPanelMessages = max(3, min(20, (int)($_POST['shoutbox_panel_messages'] ?? 5)));
-    save_setting('shoutbox_panel_messages', (string)$shoutboxPanelMessages);
-
     flash('success', 'Nustatymai išsaugoti.');
     redirect('settings.php');
 }
@@ -126,36 +117,16 @@ include THEMES . 'default/admin_header.php';
 </div>
 </div>
 
-<div class="card">
-<div class="card-header">Šaukykla</div>
-<div class="card-body row g-3">
-<div class="col-md-6">
-<label class="form-label">Žinučių eiliškumas</label>
-<select class="form-select" name="shoutbox_order">
-<option value="desc" <?= setting('shoutbox_order', 'desc') === 'desc' ? 'selected' : '' ?>>Naujausios viršuje</option>
-<option value="asc" <?= setting('shoutbox_order', 'desc') === 'asc' ? 'selected' : '' ?>>Seniausios viršuje</option>
-</select>
-</div>
-<div class="col-md-3">
-<label class="form-label">Žinučių puslapyje</label>
-<input class="form-control" type="number" min="5" max="100" name="shoutbox_messages_per_page" value="<?= e(setting('shoutbox_messages_per_page', '20')) ?>">
-</div>
-<div class="col-md-3">
-<label class="form-label">Žinučių panelėje</label>
-<input class="form-control" type="number" min="3" max="20" name="shoutbox_panel_messages" value="<?= e(setting('shoutbox_panel_messages', '5')) ?>">
-</div>
-</div>
-</div>
 </div>
 
 <div class="col-lg-4">
 <div class="card">
-<div class="card-header">Bootstrap komponentų bazė</div>
+<div class="card-header">Greitos nuorodos</div>
 <div class="card-body">
-<div class="d-flex flex-wrap gap-2">
-<?php foreach (['Sidebars', 'Dropdowns', 'List groups', 'Modals', 'Badges', 'Breadcrumbs', 'Buttons', 'Checkout', 'Navbars', 'Containers', 'Grid system', 'Form control', 'Form text', 'Sizing', 'Select', 'Color', 'Datalists', 'Checks and radios', 'Inline', 'Toggle buttons', 'Outlined styles', 'Input group', 'Wrapping', 'Border radius', 'Multiple inputs', 'Custom forms', 'Floating labels', 'Textareas', 'Layout', 'Tooltips', 'Accordion', 'Alerts', 'Link color', 'Icons', 'Progress', 'Navs and tabs'] as $item): ?>
-<span class="badge text-bg-light border"><?= e($item) ?></span>
-<?php endforeach; ?>
+<p class="text-secondary mb-3">Modulių nustatymai perkelti į atitinkamų infusion administravimo puslapius.</p>
+<div class="d-grid gap-2">
+<a class="btn btn-outline-primary" href="infusions.php">Atidaryti infusion modulius</a>
+<a class="btn btn-outline-secondary" href="infusion-admin.php?folder=shoutbox">Šaukyklos nustatymai</a>
 </div>
 </div>
 </div>

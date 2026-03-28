@@ -70,4 +70,58 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   syncSortablePanels();
+
+  document.addEventListener('click', function (event) {
+    var button = event.target.closest('[data-bbcode-target][data-bbcode-insert]');
+    if (!button) {
+      return;
+    }
+
+    var textarea = document.getElementById(button.getAttribute('data-bbcode-target') || '');
+    if (!textarea) {
+      return;
+    }
+
+    event.preventDefault();
+    insertBbcode(textarea, button.getAttribute('data-bbcode-insert') || '');
+  });
+
+  function insertText(textarea, value) {
+    var start = textarea.selectionStart || 0;
+    var end = textarea.selectionEnd || 0;
+    var current = textarea.value;
+    textarea.value = current.slice(0, start) + value + current.slice(end);
+    textarea.focus();
+
+    var cursor = start + value.length;
+    if (typeof textarea.setSelectionRange === 'function') {
+      textarea.setSelectionRange(cursor, cursor);
+    }
+  }
+
+  function insertBbcode(textarea, template) {
+    if (!template) {
+      return;
+    }
+
+    var start = textarea.selectionStart || 0;
+    var end = textarea.selectionEnd || 0;
+    var current = textarea.value;
+    var selected = current.slice(start, end);
+    var pair = template.match(/^(\[[^\]]+\])(\[\/[^\]]+\])$/);
+
+    if (!pair) {
+      insertText(textarea, template);
+      return;
+    }
+
+    var inserted = pair[1] + selected + pair[2];
+    textarea.value = current.slice(0, start) + inserted + current.slice(end);
+    textarea.focus();
+
+    var cursor = selected ? start + inserted.length : start + pair[1].length;
+    if (typeof textarea.setSelectionRange === 'function') {
+      textarea.setSelectionRange(cursor, cursor);
+    }
+  }
 });

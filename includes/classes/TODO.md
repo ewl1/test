@@ -16,5 +16,6 @@
 
 ## Likę darbai
 - [ ] Nuspręsti galutinį namespace ir autoload struktūrą.
-- [ ] Paruošti `composer.json` autoload sekciją (`psr-4`).
-- [ ] Išskaidyti pirmas 1-2 paslaugas be pilno projekto perrašymo.
+- [x] Paruošta `composer.json` autoload sekcija (`psr-4`) su `App\\`.
+- [x] Pridėti pradiniai karkasiniai servisai `AuthService`, `Mailer`, `ForumService`.
+- [ ] Pradėti nuo `App\\Auth\\AuthService`, `App\\Mail\\Mailer` ir `App\\Forum\\ForumService` kaip pirmų paslaugų be pilno projekto perrašymo.

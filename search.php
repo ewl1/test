@@ -345,14 +345,14 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
     <div class="col-lg-9">
         <div class="card mb-4">
             <div class="card-body">
-                <h1 class="h3 mb-3">Paieška</h1>
+                <h1 class="h3 mb-3"><?= e(__('search.title')) ?></h1>
                 <form method="get" action="<?= public_path('search.php') ?>" class="row g-2 align-items-end">
                     <div class="col-md-10">
-                        <label class="form-label" for="search-query">Raktažodis</label>
-                        <input class="form-control" id="search-query" name="q" type="search" maxlength="100" value="<?= e($query) ?>" placeholder="Ieškoti įrašuose, nariuose, komentaruose, forume ir šaukykloje">
+                        <label class="form-label" for="search-query"><?= e(__('search.keyword')) ?></label>
+                        <input class="form-control" id="search-query" name="q" type="search" maxlength="100" value="<?= e($query) ?>" placeholder="<?= e(__('search.placeholder')) ?>">
                     </div>
                     <div class="col-md-2 d-grid">
-                        <button class="btn btn-primary" type="submit">Ieškoti</button>
+                        <button class="btn btn-primary" type="submit"><?= e(__('search.submit')) ?></button>
                     </div>
                 </form>
             </div>
@@ -361,30 +361,32 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
         <?php if ($searched): ?>
             <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                 <div class="text-secondary">
-                    Rasta iš viso: <strong><?= (int)$overallTotal ?></strong> pagal užklausą "<?= e($query) ?>"
+                    <?= e(__('search.results_summary', ['count' => (int)$overallTotal, 'query' => $query])) ?>
                 </div>
                 <div class="small text-secondary">
-                    Įrašai: <?= (int)$postTotal ?>
-                    · Nariai: <?= (int)$memberTotal ?>
-                    · Forumas: <?= (int)$forumTopicTotal ?>
-                    · Komentarai: <?= (int)$profileCommentTotal ?>
-                    · Navigacija: <?= (int)$navigationTotal ?>
-                    · Šaukykla: <?= (int)$shoutboxTotal ?>
+                    <?= e(__('search.breakdown', [
+                        'posts' => (int)$postTotal,
+                        'members' => (int)$memberTotal,
+                        'forum' => (int)$forumTopicTotal,
+                        'comments' => (int)$profileCommentTotal,
+                        'navigation' => (int)$navigationTotal,
+                        'shoutbox' => (int)$shoutboxTotal,
+                    ])) ?>
                 </div>
             </div>
 
             <div class="card mb-4 search-section-card">
-                <div class="card-header">Turinys</div>
+                <div class="card-header"><?= e(__('search.section.content')) ?></div>
                 <div class="card-body">
                     <?php if (!$postResults): ?>
-                        <div class="text-secondary">Įrašų pagal šią užklausą nerasta.</div>
+                        <div class="text-secondary"><?= e(__('search.empty.posts')) ?></div>
                     <?php else: ?>
                         <div class="vstack gap-3">
                             <?php foreach ($postResults as $result): ?>
                                 <article class="search-result-card border-bottom pb-3">
                                     <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
                                         <div>
-                                            <span class="badge text-bg-primary search-type-badge mb-2">Įrašas</span>
+                                            <span class="badge text-bg-primary search-type-badge mb-2"><?= e(__('search.type.post')) ?></span>
                                             <h2 class="h5 mb-2">
                                                 <a class="text-decoration-none" href="<?= public_path('post.php?id=' . (int)$result['id']) ?>">
                                                     <?= e($result['title'] ?: 'Be pavadinimo') ?>
@@ -409,10 +411,10 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
             </div>
 
             <div class="card mb-4 search-section-card">
-                <div class="card-header">Nariai</div>
+                <div class="card-header"><?= e(__('search.section.members')) ?></div>
                 <div class="card-body">
                     <?php if (!$memberResults): ?>
-                        <div class="text-secondary">Narių nerasta.</div>
+                        <div class="text-secondary"><?= e(__('search.empty.members')) ?></div>
                     <?php else: ?>
                         <div class="vstack gap-3">
                             <?php foreach ($memberResults as $result): ?>
@@ -421,7 +423,7 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                                         <div class="d-flex align-items-start gap-3">
                                             <img src="<?= escape_url(user_avatar_url($result)) ?>" alt="" class="member-panel-avatar">
                                             <div>
-                                                <span class="badge text-bg-info search-type-badge mb-2">Narys</span>
+                                                <span class="badge text-bg-info search-type-badge mb-2"><?= e(__('search.type.member')) ?></span>
                                                 <h3 class="h6 mb-1">
                                                     <a class="text-decoration-none" href="<?= user_profile_url((int)$result['id']) ?>"><?= e($result['username']) ?></a>
                                                 </h3>
@@ -441,17 +443,17 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
             </div>
 
             <div class="card mb-4 search-section-card">
-                <div class="card-header">Forumo temos</div>
+                <div class="card-header"><?= e(__('search.section.forum')) ?></div>
                 <div class="card-body">
                     <?php if (!$forumTopicResults): ?>
-                        <div class="text-secondary">Forumo temų nerasta.</div>
+                        <div class="text-secondary"><?= e(__('search.empty.forum')) ?></div>
                     <?php else: ?>
                         <div class="vstack gap-3">
                             <?php foreach ($forumTopicResults as $result): ?>
                                 <article class="search-result-card border-bottom pb-3">
                                     <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
                                         <div>
-                                            <span class="badge text-bg-warning search-type-badge mb-2">Forumas</span>
+                                            <span class="badge text-bg-warning search-type-badge mb-2"><?= e(__('search.type.forum')) ?></span>
                                             <h3 class="h6 mb-1">
                                                 <a class="text-decoration-none" href="<?= public_path('forum-topic.php?id=' . (int)$result['id']) ?>"><?= e($result['title']) ?></a>
                                             </h3>
@@ -473,17 +475,17 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
             </div>
 
             <div class="card mb-4 search-section-card">
-                <div class="card-header">Profilio komentarai</div>
+                <div class="card-header"><?= e(__('search.section.comments')) ?></div>
                 <div class="card-body">
                     <?php if (!$profileCommentResults): ?>
-                        <div class="text-secondary">Komentarų nerasta.</div>
+                        <div class="text-secondary"><?= e(__('search.empty.comments')) ?></div>
                     <?php else: ?>
                         <div class="vstack gap-3">
                             <?php foreach ($profileCommentResults as $result): ?>
                                 <article class="search-result-card border-bottom pb-3">
                                     <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
                                         <div>
-                                            <span class="badge text-bg-secondary search-type-badge mb-2">Komentaras</span>
+                                            <span class="badge text-bg-secondary search-type-badge mb-2"><?= e(__('search.type.comment')) ?></span>
                                             <div class="fw-semibold mb-1">
                                                 <a class="text-decoration-none" href="<?= user_profile_url((int)$result['author_user_id']) ?>"><?= e($result['author_username'] ?? __('member.none')) ?></a>
                                                 <span class="text-secondary fw-normal">apie</span>
@@ -501,15 +503,15 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
             </div>
 
             <div class="card mb-4 search-section-card">
-                <div class="card-header">Navigacija</div>
+                <div class="card-header"><?= e(__('search.section.navigation')) ?></div>
                 <div class="card-body">
                     <?php if (!$navigationResults): ?>
-                        <div class="text-secondary">Navigacijos nuorodų nerasta.</div>
+                        <div class="text-secondary"><?= e(__('search.empty.navigation')) ?></div>
                     <?php else: ?>
                         <div class="vstack gap-3">
                             <?php foreach ($navigationResults as $result): ?>
                                 <article class="search-result-card border-bottom pb-3">
-                                    <span class="badge text-bg-secondary search-type-badge mb-2">Navigacija</span>
+                                    <span class="badge text-bg-secondary search-type-badge mb-2"><?= e(__('search.type.navigation')) ?></span>
                                     <h3 class="h6 mb-2"><a class="text-decoration-none" href="<?= escape_url($result['url']) ?>"><?= e($result['title']) ?></a></h3>
                                     <div class="small text-secondary"><?= e($result['url']) ?></div>
                                 </article>
@@ -520,10 +522,10 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
             </div>
 
             <div class="card search-section-card">
-                <div class="card-header">Šaukykla</div>
+                <div class="card-header"><?= e(__('search.section.shoutbox')) ?></div>
                 <div class="card-body">
                     <?php if (!$shoutboxResults): ?>
-                        <div class="text-secondary">Šaukyklos žinučių nerasta.</div>
+                        <div class="text-secondary"><?= e(__('search.empty.shoutbox')) ?></div>
                     <?php else: ?>
                         <div class="vstack gap-3">
                             <?php foreach ($shoutboxResults as $result): ?>
@@ -535,7 +537,7 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                                 <article class="search-result-card border-bottom pb-3">
                                     <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
                                         <div>
-                                            <span class="badge text-bg-warning search-type-badge mb-2">Šaukykla</span>
+                                            <span class="badge text-bg-warning search-type-badge mb-2"><?= e(__('search.type.shoutbox')) ?></span>
                                             <div class="fw-semibold">
                                                 <?php if (!empty($result['user_id'])): ?>
                                                     <a class="text-decoration-none" href="<?= user_profile_url((int)$result['user_id']) ?>"><?= e($result['username'] ?? __('member.none')) ?></a>
@@ -547,7 +549,7 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                                         <div class="small text-secondary"><?= e(format_dt($result['created_at'])) ?></div>
                                     </div>
                                     <p class="mb-2"><?= e(search_excerpt($result['message'])) ?></p>
-                                    <a class="small text-decoration-none" href="<?= $resultUrl ?>">Atidaryti žinutę</a>
+                                    <a class="small text-decoration-none" href="<?= $resultUrl ?>"><?= e(__('search.open_message')) ?></a>
                                 </article>
                             <?php endforeach; ?>
                         </div>
@@ -557,7 +559,7 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
         <?php else: ?>
             <div class="card">
                 <div class="card-body text-secondary">
-                    Įveskite raktažodį ir ieškokite įrašuose, narių profiliuose, komentaruose, forumo temose, meniu nuorodose bei šaukykloje.
+                    <?= e(__('search.empty.prompt')) ?>
                 </div>
             </div>
         <?php endif; ?>
