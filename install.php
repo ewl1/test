@@ -6,6 +6,22 @@ $step = $_GET['step'] ?? 'welcome';
 $error = '';
 $success = '';
 
+install_require_classes($root);
+
+function install_require_classes($root)
+{
+    $files = [
+        '/includes/classes/MiniCMS/Installer/ConfigWriter.php',
+        '/includes/classes/MiniCMS/Installer/DatabaseSchema.php',
+        '/includes/classes/MiniCMS/Installer/DatabaseInstaller.php',
+        '/includes/classes/MiniCMS/Installer/AdminAccountInstaller.php',
+    ];
+
+    foreach ($files as $file) {
+        require_once $root . $file;
+    }
+}
+
 function h($value)
 {
     return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
@@ -14,6 +30,80 @@ function h($value)
 function can_write($file)
 {
     return file_exists($file) ? is_writable($file) : is_writable(dirname($file));
+}
+
+function install_detect_site_url()
+{
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/install.php'));
+    $scriptDir = $scriptDir === '/' ? '' : rtrim($scriptDir, '/');
+
+    return $scheme . '://' . $host . $scriptDir;
+}
+
+function install_defaults($root)
+{
+    $configPath = $root . '/config.php';
+    if (is_file($configPath)) {
+        require_once $configPath;
+    }
+
+    return [
+        'app_name' => defined('APP_NAME') ? APP_NAME : 'Mini CMS Pro',
+        'site_url' => defined('SITE_URL') ? SITE_URL : install_detect_site_url(),
+        'db_host' => defined('DB_HOST') ? DB_HOST : 'localhost',
+        'db_name' => defined('DB_NAME') ? DB_NAME : 'minicms',
+        'db_user' => defined('DB_USER') ? DB_USER : 'root',
+        'db_pass' => defined('DB_PASS') ? DB_PASS : '',
+        'mail_host' => defined('MAIL_HOST') ? MAIL_HOST : 'smtp.example.com',
+        'mail_port' => defined('MAIL_PORT') ? (string)MAIL_PORT : '587',
+        'mail_user' => defined('MAIL_USERNAME') ? MAIL_USERNAME : 'user@example.com',
+        'mail_pass' => defined('MAIL_PASSWORD') ? MAIL_PASSWORD : '',
+        'mail_from' => defined('MAIL_FROM') ? MAIL_FROM : 'noreply@example.com',
+        'mail_from_name' => defined('MAIL_FROM_NAME') ? MAIL_FROM_NAME : 'Mini CMS Pro',
+        'current_theme' => defined('CURRENT_THEME') ? CURRENT_THEME : 'default',
+        'admin_theme' => defined('ADMIN_THEME') ? ADMIN_THEME : 'default',
+        'timezone' => defined('TIMEZONE') ? TIMEZONE : 'Europe/Vilnius',
+    ];
+}
+
+function install_request_config()
+{
+    return [
+        'app_name' => trim((string)($_POST['app_name'] ?? 'Mini CMS Pro')),
+        'site_url' => trim((string)($_POST['site_url'] ?? install_detect_site_url())),
+        'db_host' => trim((string)($_POST['db_host'] ?? 'localhost')),
+        'db_name' => trim((string)($_POST['db_name'] ?? 'minicms')),
+        'db_user' => trim((string)($_POST['db_user'] ?? 'root')),
+        'db_pass' => (string)($_POST['db_pass'] ?? ''),
+        'mail_host' => trim((string)($_POST['mail_host'] ?? 'smtp.example.com')),
+        'mail_port' => (string)($_POST['mail_port'] ?? '587'),
+        'mail_user' => trim((string)($_POST['mail_user'] ?? 'user@example.com')),
+        'mail_pass' => (string)($_POST['mail_pass'] ?? ''),
+        'mail_from' => trim((string)($_POST['mail_from'] ?? 'noreply@example.com')),
+        'mail_from_name' => trim((string)($_POST['mail_from_name'] ?? 'Mini CMS Pro')),
+        'current_theme' => trim((string)($_POST['current_theme'] ?? 'default')),
+        'admin_theme' => trim((string)($_POST['admin_theme'] ?? 'default')),
+        'timezone' => trim((string)($_POST['timezone'] ?? 'Europe/Vilnius')),
+    ];
+}
+
+function install_runtime_config($root)
+{
+    $configPath = $root . '/config.php';
+    if (!is_file($configPath)) {
+        throw new RuntimeException('Pirmiausia issaugokite config.php.');
+    }
+
+    require_once $configPath;
+
+    return [
+        'db_host' => defined('DB_HOST') ? DB_HOST : 'localhost',
+        'db_name' => defined('DB_NAME') ? DB_NAME : 'minicms',
+        'db_user' => defined('DB_USER') ? DB_USER : 'root',
+        'db_pass' => defined('DB_PASS') ? DB_PASS : '',
+    ];
 }
 
 function install_csrf_token()
@@ -44,146 +134,123 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         verify_install_csrf();
 
         if (isset($_POST['save_config'])) {
-            $cfg = [
-                'app_name' => trim($_POST['app_name'] ?? 'Mini CMS Pro'),
-                'site_url' => trim($_POST['site_url'] ?? 'http://localhost/mini-cms-pro'),
-                'db_host' => trim($_POST['db_host'] ?? 'localhost'),
-                'db_name' => trim($_POST['db_name'] ?? 'mini_cms'),
-                'db_user' => trim($_POST['db_user'] ?? 'root'),
-                'db_pass' => (string)($_POST['db_pass'] ?? ''),
-                'mail_host' => trim($_POST['mail_host'] ?? 'smtp.example.com'),
-                'mail_port' => (int)($_POST['mail_port'] ?? 587),
-                'mail_user' => trim($_POST['mail_user'] ?? 'user@example.com'),
-                'mail_pass' => (string)($_POST['mail_pass'] ?? ''),
-                'mail_from' => trim($_POST['mail_from'] ?? 'noreply@example.com'),
-                'mail_from_name' => trim($_POST['mail_from_name'] ?? 'Mini CMS Pro'),
-                'current_theme' => trim($_POST['current_theme'] ?? 'default'),
-                'admin_theme' => trim($_POST['admin_theme'] ?? 'default'),
-                'timezone' => trim($_POST['timezone'] ?? 'Europe/Vilnius'),
-            ];
+            $config = install_request_config();
+            $configWriter = new \App\MiniCMS\Installer\ConfigWriter();
+            $configPath = $root . '/config.php';
 
-            $content = "<?php\n"
-                . "define('APP_NAME', " . var_export($cfg['app_name'], true) . ");\n"
-                . "define('SITE_URL', " . var_export($cfg['site_url'], true) . ");\n"
-                . "define('DB_HOST', " . var_export($cfg['db_host'], true) . ");\n"
-                . "define('DB_NAME', " . var_export($cfg['db_name'], true) . ");\n"
-                . "define('DB_USER', " . var_export($cfg['db_user'], true) . ");\n"
-                . "define('DB_PASS', " . var_export($cfg['db_pass'], true) . ");\n"
-                . "define('MAIL_HOST', " . var_export($cfg['mail_host'], true) . ");\n"
-                . "define('MAIL_PORT', " . (int)$cfg['mail_port'] . ");\n"
-                . "define('MAIL_USERNAME', " . var_export($cfg['mail_user'], true) . ");\n"
-                . "define('MAIL_PASSWORD', " . var_export($cfg['mail_pass'], true) . ");\n"
-                . "define('MAIL_FROM', " . var_export($cfg['mail_from'], true) . ");\n"
-                . "define('MAIL_FROM_NAME', " . var_export($cfg['mail_from_name'], true) . ");\n"
-                . "define('CURRENT_THEME', " . var_export($cfg['current_theme'], true) . ");\n"
-                . "define('ADMIN_THEME', " . var_export($cfg['admin_theme'], true) . ");\n"
-                . "define('TIMEZONE', " . var_export($cfg['timezone'], true) . ");\n"
-                . "define('APP_VERSION', '1.0.0');\n"
-                . "define('MAINTENANCE_MODE', false);\n";
-
-            if (!can_write($root . '/config.php')) {
-                $error = 'Nepavyko įrašyti config.php';
-            } else {
-                file_put_contents($root . '/config.php', $content);
-                header('Location: install.php?step=db');
-                exit;
+            if (!can_write($configPath)) {
+                throw new RuntimeException('Nepavyko irasyti config.php');
             }
+
+            $configWriter->write($configPath, $config);
+            header('Location: install.php?step=db');
+            exit;
         }
 
         if (isset($_POST['run_sql'])) {
-            require_once $root . '/maincore.php';
-            $pdo = new PDO(
-                'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8mb4',
-                DB_USER,
-                DB_PASS,
-                [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+            $config = install_runtime_config($root);
+            $databaseInstaller = new \App\MiniCMS\Installer\DatabaseInstaller(
+                $config['db_host'],
+                $config['db_name'],
+                $config['db_user'],
+                $config['db_pass'],
+                new \App\MiniCMS\Installer\DatabaseSchema()
             );
-            $pdo->exec(file_get_contents($root . '/database.sql'));
+            $databaseInstaller->install();
             header('Location: install.php?step=admin');
             exit;
         }
 
         if (isset($_POST['create_admin'])) {
-            require_once $root . '/maincore.php';
-            $pdo = new PDO(
-                'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8mb4',
-                DB_USER,
-                DB_PASS,
-                [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+            $config = install_runtime_config($root);
+            $databaseInstaller = new \App\MiniCMS\Installer\DatabaseInstaller(
+                $config['db_host'],
+                $config['db_name'],
+                $config['db_user'],
+                $config['db_pass'],
+                new \App\MiniCMS\Installer\DatabaseSchema()
             );
-            $stmt = $pdo->prepare("
-                INSERT INTO users (username, email, password, role_id, is_active, status, created_at)
-                VALUES (:u, :e, :p, 1, 1, 'active', NOW())
-            ");
-            $stmt->execute([
-                ':u' => trim((string)($_POST['username'] ?? '')),
-                ':e' => trim((string)($_POST['email'] ?? '')),
-                ':p' => password_hash((string)($_POST['password'] ?? ''), PASSWORD_DEFAULT),
-            ]);
-            $success = 'Admin sukurtas.';
+            $adminInstaller = new \App\MiniCMS\Installer\AdminAccountInstaller($databaseInstaller->connect());
+            $adminInstaller->create(
+                (string)($_POST['username'] ?? ''),
+                (string)($_POST['email'] ?? ''),
+                (string)($_POST['password'] ?? '')
+            );
+
+            $success = 'Administratoriaus paskyra sukurta.';
             $step = 'done';
         }
     } catch (Throwable $e) {
         $error = $e->getMessage();
     }
 }
+
+$defaults = install_defaults($root);
 ?>
 <!doctype html>
 <html lang="lt">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Diegimas</title>
+<title>Mini CMS diegimas</title>
 <link rel="stylesheet" href="themes/default/bootstrap.min.css">
 </head>
 <body class="bg-body-tertiary">
 <div class="container py-5">
-<div class="mx-auto" style="max-width: 820px;">
-<div class="card shadow-sm">
-<div class="card-body p-4">
-<h1 class="h3 mb-3">Mini CMS diegimas</h1>
-<?php if ($error): ?><div class="alert alert-danger"><?= h($error) ?></div><?php endif; ?>
-<?php if ($success): ?><div class="alert alert-success"><?= h($success) ?></div><?php endif; ?>
+  <div class="mx-auto" style="max-width: 860px;">
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        <h1 class="h3 mb-3">Mini CMS diegimas</h1>
+        <p class="text-secondary">Diegimas dabar naudoja Installer klases is <code>includes/classes/MiniCMS/Installer/</code>.</p>
 
-<?php if ($step === 'welcome'): ?>
-<form method="post" class="row g-3">
-<?= install_csrf_field() ?>
-<div class="col-md-6"><label class="form-label">APP_NAME</label><input class="form-control" name="app_name" value="Mini CMS Pro"></div>
-<div class="col-md-6"><label class="form-label">SITE_URL</label><input class="form-control" name="site_url" value="http://localhost/mini-cms-pro"></div>
-<div class="col-md-6"><label class="form-label">DB_HOST</label><input class="form-control" name="db_host" value="localhost"></div>
-<div class="col-md-6"><label class="form-label">DB_NAME</label><input class="form-control" name="db_name" value="mini_cms"></div>
-<div class="col-md-6"><label class="form-label">DB_USER</label><input class="form-control" name="db_user" value="root"></div>
-<div class="col-md-6"><label class="form-label">DB_PASS</label><input class="form-control" type="password" name="db_pass"></div>
-<div class="col-md-6"><label class="form-label">MAIL_HOST</label><input class="form-control" name="mail_host" value="smtp.example.com"></div>
-<div class="col-md-6"><label class="form-label">MAIL_PORT</label><input class="form-control" name="mail_port" value="587"></div>
-<div class="col-md-6"><label class="form-label">Svetainės tema</label><input class="form-control" name="current_theme" value="default"></div>
-<div class="col-md-6"><label class="form-label">Admin tema</label><input class="form-control" name="admin_theme" value="default"></div>
-<div class="col-md-6"><label class="form-label">MAIL_USERNAME</label><input class="form-control" name="mail_user" value="user@example.com"></div>
-<div class="col-md-6"><label class="form-label">MAIL_PASSWORD</label><input class="form-control" type="password" name="mail_pass"></div>
-<div class="col-md-6"><label class="form-label">MAIL_FROM</label><input class="form-control" name="mail_from" value="noreply@example.com"></div>
-<div class="col-md-6"><label class="form-label">MAIL_FROM_NAME</label><input class="form-control" name="mail_from_name" value="Mini CMS Pro"></div>
-<div class="col-md-6"><label class="form-label">TIMEZONE</label><input class="form-control" name="timezone" value="Europe/Vilnius"></div>
-<div class="col-12"><button class="btn btn-primary" name="save_config" value="1">Išsaugoti config</button></div>
-</form>
-<?php elseif ($step === 'db'): ?>
-<form method="post">
-<?= install_csrf_field() ?>
-<button class="btn btn-primary" name="run_sql" value="1">Importuoti DB</button>
-</form>
-<?php elseif ($step === 'admin'): ?>
-<form method="post" class="row g-3">
-<?= install_csrf_field() ?>
-<div class="col-md-6"><label class="form-label">Username</label><input class="form-control" name="username"></div>
-<div class="col-md-6"><label class="form-label">Email</label><input class="form-control" name="email"></div>
-<div class="col-md-6"><label class="form-label">Password</label><input class="form-control" type="password" name="password"></div>
-<div class="col-12"><button class="btn btn-success" name="create_admin" value="1">Sukurti admin</button></div>
-</form>
-<?php else: ?>
-<div class="alert alert-success">Baigta. Prisijunk per /administration/login.php</div>
-<?php endif; ?>
-</div>
-</div>
-</div>
+        <?php if ($error): ?>
+          <div class="alert alert-danger"><?= h($error) ?></div>
+        <?php endif; ?>
+
+        <?php if ($success): ?>
+          <div class="alert alert-success"><?= h($success) ?></div>
+        <?php endif; ?>
+
+        <?php if ($step === 'welcome'): ?>
+          <form method="post" class="row g-3">
+            <?= install_csrf_field() ?>
+            <div class="col-md-6"><label class="form-label">APP_NAME</label><input class="form-control" name="app_name" value="<?= h($defaults['app_name']) ?>"></div>
+            <div class="col-md-6"><label class="form-label">SITE_URL</label><input class="form-control" name="site_url" value="<?= h($defaults['site_url']) ?>"></div>
+            <div class="col-md-6"><label class="form-label">DB_HOST</label><input class="form-control" name="db_host" value="<?= h($defaults['db_host']) ?>"></div>
+            <div class="col-md-6"><label class="form-label">DB_NAME</label><input class="form-control" name="db_name" value="<?= h($defaults['db_name']) ?>"></div>
+            <div class="col-md-6"><label class="form-label">DB_USER</label><input class="form-control" name="db_user" value="<?= h($defaults['db_user']) ?>"></div>
+            <div class="col-md-6"><label class="form-label">DB_PASS</label><input class="form-control" type="password" name="db_pass" value="<?= h($defaults['db_pass']) ?>"></div>
+            <div class="col-md-6"><label class="form-label">MAIL_HOST</label><input class="form-control" name="mail_host" value="<?= h($defaults['mail_host']) ?>"></div>
+            <div class="col-md-6"><label class="form-label">MAIL_PORT</label><input class="form-control" name="mail_port" value="<?= h($defaults['mail_port']) ?>"></div>
+            <div class="col-md-6"><label class="form-label">Svetaines tema</label><input class="form-control" name="current_theme" value="<?= h($defaults['current_theme']) ?>"></div>
+            <div class="col-md-6"><label class="form-label">Admin tema</label><input class="form-control" name="admin_theme" value="<?= h($defaults['admin_theme']) ?>"></div>
+            <div class="col-md-6"><label class="form-label">MAIL_USERNAME</label><input class="form-control" name="mail_user" value="<?= h($defaults['mail_user']) ?>"></div>
+            <div class="col-md-6"><label class="form-label">MAIL_PASSWORD</label><input class="form-control" type="password" name="mail_pass" value="<?= h($defaults['mail_pass']) ?>"></div>
+            <div class="col-md-6"><label class="form-label">MAIL_FROM</label><input class="form-control" name="mail_from" value="<?= h($defaults['mail_from']) ?>"></div>
+            <div class="col-md-6"><label class="form-label">MAIL_FROM_NAME</label><input class="form-control" name="mail_from_name" value="<?= h($defaults['mail_from_name']) ?>"></div>
+            <div class="col-md-6"><label class="form-label">TIMEZONE</label><input class="form-control" name="timezone" value="<?= h($defaults['timezone']) ?>"></div>
+            <div class="col-12"><button class="btn btn-primary" name="save_config" value="1">Issaugoti config</button></div>
+          </form>
+        <?php elseif ($step === 'db'): ?>
+          <div class="alert alert-info">Bus sukurta duombaze, pagrindines lenteles ir numatytieji moduliai.</div>
+          <form method="post">
+            <?= install_csrf_field() ?>
+            <button class="btn btn-primary" name="run_sql" value="1">Sukurti ir importuoti DB</button>
+          </form>
+        <?php elseif ($step === 'admin'): ?>
+          <form method="post" class="row g-3">
+            <?= install_csrf_field() ?>
+            <div class="col-md-6"><label class="form-label">Naudotojo vardas</label><input class="form-control" name="username" value="admin"></div>
+            <div class="col-md-6"><label class="form-label">El. pastas</label><input class="form-control" name="email" value="admin@example.com"></div>
+            <div class="col-md-6"><label class="form-label">Slaptazodis</label><input class="form-control" type="password" name="password"></div>
+            <div class="col-12"><button class="btn btn-success" name="create_admin" value="1">Sukurti administratoriu</button></div>
+          </form>
+        <?php else: ?>
+          <div class="alert alert-success">Diegimas baigtas. Prisijunkite per <code>/administration/login.php</code>.</div>
+        <?php endif; ?>
+      </div>
+    </div>
+  </div>
 </div>
 </body>
 </html>
