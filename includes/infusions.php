@@ -79,6 +79,327 @@ function scan_infusions()
     return $items;
 }
 
+function read_infusion_manifest_raw($folder)
+{
+    $path = infusion_manifest_path($folder);
+    if (!is_file($path)) {
+        return null;
+    }
+
+    $data = json_decode((string)file_get_contents($path), true);
+    return is_array($data) ? $data : null;
+}
+
+function infusion_developer_normalize_path($path)
+{
+    return str_replace('\\', '/', strtolower((string)$path));
+}
+
+function describe_infusion_hook_listener(callable $listener)
+{
+    $info = [
+        'label' => 'Closure',
+        'class' => null,
+        'scope_class' => null,
+        'method' => null,
+        'file' => null,
+        'line' => null,
+        'type' => 'callable',
+    ];
+
+    try {
+        if (is_array($listener) && isset($listener[0], $listener[1])) {
+            $target = $listener[0];
+            $method = (string)$listener[1];
+            $class = is_object($target) ? get_class($target) : trim((string)$target);
+            $info['class'] = $class !== '' ? $class : null;
+            $info['method'] = $method !== '' ? $method : null;
+            $info['label'] = $class !== ''
+                ? (is_object($target) ? $class . '->' . $method : $class . '::' . $method)
+                : $method;
+            $info['type'] = is_object($target) ? 'object_method' : 'static_method';
+
+            $reflection = new ReflectionMethod($target, $method);
+            $info['file'] = $reflection->getFileName() ?: null;
+            $info['line'] = $reflection->getStartLine() ?: null;
+            return $info;
+        }
+
+        if ($listener instanceof Closure) {
+            $reflection = new ReflectionFunction($listener);
+            $scopeClass = $reflection->getClosureScopeClass();
+            $closureThis = $reflection->getClosureThis();
+
+            $info['type'] = 'closure';
+            $info['scope_class'] = $scopeClass ? $scopeClass->getName() : null;
+            $info['class'] = is_object($closureThis) ? get_class($closureThis) : $info['scope_class'];
+            $info['label'] = $info['class'] ? $info['class'] . '::{closure}' : 'Closure';
+            $info['file'] = $reflection->getFileName() ?: null;
+            $info['line'] = $reflection->getStartLine() ?: null;
+            return $info;
+        }
+
+        if (is_string($listener) && strpos($listener, '::') !== false) {
+            [$class, $method] = explode('::', $listener, 2);
+            $info['class'] = $class !== '' ? $class : null;
+            $info['method'] = $method !== '' ? $method : null;
+            $info['label'] = $listener;
+            $info['type'] = 'static_string';
+
+            $reflection = new ReflectionMethod($class, $method);
+            $info['file'] = $reflection->getFileName() ?: null;
+            $info['line'] = $reflection->getStartLine() ?: null;
+            return $info;
+        }
+
+        if (is_object($listener) && is_callable($listener)) {
+            $class = get_class($listener);
+            $info['class'] = $class;
+            $info['method'] = '__invoke';
+            $info['label'] = $class . '::__invoke';
+            $info['type'] = 'invokable_object';
+
+            $reflection = new ReflectionMethod($listener, '__invoke');
+            $info['file'] = $reflection->getFileName() ?: null;
+            $info['line'] = $reflection->getStartLine() ?: null;
+            return $info;
+        }
+
+        if (is_string($listener)) {
+            $info['label'] = $listener;
+            $info['type'] = 'function';
+
+            $reflection = new ReflectionFunction($listener);
+            $info['file'] = $reflection->getFileName() ?: null;
+            $info['line'] = $reflection->getStartLine() ?: null;
+            return $info;
+        }
+    } catch (Throwable $e) {
+    }
+
+    return $info;
+}
+
+function infusion_hook_listener_matches_module(array $listenerInfo, $folder, $moduleClass, $moduleNamespace)
+{
+    $folderRoot = infusion_developer_normalize_path(INFUSIONS . trim((string)$folder) . '/');
+    $classCandidates = array_filter([
+        $listenerInfo['class'] ?? null,
+        $listenerInfo['scope_class'] ?? null,
+    ]);
+
+    foreach ($classCandidates as $candidate) {
+        if ($moduleClass !== '' && $candidate === $moduleClass) {
+            return true;
+        }
+        if ($moduleNamespace !== '' && str_starts_with($candidate, $moduleNamespace)) {
+            return true;
+        }
+    }
+
+    $listenerFile = trim((string)($listenerInfo['file'] ?? ''));
+    if ($listenerFile !== '') {
+        return str_starts_with(infusion_developer_normalize_path($listenerFile), $folderRoot);
+    }
+
+    return false;
+}
+
+function get_infusion_registered_hooks($folder, $infusionId = 0, ?array $manifest = null)
+{
+    $context = infusion_context($folder, (int)$infusionId, $manifest);
+    $moduleClass = trim((string)$context->moduleClass());
+    $moduleNamespace = trim((string)$context->moduleNamespace());
+    $registered = [];
+
+    foreach (infusion_hook_registry()->all() as $hookName => $listenersByPriority) {
+        foreach ($listenersByPriority as $priority => $listeners) {
+            foreach ($listeners as $listener) {
+                $info = describe_infusion_hook_listener($listener);
+                if (!infusion_hook_listener_matches_module($info, $folder, $moduleClass, $moduleNamespace)) {
+                    continue;
+                }
+
+                $registered[] = [
+                    'hook' => (string)$hookName,
+                    'priority' => (int)$priority,
+                    'listener' => $info['label'],
+                    'file' => $info['file'],
+                    'line' => $info['line'],
+                    'type' => $info['type'],
+                ];
+            }
+        }
+    }
+
+    usort($registered, static function ($left, $right) {
+        return [$left['hook'], $left['priority'], $left['listener']] <=> [$right['hook'], $right['priority'], $right['listener']];
+    });
+
+    return $registered;
+}
+
+function get_infusion_developer_snapshot($folder, $infusionId = 0, ?array $manifest = null)
+{
+    $folder = trim((string)$folder);
+    $manifest = $manifest ?: read_infusion_manifest($folder);
+    $context = infusion_context($folder, (int)$infusionId, $manifest);
+    $rawManifest = read_infusion_manifest_raw($folder);
+    $directory = rtrim($context->path(), '/\\');
+    $installed = $infusionId > 0 ? get_installed_infusion((int)$infusionId) : get_installed_infusion_by_folder($folder);
+    $migrationFiles = array_map('basename', glob($context->migrationsPath('*.php')) ?: []);
+    sort($migrationFiles);
+
+    $rollbackFiles = array_values(array_filter($migrationFiles, static function ($file) {
+        return str_ends_with($file, '.rollback.php');
+    }));
+    $migrationSteps = array_values(array_filter($migrationFiles, static function ($file) {
+        return !str_ends_with($file, '.rollback.php');
+    }));
+
+    $assetCss = array_map('basename', glob($context->path('assets/css/*.css')) ?: []);
+    $assetJs = array_map('basename', glob($context->path('assets/js/*.js')) ?: []);
+    $localeFiles = array_map('basename', glob($context->path('locale/*.php')) ?: []);
+    sort($assetCss);
+    sort($assetJs);
+    sort($localeFiles);
+
+    $moduleClass = $context->moduleClass();
+    $moduleNamespace = $context->moduleNamespace();
+    $classExists = class_exists($moduleClass);
+    $isSdkModule = $classExists && is_subclass_of($moduleClass, \App\MiniCMS\Infusions\InfusionModuleInterface::class);
+
+    $permissions = [];
+    foreach ((array)($manifest['permissions'] ?? []) as $permission) {
+        $slug = trim((string)($permission['slug'] ?? ''));
+        if ($slug !== '') {
+            $permissions[] = $slug;
+        }
+    }
+
+    $adminMenu = [];
+    foreach ((array)($manifest['admin_menu'] ?? []) as $menuItem) {
+        $slug = trim((string)($menuItem['slug'] ?? ''));
+        if ($slug !== '') {
+            $adminMenu[] = $slug;
+        }
+    }
+
+    $dependencies = [];
+    foreach ((array)($rawManifest['dependencies'] ?? $manifest['dependencies'] ?? []) as $dependency) {
+        if (is_array($dependency)) {
+            $folderName = trim((string)($dependency['folder'] ?? ''));
+            $version = trim((string)($dependency['version'] ?? ''));
+            if ($folderName !== '') {
+                $dependencies[] = $version !== '' ? ($folderName . ' >= ' . $version) : $folderName;
+            }
+            continue;
+        }
+
+        $dependency = trim((string)$dependency);
+        if ($dependency !== '') {
+            $dependencies[] = $dependency;
+        }
+    }
+
+    $conflicts = [];
+    foreach ((array)($rawManifest['conflicts'] ?? []) as $conflict) {
+        $conflict = trim((string)$conflict);
+        if ($conflict !== '') {
+            $conflicts[] = $conflict;
+        }
+    }
+
+    $declaredHooks = [];
+    foreach ((array)($rawManifest['hooks'] ?? $manifest['hooks'] ?? []) as $key => $value) {
+        if (is_int($key)) {
+            $hookName = trim((string)$value);
+            if ($hookName !== '') {
+                $declaredHooks[] = $hookName;
+            }
+            continue;
+        }
+
+        $hookName = trim((string)$key);
+        if ($hookName !== '') {
+            $declaredHooks[] = $hookName;
+        }
+    }
+    sort($declaredHooks);
+
+    $provides = [];
+    foreach ((array)($rawManifest['provides'] ?? $manifest['provides'] ?? []) as $key => $value) {
+        if (is_int($key)) {
+            $value = trim((string)$value);
+            if ($value !== '') {
+                $provides[] = $value;
+            }
+            continue;
+        }
+
+        if (is_array($value)) {
+            foreach ($value as $nestedValue) {
+                $nestedValue = trim((string)$nestedValue);
+                if ($nestedValue !== '') {
+                    $provides[] = $key . ':' . $nestedValue;
+                }
+            }
+            continue;
+        }
+
+        $value = trim((string)$value);
+        if ($value !== '') {
+            $provides[] = $key . ':' . $value;
+        } else {
+            $provides[] = (string)$key;
+        }
+    }
+    sort($provides);
+
+    return [
+        'folder' => $folder,
+        'directory' => $directory,
+        'installed' => $installed ?: null,
+        'manifest' => $manifest,
+        'raw_manifest' => $rawManifest,
+        'raw_manifest_json' => json_encode($rawManifest ?: $manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
+        'module_class' => $moduleClass,
+        'module_namespace' => $moduleNamespace,
+        'module_class_exists' => $classExists,
+        'is_sdk_module' => $isSdkModule,
+        'files' => [
+            'manifest.json' => is_file($context->path('manifest.json')),
+            'bootstrap.php' => $context->has('bootstrap.php'),
+            'admin.php' => $context->has('admin.php'),
+            'panel.php' => $context->has('panel.php'),
+            'schema.php' => $context->has('schema.php'),
+            'upgrade.php' => $context->has('upgrade.php'),
+            'uninstall.php' => $context->has('uninstall.php'),
+        ],
+        'directories' => [
+            'assets/' => $context->hasDirectory('assets'),
+            'locale/' => $context->hasDirectory('locale'),
+            'classes/' => $context->hasDirectory('classes'),
+            'migrations/' => $context->hasDirectory('migrations'),
+        ],
+        'migration_steps' => $migrationSteps,
+        'rollback_files' => $rollbackFiles,
+        'asset_css' => $assetCss,
+        'asset_js' => $assetJs,
+        'locale_files' => $localeFiles,
+        'permissions' => $permissions,
+        'admin_menu' => $adminMenu,
+        'dependencies' => $dependencies,
+        'conflicts' => $conflicts,
+        'required_extensions' => array_values(array_filter(array_map('strval', (array)($rawManifest['required_extensions'] ?? [])))),
+        'declared_hooks' => $declaredHooks,
+        'registered_hooks' => get_infusion_registered_hooks($folder, (int)($installed['id'] ?? $infusionId), $manifest),
+        'provides' => $provides,
+        'settings_page' => trim((string)($rawManifest['settings_page'] ?? $manifest['settings_page'] ?? '')),
+        'diagnostics_page' => trim((string)($rawManifest['diagnostics_page'] ?? '')),
+    ];
+}
+
 function ensure_infusion_tables()
 {
     $GLOBALS['pdo']->exec("
