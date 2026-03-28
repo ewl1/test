@@ -425,7 +425,7 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                                                 <h3 class="h6 mb-1">
                                                     <a class="text-decoration-none" href="<?= user_profile_url((int)$result['id']) ?>"><?= e($result['username']) ?></a>
                                                 </h3>
-                                                <div class="small text-secondary"><?= e($result['role_name'] ?? 'Narys') ?></div>
+                                                <div class="small text-secondary"><?= e($result['role_name'] ?? __('member.none')) ?></div>
                                             </div>
                                         </div>
                                         <div class="small text-secondary"><?= e(format_dt($result['created_at'])) ?></div>
@@ -485,7 +485,7 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                                         <div>
                                             <span class="badge text-bg-secondary search-type-badge mb-2">Komentaras</span>
                                             <div class="fw-semibold mb-1">
-                                                <a class="text-decoration-none" href="<?= user_profile_url((int)$result['author_user_id']) ?>"><?= e($result['author_username'] ?? 'Narys') ?></a>
+                                                <a class="text-decoration-none" href="<?= user_profile_url((int)$result['author_user_id']) ?>"><?= e($result['author_username'] ?? __('member.none')) ?></a>
                                                 <span class="text-secondary fw-normal">apie</span>
                                                 <a class="text-decoration-none" href="<?= profile_comment_url((int)$result['profile_user_id'], (int)$result['id']) ?>"><?= e($result['profile_username'] ?? 'profilį') ?></a>
                                             </div>
@@ -538,9 +538,9 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                                             <span class="badge text-bg-warning search-type-badge mb-2">Šaukykla</span>
                                             <div class="fw-semibold">
                                                 <?php if (!empty($result['user_id'])): ?>
-                                                    <a class="text-decoration-none" href="<?= user_profile_url((int)$result['user_id']) ?>"><?= e($result['username'] ?? 'Narys') ?></a>
+                                                    <a class="text-decoration-none" href="<?= user_profile_url((int)$result['user_id']) ?>"><?= e($result['username'] ?? __('member.none')) ?></a>
                                                 <?php else: ?>
-                                                    <?= e($result['username'] ?? 'Svečias') ?>
+                                                    <?= e($result['username'] ?? __('member.guest')) ?>
                                                 <?php endif; ?>
                                             </div>
                                         </div>

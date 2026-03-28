@@ -1,4 +1,10 @@
 <?php
+function shoutbox_register_assets()
+{
+    register_page_style('infusions/shoutbox/assets/css/shoutbox.css');
+    register_page_script('infusions/shoutbox/assets/js/shoutbox.js');
+}
+
 function shoutbox_smileys()
 {
     return [
@@ -215,35 +221,35 @@ function shoutbox_render_editor($context = 'page', $textareaId = 'shoutbox-messa
     <?php endif;
 
     if (!current_user()): ?>
-        <div class="alert alert-info mb-0">Rašyti gali tik prisijungę nariai. <a href="<?= public_path('login.php') ?>">Prisijunkite</a>.</div>
+        <div class="alert alert-info mb-0"><?= e(__('shoutbox.post.login')) ?> <a href="<?= public_path('login.php') ?>"><?= e(__('nav.login')) ?></a>.</div>
         <?php
         return;
     endif;
     ?>
 
-    <form method="post">
+    <form method="post" class="shoutbox-editor-form <?= $compact ? 'shoutbox-editor-form-compact' : 'shoutbox-editor-form-page' ?>">
         <?= csrf_field() ?>
         <input type="hidden" name="shoutbox_action" value="post">
         <input type="hidden" name="shoutbox_context" value="<?= e($context) ?>">
         <input type="hidden" name="redirect_to" value="<?= e($redirectPath) ?>">
 
-        <div class="mb-2 d-flex flex-wrap gap-2">
+        <div class="mb-2 d-flex flex-wrap gap-2 shoutbox-toolbar">
             <?php foreach (shoutbox_bbcode_buttons() as $button): ?>
-                <button type="button" class="btn btn-sm btn-outline-secondary" data-editor-target="<?= e($textareaId) ?>" data-insert-text="<?= e($button['insert']) ?>"><?= e($button['label']) ?></button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-shoutbox-editor-target="<?= e($textareaId) ?>" data-shoutbox-insert-text="<?= e($button['insert']) ?>"><?= e($button['label']) ?></button>
             <?php endforeach; ?>
         </div>
-        <div class="mb-2 d-flex flex-wrap gap-2">
+        <div class="mb-2 d-flex flex-wrap gap-2 shoutbox-smiley-toolbar">
             <?php foreach (shoutbox_smileys() as $code => $emoji): ?>
-                <button type="button" class="btn btn-sm btn-outline-warning" data-editor-target="<?= e($textareaId) ?>" data-smiley-code="<?= e($code) ?>"><?= $emoji ?></button>
+                <button type="button" class="btn btn-sm btn-outline-warning" data-shoutbox-editor-target="<?= e($textareaId) ?>" data-shoutbox-smiley-code="<?= e($code) ?>"><?= $emoji ?></button>
             <?php endforeach; ?>
         </div>
 
-        <div class="mb-3">
-            <label class="form-label"><?= $compact ? 'Komentaras' : 'Žinutė' ?></label>
-            <textarea class="form-control" id="<?= e($textareaId) ?>" name="message" rows="<?= $compact ? 3 : 4 ?>" maxlength="500" placeholder="<?= $compact ? 'Parašykite žinutę...' : 'Rašykite žinutę...' ?>"></textarea>
-            <div class="form-text">Leidžiamas BBCode: [b], [i], [u], [quote], [code], [url=...][/url]</div>
+        <div class="mb-3 shoutbox-editor-field">
+            <label class="form-label"><?= e($compact ? __('shoutbox.comment') : __('shoutbox.message')) ?></label>
+            <textarea class="form-control shoutbox-editor-textarea" id="<?= e($textareaId) ?>" name="message" rows="<?= $compact ? 3 : 4 ?>" maxlength="500" placeholder="<?= e($compact ? __('shoutbox.comment.placeholder') : __('shoutbox.message.placeholder')) ?>"></textarea>
+            <div class="form-text"><?= e(__('forum.allowed_bbcode')) ?></div>
         </div>
-        <button class="btn btn-primary"><?= $compact ? 'Komentuoti' : 'Siųsti' ?></button>
+        <button class="btn btn-primary"><?= e($compact ? __('shoutbox.comment.send') : __('shoutbox.send')) ?></button>
     </form>
 
     <?php
@@ -261,7 +267,7 @@ function shoutbox_handle_request()
 
     verify_csrf();
 
-    $context = ($_POST['shoutbox_context'] ?? 'page') === 'panel' ? 'panel' : 'page';
+    $context = ($_POST['shoutbox_context'] ?? 'panel') === 'panel' ? 'panel' : 'page';
     [$ok, $message] = shoutbox_create_message($_POST['message'] ?? '');
     flash(shoutbox_flash_key($context, $ok ? 'success' : 'error'), $message);
 
@@ -295,35 +301,35 @@ function render_shoutbox_page()
     $messages = shoutbox_get_messages($perPage, (int)$pager['offset']);
     include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
     ?>
-    <div class="row justify-content-center">
+    <div class="row justify-content-center shoutbox-page">
         <div class="col-lg-8">
-            <div class="card mb-3">
+            <div class="card mb-3 shoutbox-composer-card">
                 <div class="card-body">
-                    <h1 class="h4 mb-3">Šaukykla</h1>
+                    <h1 class="h4 mb-3"><?= e(__('shoutbox.title')) ?></h1>
                     <?php shoutbox_render_editor('page', 'shoutbox-message', 'shoutbox.php', false); ?>
                 </div>
             </div>
 
-            <div class="card">
+            <div class="card shoutbox-messages-card">
                 <div class="card-body">
                     <?php if (!$messages): ?>
-                        <p class="text-secondary mb-0">Kol kas žinučių nėra.</p>
+                        <p class="text-secondary mb-0"><?= e(__('shoutbox.empty')) ?></p>
                     <?php endif; ?>
 
                     <?php foreach ($messages as $message): ?>
-                        <div class="border-bottom py-3" id="shoutbox-message-<?= (int)$message['id'] ?>">
-                            <div class="d-flex justify-content-between gap-3">
-                                <div>
+                        <article class="shoutbox-message-item border-bottom py-3" id="shoutbox-message-<?= (int)$message['id'] ?>">
+                            <div class="d-flex justify-content-between gap-3 align-items-start">
+                                <div class="shoutbox-message-meta">
                                     <?php if (!empty($message['user_id'])): ?>
-                                        <strong><a class="text-decoration-none" href="<?= user_profile_url((int)$message['user_id']) ?>"><?= e($message['username'] ?? 'Narys') ?></a></strong>
+                                        <strong><a class="text-decoration-none" href="<?= user_profile_url((int)$message['user_id']) ?>"><?= e($message['username'] ?? __('member.none')) ?></a></strong>
                                     <?php else: ?>
-                                        <strong><?= e($message['username'] ?? 'Svečias') ?></strong>
+                                        <strong><?= e($message['username'] ?? __('member.guest')) ?></strong>
                                     <?php endif; ?>
                                     <div class="text-secondary small"><?= e(format_dt($message['created_at'])) ?></div>
                                 </div>
                             </div>
-                            <div class="mt-2"><?= shoutbox_escape_and_format($message['message']) ?></div>
-                        </div>
+                            <div class="mt-2 shoutbox-message-body"><?= shoutbox_escape_and_format($message['message']) ?></div>
+                        </article>
                     <?php endforeach; ?>
 
                     <?php $pagination = render_pagination(public_path('shoutbox.php'), $pager); ?>
@@ -338,4 +344,5 @@ function render_shoutbox_page()
     include THEMES . setting('current_theme', CURRENT_THEME) . '/footer.php';
 }
 
+shoutbox_register_assets();
 shoutbox_handle_request();

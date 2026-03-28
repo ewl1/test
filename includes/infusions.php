@@ -434,7 +434,7 @@ function upgrade_infusion_by_id($id)
         } else {
             $upgradeFile = infusion_upgrade_path($infusion['folder']);
             if (!file_exists($upgradeFile)) {
-                throw new RuntimeException('Upgrade failas nerastas.');
+                throw new RuntimeException('Atnaujinimo failas nerastas.');
             }
             $INFUSION = [
                 'id' => (int)$id,

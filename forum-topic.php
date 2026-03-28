@@ -3,7 +3,7 @@ require_once __DIR__ . '/includes/bootstrap.php';
 
 if (!function_exists('forum_get_topic')) {
     include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
-    echo '<div class="alert alert-warning">Forumo infusion dar neidiegta arba isjungta.</div>';
+    echo '<div class="alert alert-warning">Forumo infusion dar neįdiegta arba išjungta.</div>';
     include THEMES . setting('current_theme', CURRENT_THEME) . '/footer.php';
     return;
 }
@@ -138,7 +138,7 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
     <div class="col-xl-10">
         <?php
         $breadcrumbs = [
-            ['title' => 'Forumas', 'url' => forum_index_url()],
+            ['title' => __('forum.title'), 'url' => forum_index_url()],
             ['title' => $topic['category_title'], 'url' => forum_index_url()],
         ];
         if ($parentForum) {
@@ -164,21 +164,21 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                     <div>
                         <div class="d-flex gap-2 align-items-center flex-wrap mb-2">
                             <?php if ((int)$topic['is_pinned'] === 1): ?>
-                                <span class="badge text-bg-warning">Prisegta</span>
+                                <span class="badge text-bg-warning"><?= e(__('forum.pinned')) ?></span>
                             <?php endif; ?>
                             <?php if ((int)$topic['is_locked'] === 1): ?>
-                                <span class="badge text-bg-dark">Uzrakinta</span>
+                                <span class="badge text-bg-dark"><?= e(__('forum.locked')) ?></span>
                             <?php endif; ?>
                         </div>
                         <h1 class="h3 mb-2"><?= e($topic['title']) ?></h1>
                         <div class="text-secondary small">
-                            Perziuros: <?= (int)$topic['views'] ?>
-                            · Atsakymai: <?= (int)$topic['reply_count'] ?>
-                            · Sukurta: <?= e(format_dt($topic['created_at'])) ?>
+                            <?= e(__('forum.views')) ?>: <?= (int)$topic['views'] ?>
+                            · <?= e(__('forum.replies')) ?>: <?= (int)$topic['reply_count'] ?>
+                            · <?= e(__('forum.created')) ?>: <?= e(format_dt($topic['created_at'])) ?>
                         </div>
                     </div>
                     <?php if ($forum): ?>
-                        <a class="btn btn-outline-secondary" href="<?= forum_forum_url((int)$forum['id']) ?>">Atgal i foruma</a>
+                        <a class="btn btn-outline-secondary" href="<?= forum_forum_url((int)$forum['id']) ?>"><?= e(__('forum.back')) ?></a>
                     <?php endif; ?>
                 </div>
             </div>
@@ -188,25 +188,25 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
             <div class="card forum-moderation-card mb-4">
                 <div class="card-body d-flex justify-content-between align-items-center gap-3 flex-wrap">
                     <div>
-                        <strong>Temos moderavimas</strong>
-                        <div class="small text-secondary">Prisegimas, uzrakinimas, redagavimas ir trynimas.</div>
+                        <strong><?= e(__('forum.moderation')) ?></strong>
+                        <div class="small text-secondary"><?= e(__('forum.moderation.help')) ?></div>
                     </div>
                     <div class="d-flex flex-wrap gap-2">
                         <form method="post" class="d-inline">
                             <?= csrf_field() ?>
                             <input type="hidden" name="forum_action" value="toggle_pin">
-                            <button class="btn btn-sm btn-outline-warning" type="submit"><?= (int)$topic['is_pinned'] === 1 ? 'Nuimti prisegima' : 'Prisegti tema' ?></button>
+                            <button class="btn btn-sm btn-outline-warning" type="submit"><?= e((int)$topic['is_pinned'] === 1 ? __('forum.unpin') : __('forum.pin')) ?></button>
                         </form>
                         <form method="post" class="d-inline">
                             <?= csrf_field() ?>
                             <input type="hidden" name="forum_action" value="toggle_lock">
-                            <button class="btn btn-sm btn-outline-secondary" type="submit"><?= (int)$topic['is_locked'] === 1 ? 'Atrakinti tema' : 'Uzrakinti tema' ?></button>
+                            <button class="btn btn-sm btn-outline-secondary" type="submit"><?= e((int)$topic['is_locked'] === 1 ? __('forum.unlock') : __('forum.lock')) ?></button>
                         </form>
-                        <a class="btn btn-sm btn-outline-primary" href="<?= forum_topic_url((int)$topic['id'], $page) . '&mode=edit' ?>">Redaguoti</a>
+                        <a class="btn btn-sm btn-outline-primary" href="<?= forum_topic_url((int)$topic['id'], $page) . '&mode=edit' ?>"><?= e(__('forum.edit')) ?></a>
                         <form method="post" class="d-inline">
                             <?= csrf_field() ?>
                             <input type="hidden" name="forum_action" value="delete_topic">
-                            <button class="btn btn-sm btn-outline-danger" type="submit" data-confirm-message="Ar tikrai norite istrinti sia tema ir visus atsakymus?">Istrinti tema</button>
+                            <button class="btn btn-sm btn-outline-danger" type="submit" data-confirm-message="<?= e(__('forum.delete_topic.confirm')) ?>"><?= e(__('forum.delete_topic')) ?></button>
                         </form>
                     </div>
                 </div>
@@ -216,8 +216,8 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
         <?php if ($canModerateTopic && $topicEditMode): ?>
             <div class="card forum-editor-card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center gap-3">
-                    <span>Redaguoti tema</span>
-                    <a class="btn btn-sm btn-outline-secondary" href="<?= forum_topic_url((int)$topic['id'], $page) ?>">Uzdaryti</a>
+                    <span><?= e(__('forum.edit')) ?></span>
+                    <a class="btn btn-sm btn-outline-secondary" href="<?= forum_topic_url((int)$topic['id'], $page) ?>"><?= e(__('forum.close')) ?></a>
                 </div>
                 <div class="card-body">
                     <?php if ($topicEditError): ?>
@@ -235,17 +235,17 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label" for="forum-edit-topic-title">Temos pavadinimas</label>
+                            <label class="form-label" for="forum-edit-topic-title"><?= e(__('forum.topic.title')) ?></label>
                             <input class="form-control" id="forum-edit-topic-title" name="title" maxlength="190" value="<?= e($topicEditTitle) ?>" required>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label" for="forum-edit-topic-content">Turinys</label>
                             <textarea class="form-control" id="forum-edit-topic-content" name="content" rows="8" maxlength="15000" required><?= e($topicEditContent) ?></textarea>
-                            <div class="form-text">Leidziamas BBCode: [b], [i], [u], [quote], [code], [url=...][/url]</div>
+                            <div class="form-text"><?= e(__('forum.allowed_bbcode')) ?></div>
                         </div>
 
-                        <button class="btn btn-primary">Issaugoti pakeitimus</button>
+                        <button class="btn btn-primary"><?= e(__('forum.save_changes')) ?></button>
                     </form>
                 </div>
             </div>
@@ -258,9 +258,9 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                         <img src="<?= escape_url(user_avatar_url($topic)) ?>" alt="" class="forum-avatar forum-avatar-lg mb-3">
                         <div class="fw-semibold">
                             <?php if (!empty($topic['user_id'])): ?>
-                                <a class="text-decoration-none" href="<?= user_profile_url((int)$topic['user_id']) ?>"><?= e($topic['username'] ?? 'Narys') ?></a>
+                                <a class="text-decoration-none" href="<?= user_profile_url((int)$topic['user_id']) ?>"><?= e($topic['username'] ?? __('member.none')) ?></a>
                             <?php else: ?>
-                                <?= e($topic['username'] ?? 'Svecias') ?>
+                                <?= e($topic['username'] ?? __('member.guest')) ?>
                             <?php endif; ?>
                         </div>
                         <div class="small text-secondary"><?= e(format_dt($topic['created_at'])) ?></div>
@@ -268,7 +268,7 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                 </aside>
                 <div class="forum-post-content">
                     <div class="forum-post-meta">
-                        <span class="badge text-bg-primary">Tema</span>
+                        <span class="badge text-bg-primary"><?= e(__('forum.topic_badge')) ?></span>
                     </div>
                     <div class="forum-post-body"><?= forum_format_body($topic['content']) ?></div>
                 </div>
@@ -284,9 +284,9 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                             <img src="<?= escape_url(user_avatar_url($reply)) ?>" alt="" class="forum-avatar forum-avatar-lg mb-3">
                             <div class="fw-semibold">
                                 <?php if (!empty($reply['user_id'])): ?>
-                                    <a class="text-decoration-none" href="<?= user_profile_url((int)$reply['user_id']) ?>"><?= e($reply['username'] ?? 'Narys') ?></a>
+                                    <a class="text-decoration-none" href="<?= user_profile_url((int)$reply['user_id']) ?>"><?= e($reply['username'] ?? __('member.none')) ?></a>
                                 <?php else: ?>
-                                    <?= e($reply['username'] ?? 'Svecias') ?>
+                                    <?= e($reply['username'] ?? __('member.guest')) ?>
                                 <?php endif; ?>
                             </div>
                             <div class="small text-secondary"><?= e(format_dt($reply['created_at'])) ?></div>
@@ -298,17 +298,17 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                     <div class="forum-post-content">
                         <div class="forum-post-meta d-flex justify-content-between align-items-center gap-3 flex-wrap">
                             <div class="d-flex align-items-center gap-2 flex-wrap">
-                                <span class="badge text-bg-secondary">Atsakymas</span>
+                                <span class="badge text-bg-secondary"><?= e(__('forum.reply_badge')) ?></span>
                             </div>
                             <?php if ($canModerateReply): ?>
                                 <div class="d-flex flex-wrap gap-2">
-                                    <a class="btn btn-sm btn-outline-primary" href="<?= forum_topic_url((int)$topic['id'], $page) . '&edit_reply=' . (int)$reply['id'] . '#forum-reply-' . (int)$reply['id'] ?>">Redaguoti</a>
+                                    <a class="btn btn-sm btn-outline-primary" href="<?= forum_topic_url((int)$topic['id'], $page) . '&edit_reply=' . (int)$reply['id'] . '#forum-reply-' . (int)$reply['id'] ?>"><?= e(__('forum.edit')) ?></a>
                                     <form method="post" class="d-inline">
                                         <?= csrf_field() ?>
                                         <input type="hidden" name="forum_action" value="delete_reply">
                                         <input type="hidden" name="reply_id" value="<?= (int)$reply['id'] ?>">
                                         <input type="hidden" name="reply_page" value="<?= (int)$page ?>">
-                                        <button class="btn btn-sm btn-outline-danger" type="submit" data-confirm-message="Ar tikrai norite istrinti si atsakyma?">Istrinti</button>
+                                        <button class="btn btn-sm btn-outline-danger" type="submit" data-confirm-message="<?= e(__('forum.reply.delete.confirm')) ?>"><?= e(__('forum.reply.delete')) ?></button>
                                     </form>
                                 </div>
                             <?php endif; ?>
@@ -333,13 +333,13 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                                     </div>
 
                                     <div class="mb-3">
-                                        <label class="form-label" for="forum-edit-reply-content-<?= (int)$reply['id'] ?>">Atsakymo turinys</label>
+                                        <label class="form-label" for="forum-edit-reply-content-<?= (int)$reply['id'] ?>"><?= e(__('forum.reply.body')) ?></label>
                                         <textarea class="form-control" id="forum-edit-reply-content-<?= (int)$reply['id'] ?>" name="content" rows="7" maxlength="15000" required><?= e($replyEditContent) ?></textarea>
                                     </div>
 
                                     <div class="d-flex flex-wrap gap-2">
-                                        <button class="btn btn-primary">Issaugoti atsakyma</button>
-                                        <a class="btn btn-outline-secondary" href="<?= forum_topic_url((int)$topic['id'], $page) . '#forum-reply-' . (int)$reply['id'] ?>">Atmesti</a>
+                                        <button class="btn btn-primary"><?= e(__('forum.reply.save')) ?></button>
+                                        <a class="btn btn-outline-secondary" href="<?= forum_topic_url((int)$topic['id'], $page) . '#forum-reply-' . (int)$reply['id'] ?>"><?= e(__('forum.cancel')) ?></a>
                                     </div>
                                 </form>
                             </div>
@@ -357,16 +357,16 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
         <?php endif; ?>
 
         <div class="card forum-editor-card">
-            <div class="card-header">Atsakyti i tema</div>
+            <div class="card-header"><?= e(__('forum.reply_to_topic')) ?></div>
             <div class="card-body">
                 <?php if ($replyError): ?>
                     <div class="alert alert-danger"><?= e($replyError) ?></div>
                 <?php endif; ?>
 
                 <?php if ((int)$topic['is_locked'] === 1): ?>
-                    <div class="alert alert-warning mb-0">Tema uzrakinta. Nauji atsakymai negalimi.</div>
+                    <div class="alert alert-warning mb-0"><?= e(__('forum.reply_locked')) ?></div>
                 <?php elseif (!current_user()): ?>
-                    <div class="alert alert-info mb-0">Atsakyti gali tik prisijunge nariai. <a href="<?= public_path('login.php') ?>">Prisijunkite</a>.</div>
+                    <div class="alert alert-info mb-0"><?= e(__('forum.reply_login')) ?> <a href="<?= public_path('login.php') ?>"><?= e(__('nav.login')) ?></a>.</div>
                 <?php else: ?>
                     <form method="post">
                         <?= csrf_field() ?>
@@ -380,12 +380,12 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label" for="forum-reply-content">Jusu atsakymas</label>
+                            <label class="form-label" for="forum-reply-content"><?= e(__('forum.your_reply')) ?></label>
                             <textarea class="form-control" id="forum-reply-content" name="content" rows="7" maxlength="15000" required><?= e($replyContent) ?></textarea>
-                            <div class="form-text">Leidziamas BBCode: [b], [i], [u], [quote], [code], [url=...][/url]</div>
+                            <div class="form-text"><?= e(__('forum.allowed_bbcode')) ?></div>
                         </div>
 
-                        <button class="btn btn-primary">Atsakyti</button>
+                        <button class="btn btn-primary"><?= e(__('forum.reply')) ?></button>
                     </form>
                 <?php endif; ?>
             </div>

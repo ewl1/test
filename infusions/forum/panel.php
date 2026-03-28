@@ -3,12 +3,12 @@ $topics = forum_recent_topics(forum_panel_topics_limit());
 ?>
 <div class="forum-panel">
     <div class="d-flex justify-content-between align-items-center gap-2 mb-3">
-        <strong>Paskutines temos</strong>
-        <a class="small text-decoration-none" href="<?= forum_index_url() ?>">Visas forumas</a>
+        <strong>Paskutinės temos</strong>
+        <a class="small text-decoration-none" href="<?= forum_index_url() ?>"><?= e(__('forum.all')) ?></a>
     </div>
 
     <?php if (!$topics): ?>
-        <div class="text-secondary small">Forume temu dar nera.</div>
+        <div class="text-secondary small">Forume temų dar nėra.</div>
     <?php else: ?>
         <div class="vstack gap-3">
             <?php foreach ($topics as $topic): ?>
@@ -21,9 +21,9 @@ $topics = forum_recent_topics(forum_panel_topics_limit());
                             </a>
                             <div class="small text-secondary">
                                 <?php if (!empty($topic['user_id'])): ?>
-                                    <a class="text-decoration-none" href="<?= user_profile_url((int)$topic['user_id']) ?>"><?= e($topic['username'] ?? 'Narys') ?></a>
+                                    <a class="text-decoration-none" href="<?= user_profile_url((int)$topic['user_id']) ?>"><?= e($topic['username'] ?? __('member.none')) ?></a>
                                 <?php else: ?>
-                                    <?= e($topic['username'] ?? 'Svečias') ?>
+                                    <?= e($topic['username'] ?? __('member.guest')) ?>
                                 <?php endif; ?>
                                 · <?= e(format_dt($topic['last_post_at'] ?: $topic['created_at'])) ?>
                             </div>

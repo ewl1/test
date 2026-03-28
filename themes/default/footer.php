@@ -13,4 +13,8 @@
 <script src="<?= asset_path('includes/js/bootstrap.bundle.min.js') ?>"></script>
 <script src="<?= asset_path('includes/js/Sortable.min.js') ?>"></script>
 <script src="<?= asset_path('includes/js/app.js') ?>"></script>
-</body></html>
+<?php foreach (get_registered_page_scripts() as $scriptPath): ?>
+<script src="<?= asset_path($scriptPath) ?>"></script>
+<?php endforeach; ?>
+</body>
+</html>

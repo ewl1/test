@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf();
     if (($_POST['action'] ?? '') === 'clear') {
         file_put_contents($logPath, '');
-        flash('success', 'Klaidu logas isvalytas.');
+        flash('success', 'Klaidų žurnalas išvalytas.');
         redirect('error-logs.php');
     }
 }
@@ -26,16 +26,16 @@ if ($search !== '') {
 include THEMES . 'default/admin_header.php';
 ?>
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3 mb-0">Error log</h1>
+    <h1 class="h3 mb-0"><?= e(__('admin.error_log')) ?></h1>
     <div class="d-flex gap-2">
         <form method="get" class="d-flex gap-2">
-            <input class="form-control" name="q" placeholder="Ieskoti loge" value="<?= e($search) ?>">
-            <button class="btn btn-outline-secondary">Ieskoti</button>
+            <input class="form-control" name="q" placeholder="Ieškoti žurnale" value="<?= e($search) ?>">
+            <button class="btn btn-outline-secondary">Ieškoti</button>
         </form>
         <form method="post">
             <?= csrf_field() ?>
             <input type="hidden" name="action" value="clear">
-            <button class="btn btn-outline-danger" data-confirm-message="Isvalyti klaidu loga?">Isvalyti</button>
+            <button class="btn btn-outline-danger" data-confirm-message="Išvalyti klaidų žurnalą?">Išvalyti</button>
         </form>
     </div>
 </div>
@@ -48,14 +48,14 @@ include THEMES . 'default/admin_header.php';
     <div class="card-body">
         <div class="small text-secondary mb-3">Failas: <?= e($logPath) ?></div>
         <?php if (!$lines): ?>
-            <div class="text-secondary">Klaidu logas tuscias.</div>
+            <div class="text-secondary">Klaidų žurnalas tuščias.</div>
         <?php else: ?>
             <div class="table-responsive">
                 <table class="table table-striped align-middle mb-0 small admin-log-table">
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Irasas</th>
+                            <th>Įrašas</th>
                         </tr>
                     </thead>
                     <tbody>

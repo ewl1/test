@@ -1,0 +1,41 @@
+.shoutbox-composer-card,
+.shoutbox-messages-card {
+    border-color: #d7e8ff;
+}
+
+.shoutbox-toolbar .btn,
+.shoutbox-smiley-toolbar .btn {
+    min-width: 44px;
+}
+
+.shoutbox-editor-textarea {
+    resize: vertical;
+}
+
+.shoutbox-message-item:last-child {
+    border-bottom: 0 !important;
+}
+
+.shoutbox-message-body {
+    line-height: 1.7;
+}
+
+.shoutbox-message-body blockquote {
+    background: #f8fafc;
+    border-radius: 14px;
+    padding: 0.85rem 1rem;
+}
+
+.shoutbox-smiley {
+    font-size: 1.15em;
+    line-height: 1;
+}
+
+.shoutbox-panel-item + .shoutbox-panel-item {
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--site-border);
+}
+
+.shoutbox-panel-excerpt {
+    line-height: 1.55;
+}

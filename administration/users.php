@@ -133,6 +133,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $roles = $GLOBALS['pdo']->query("SELECT * FROM roles ORDER BY level DESC")->fetchAll();
 $users = $GLOBALS['pdo']->query("SELECT u.*, r.name AS role_name FROM users u LEFT JOIN roles r ON r.id = u.role_id ORDER BY u.id DESC")->fetchAll();
+$statusLabels = [
+    'active' => 'Aktyvus',
+    'inactive' => 'Neaktyvus',
+    'blocked' => 'Blokuotas',
+    'deleted' => 'Ištrintas',
+];
 
 include THEMES . 'default/admin_header.php';
 ?>
@@ -150,7 +156,7 @@ include THEMES . 'default/admin_header.php';
       <div class="col-md-3"><label class="form-label">El. paštas</label><input class="form-control" type="email" name="email"></div>
       <div class="col-md-2"><label class="form-label">Slaptažodis</label><input class="form-control" type="password" name="password"></div>
       <div class="col-md-2"><label class="form-label">Rolė</label><select class="form-select" name="role_id"><?php foreach ($roles as $role): ?><option value="<?= (int)$role['id'] ?>"><?= e($role['name']) ?></option><?php endforeach; ?></select></div>
-      <div class="col-md-2"><label class="form-label">Būsena</label><select class="form-select" name="status"><?php foreach (['active', 'inactive', 'blocked'] as $status): ?><option value="<?= $status ?>"><?= $status ?></option><?php endforeach; ?></select></div>
+      <div class="col-md-2"><label class="form-label">Būsena</label><select class="form-select" name="status"><?php foreach (['active', 'inactive', 'blocked'] as $status): ?><option value="<?= $status ?>"><?= e($statusLabels[$status] ?? $status) ?></option><?php endforeach; ?></select></div>
       <div class="col-12"><button class="btn btn-primary">Sukurti</button></div>
     </form>
   </div>
@@ -159,7 +165,7 @@ include THEMES . 'default/admin_header.php';
 <div class="card">
   <div class="table-responsive">
     <table class="table align-middle mb-0">
-      <thead><tr><th>ID</th><th>Vartotojas</th><th>El. paštas</th><th>Rolė</th><th>Status</th><th>Aktyvus</th><th></th></tr></thead>
+      <thead><tr><th>ID</th><th>Vartotojas</th><th>El. paštas</th><th>Rolė</th><th>Statusas</th><th>Aktyvus</th><th></th></tr></thead>
       <tbody>
       <?php foreach ($users as $user): ?>
         <tr>
@@ -167,7 +173,7 @@ include THEMES . 'default/admin_header.php';
           <td><span class="fw-semibold"><?= e($user['username']) ?></span></td>
           <td><span class="admin-table-note"><?= e($user['email']) ?></span></td>
           <td><span class="fw-semibold"><?= e($user['role_name'] ?? '-') ?></span></td>
-          <td><span class="badge text-bg-secondary"><?= e($user['status']) ?></span></td>
+          <td><span class="badge text-bg-secondary"><?= e($statusLabels[$user['status']] ?? $user['status']) ?></span></td>
           <td><span class="admin-table-note"><?= (int)$user['is_active'] ? 'Taip' : 'Ne' ?></span></td>
           <td><button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#user-<?= (int)$user['id'] ?>">Valdyti</button></td>
         </tr>
@@ -187,10 +193,10 @@ include THEMES . 'default/admin_header.php';
                   <?php endforeach; ?>
                 </select>
               </div>
-              <div class="col-md-1"><label class="form-label">Status</label>
+              <div class="col-md-1"><label class="form-label">Statusas</label>
                 <select class="form-select" name="status">
                   <?php foreach (['active', 'inactive', 'blocked', 'deleted'] as $status): ?>
-                    <option value="<?= $status ?>" <?= $user['status'] === $status ? 'selected' : '' ?>><?= $status ?></option>
+                    <option value="<?= $status ?>" <?= $user['status'] === $status ? 'selected' : '' ?>><?= e($statusLabels[$status] ?? $status) ?></option>
                   <?php endforeach; ?>
                 </select>
               </div>
@@ -200,7 +206,7 @@ include THEMES . 'default/admin_header.php';
                   <option value="0" <?= (int)$user['is_active'] === 0 ? 'selected' : '' ?>>0</option>
                 </select>
               </div>
-              <div class="col-md-1 d-flex gap-2"><button class="btn btn-primary">Save</button></div>
+              <div class="col-md-1 d-flex gap-2"><button class="btn btn-primary">Išsaugoti</button></div>
             </form>
 
             <form method="post" class="d-flex flex-wrap gap-2">

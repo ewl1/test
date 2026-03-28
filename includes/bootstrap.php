@@ -97,9 +97,11 @@ if (PHP_SAPI !== 'cli') {
 
 require_once INCLUDES . 'db.php';
 require_once INCLUDES . 'system.php';
+require_once INCLUDES . 'assets.php';
 require_once INCLUDES . 'formatting.php';
 require_once INCLUDES . 'security.php';
 require_once INCLUDES . 'settings.php';
+require_once INCLUDES . 'locale.php';
 require_once INCLUDES . 'audit.php';
 require_once INCLUDES . 'ratelimit.php';
 require_once INCLUDES . 'auth.php';

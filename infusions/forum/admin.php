@@ -36,9 +36,9 @@ $postCount = (int)$GLOBALS['pdo']->query('SELECT COUNT(*) FROM ' . forum_table_p
 <div class="d-flex justify-content-between align-items-center mb-3 gap-3 flex-wrap">
     <div>
         <h2 class="h4 mb-1">Forumo valdymas</h2>
-        <p class="text-secondary mb-0">Kurti kategorijas, forumus ir subforumus, kurie iskart matomi viesame puslapyje.</p>
+        <p class="text-secondary mb-0">Kurti kategorijas, forumus ir subforumus, kurie iškart matomi viešame puslapyje.</p>
     </div>
-    <a class="btn btn-outline-primary" href="<?= forum_index_url() ?>" target="_blank" rel="noopener">Atidaryti foruma</a>
+    <a class="btn btn-outline-primary" href="<?= forum_index_url() ?>" target="_blank" rel="noopener">Atidaryti forumą</a>
 </div>
 
 <?php if ($message): ?>
@@ -85,7 +85,7 @@ $postCount = (int)$GLOBALS['pdo']->query('SELECT COUNT(*) FROM ' . forum_table_p
                         <input class="form-control" name="title" maxlength="190" required>
                     </div>
                     <div class="col-12">
-                        <label class="form-label">Aprasymas</label>
+                        <label class="form-label">Aprašymas</label>
                         <textarea class="form-control" name="description" rows="3"></textarea>
                     </div>
                     <div class="col-md-4">
@@ -93,7 +93,7 @@ $postCount = (int)$GLOBALS['pdo']->query('SELECT COUNT(*) FROM ' . forum_table_p
                         <input class="form-control" type="number" name="sort_order" value="1">
                     </div>
                     <div class="col-12">
-                        <button class="btn btn-primary">Sukurti kategorija</button>
+                        <button class="btn btn-primary">Sukurti kategoriją</button>
                     </div>
                 </form>
             </div>
@@ -115,9 +115,9 @@ $postCount = (int)$GLOBALS['pdo']->query('SELECT COUNT(*) FROM ' . forum_table_p
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Parent forumas</label>
+                        <label class="form-label">Tėvinis forumas</label>
                         <select class="form-select" name="parent_id">
-                            <option value="0">Be parent (paprastas forumas)</option>
+                            <option value="0">Be tėvinio forumo (paprastas forumas)</option>
                             <?php foreach ($forumOptions as $forum): ?>
                                 <?php if ((int)$forum['parent_id'] === 0): ?>
                                     <option value="<?= (int)$forum['id'] ?>"><?= e($forum['category_title'] . ' / ' . $forum['title']) ?></option>
@@ -130,7 +130,7 @@ $postCount = (int)$GLOBALS['pdo']->query('SELECT COUNT(*) FROM ' . forum_table_p
                         <input class="form-control" name="title" maxlength="190" required>
                     </div>
                     <div class="col-12">
-                        <label class="form-label">Aprasymas</label>
+                        <label class="form-label">Aprašymas</label>
                         <textarea class="form-control" name="description" rows="3"></textarea>
                     </div>
                     <div class="col-md-4">
@@ -138,7 +138,7 @@ $postCount = (int)$GLOBALS['pdo']->query('SELECT COUNT(*) FROM ' . forum_table_p
                         <input class="form-control" type="number" name="sort_order" value="1">
                     </div>
                     <div class="col-12">
-                        <button class="btn btn-primary">Sukurti foruma</button>
+                        <button class="btn btn-primary">Sukurti forumą</button>
                     </div>
                 </form>
             </div>
@@ -147,10 +147,10 @@ $postCount = (int)$GLOBALS['pdo']->query('SELECT COUNT(*) FROM ' . forum_table_p
 
     <div class="col-xl-7">
         <div class="card h-100">
-            <div class="card-header">Esama struktura</div>
+            <div class="card-header">Esama struktūra</div>
             <div class="card-body">
                 <?php if (!$forumsByCategory): ?>
-                    <div class="text-secondary">Forumo struktura dar nesukurta.</div>
+                    <div class="text-secondary">Forumo struktūra dar nesukurta.</div>
                 <?php else: ?>
                     <div class="vstack gap-4">
                         <?php foreach ($forumsByCategory as $category): ?>
@@ -166,7 +166,7 @@ $postCount = (int)$GLOBALS['pdo']->query('SELECT COUNT(*) FROM ' . forum_table_p
                                 </div>
 
                                 <?php if (!$category['forums']): ?>
-                                    <div class="small text-secondary">Kategorijoje forumu dar nera.</div>
+                                    <div class="small text-secondary">Kategorijoje forumų dar nėra.</div>
                                 <?php else: ?>
                                     <div class="list-group">
                                         <?php foreach ($category['forums'] as $forum): ?>

@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $folder = trim((string)($_POST['folder'] ?? ''));
             $id = install_infusion_from_folder($folder);
             audit_log(current_user()['id'], 'infusion_install', 'infusions', $id, ['folder' => $folder]);
-            flash('success', 'Infusion įdiegta iš failų sistemos.');
+            flash('success', 'Infusion modulis įdiegtas iš failų sistemos.');
             redirect('infusions.php');
         }
 
@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $enabled = $action === 'enable' ? 1 : 0;
             $GLOBALS['pdo']->prepare("UPDATE infusions SET is_enabled = :e WHERE id = :id")->execute([':e' => $enabled, ':id' => $id]);
             audit_log(current_user()['id'], 'infusion_' . $action, 'infusions', $id);
-            flash('success', 'Infusion būsena pakeista.');
+            flash('success', 'Infusion modulio būsena pakeista.');
             redirect('infusions.php');
         }
 
@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = (int)($_POST['id'] ?? 0);
             $result = upgrade_infusion_by_id($id);
             $msg = !empty($result['upgraded'])
-                ? 'Infusion atnaujinta iš ' . $result['from'] . ' į ' . $result['to'] . (!empty($result['steps']) ? ' | steps: ' . implode(', ', $result['steps']) : '')
+                ? 'Infusion modulis atnaujintas iš ' . $result['from'] . ' į ' . $result['to'] . (!empty($result['steps']) ? ' | žingsniai: ' . implode(', ', $result['steps']) : '')
                 : 'Atnaujinimas nereikalingas. Versija ' . $result['to'];
             flash('success', $msg . '.');
             audit_log(current_user()['id'], 'infusion_upgrade', 'infusions', $id, $result);
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = (int)($_POST['id'] ?? 0);
             uninstall_infusion_by_id($id);
             audit_log(current_user()['id'], 'infusion_uninstall', 'infusions', $id);
-            flash('success', 'Infusion pašalinta.');
+            flash('success', 'Infusion modulis pašalintas.');
             redirect('infusions.php');
         }
     } catch (Throwable $e) {
@@ -58,14 +58,14 @@ foreach ($installed as $i) {
 
 include THEMES . 'default/admin_header.php';
 ?>
-<h1 class="h3 mb-3">Infusions lifecycle</h1>
+<h1 class="h3 mb-3"><?= e(__('infusions.title')) ?></h1>
 <?php if ($error): ?><div class="alert alert-danger"><?= e($error) ?></div><?php endif; ?>
 <?php if ($msg = flash('success')): ?><div class="alert alert-success"><?= e($msg) ?></div><?php endif; ?>
 
 <div class="row g-4">
     <div class="col-lg-5">
         <div class="card">
-            <div class="card-header">Failų sistemoje rastos infusions</div>
+            <div class="card-header"><?= e(__('infusions.available')) ?></div>
             <div class="table-responsive">
                 <table class="table align-middle mb-0">
                     <thead><tr><th>Folder</th><th>Pavadinimas</th><th>Versija</th><th></th></tr></thead>
@@ -80,13 +80,13 @@ include THEMES . 'default/admin_header.php';
                             <td><span class="admin-table-note"><?= e($meta['version'] ?? '0.0.0') ?></span></td>
                             <td>
                                 <?php if (isset($installedFolders[$folder])): ?>
-                                    <span class="badge text-bg-success">Installed</span>
+                                    <span class="badge text-bg-success"><?= e(__('infusions.installed_badge')) ?></span>
                                 <?php else: ?>
                                     <form method="post">
                                         <?= csrf_field() ?>
                                         <input type="hidden" name="action" value="install_folder">
                                         <input type="hidden" name="folder" value="<?= e($folder) ?>">
-                                        <button class="btn btn-sm btn-primary">Install</button>
+                                        <button class="btn btn-sm btn-primary"><?= e(__('infusions.install')) ?></button>
                                     </form>
                                 <?php endif; ?>
                             </td>
@@ -100,7 +100,7 @@ include THEMES . 'default/admin_header.php';
 
     <div class="col-lg-7">
         <div class="card">
-            <div class="card-header">Įdiegtos infusions</div>
+            <div class="card-header"><?= e(__('infusions.installed')) ?></div>
             <div class="table-responsive">
                 <table class="table align-middle mb-0">
                     <thead><tr><th>ID</th><th>Pavadinimas</th><th>Folder</th><th>Įdiegta</th><th>Manifest</th><th></th></tr></thead>
@@ -125,29 +125,29 @@ include THEMES . 'default/admin_header.php';
                                         <?= csrf_field() ?>
                                         <input type="hidden" name="id" value="<?= (int)$inf['id'] ?>">
                                         <?php if ((int)$inf['is_enabled']): ?>
-                                            <button class="btn btn-sm btn-outline-warning" name="action" value="disable">Disable</button>
+                                            <button class="btn btn-sm btn-outline-warning" name="action" value="disable"><?= e(__('infusions.disable')) ?></button>
                                         <?php else: ?>
-                                            <button class="btn btn-sm btn-outline-success" name="action" value="enable">Enable</button>
+                                            <button class="btn btn-sm btn-outline-success" name="action" value="enable"><?= e(__('infusions.enable')) ?></button>
                                         <?php endif; ?>
                                     </form>
                                     <?php if (version_compare($manifestVersion, $installedVersion, '>')): ?>
                                         <form method="post" class="d-inline">
                                             <?= csrf_field() ?>
                                             <input type="hidden" name="id" value="<?= (int)$inf['id'] ?>">
-                                            <button class="btn btn-sm btn-outline-primary" name="action" value="upgrade">Upgrade</button>
+                                            <button class="btn btn-sm btn-outline-primary" name="action" value="upgrade"><?= e(__('infusions.upgrade')) ?></button>
                                         </form>
                                     <?php endif; ?>
                                     <form method="post" class="d-inline">
                                         <?= csrf_field() ?>
                                         <input type="hidden" name="id" value="<?= (int)$inf['id'] ?>">
-                                        <button class="btn btn-sm btn-outline-danger" name="action" value="uninstall" data-confirm-message="Tikrai pašalinti infusion?">Uninstall</button>
+                                        <button class="btn btn-sm btn-outline-danger" name="action" value="uninstall" data-confirm-message="Tikrai pašalinti infusion modulį?"><?= e(__('infusions.uninstall')) ?></button>
                                     </form>
                                 </div>
                             </td>
                         </tr>
                     <?php endforeach; ?>
                     <?php if (!$installed): ?>
-                        <tr><td colspan="6" class="text-secondary">Kol kas nėra įdiegtų infusions.</td></tr>
+                        <tr><td colspan="6" class="text-secondary">Kol kas nėra įdiegtų infusion modulių.</td></tr>
                     <?php endif; ?>
                     </tbody>
                 </table>

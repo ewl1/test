@@ -64,8 +64,8 @@ $pages = max(1, (int)ceil($total / $perPage));
 include THEMES . 'default/admin_header.php';
 ?>
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3 mb-0">Audit log</h1>
-    <span class="badge text-bg-secondary"><?= (int)$total ?> irasai</span>
+    <h1 class="h3 mb-0"><?= e(__('audit.title')) ?></h1>
+    <span class="badge text-bg-secondary"><?= e(__('audit.records', ['count' => (int)$total])) ?></span>
 </div>
 
 <form method="get" class="card card-body mb-3">
@@ -76,7 +76,7 @@ include THEMES . 'default/admin_header.php';
         <div class="col-md-3"><input class="form-control" name="ip" placeholder="IP" value="<?= e($filters['ip']) ?>"></div>
         <div class="col-12 d-flex gap-2">
             <button class="btn btn-primary">Filtruoti</button>
-            <a class="btn btn-outline-secondary" href="<?= public_path('administration/audit-logs.php') ?>">Isvalyti</a>
+            <a class="btn btn-outline-secondary" href="<?= public_path('administration/audit-logs.php') ?>">Išvalyti</a>
         </div>
     </div>
 </form>
@@ -93,7 +93,7 @@ include THEMES . 'default/admin_header.php';
                     <th>Objektas</th>
                     <th>IP</th>
                     <th>URL</th>
-                    <th>Detales</th>
+                    <th><?= e(__('audit.details')) ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -101,7 +101,7 @@ include THEMES . 'default/admin_header.php';
                 <tr>
                     <td><?= (int)$log['id'] ?></td>
                     <td><?= e(format_dt($log['created_at'])) ?></td>
-                    <td><?= e($log['username'] ?? 'Svecias') ?></td>
+                    <td><?= e($log['username'] ?? __('member.guest')) ?></td>
                     <td><code><?= e($log['action']) ?></code></td>
                     <td><?= e(trim(($log['entity_type'] ?? '') . ' #' . ($log['entity_id'] ?? ''), ' #')) ?></td>
                     <td><?= e($log['ip_text']) ?></td>
@@ -109,7 +109,7 @@ include THEMES . 'default/admin_header.php';
                     <td class="min-width-260">
                         <?php if (!empty($log['details'])): ?>
                             <details class="audit-details">
-                                <summary>Perziureti</summary>
+                                <summary><?= e(__('audit.view')) ?></summary>
                                 <pre class="small mt-2 mb-0 admin-log-entry"><?= e(audit_pretty_details($log['details'])) ?></pre>
                             </details>
                         <?php else: ?>
@@ -119,7 +119,7 @@ include THEMES . 'default/admin_header.php';
                 </tr>
             <?php endforeach; ?>
             <?php if (!$logs): ?>
-                <tr><td colspan="8" class="text-secondary">Audit irasu nerasta.</td></tr>
+                <tr><td colspan="8" class="text-secondary"><?= e(__('audit.empty')) ?></td></tr>
             <?php endif; ?>
             </tbody>
         </table>

@@ -352,7 +352,7 @@ function save_profile_rating($profileUserId, $authorUserId, $rating)
         return [false, 'Prisijungimas reikalingas.'];
     }
     if (!in_array($rating, profile_rating_options(), true)) {
-        return [false, 'Pasirinktas neteisingas ivertinimas.'];
+        return [false, 'Pasirinktas neteisingas įvertinimas.'];
     }
     if (!fetch_public_user_profile($profileUserId)) {
         return [false, 'Profilis nerastas.'];
@@ -373,7 +373,7 @@ function save_profile_rating($profileUserId, $authorUserId, $rating)
         'rating' => $rating,
     ]);
 
-    return [true, 'Ivertinimas issaugotas.'];
+    return [true, 'Įvertinimas išsaugotas.'];
 }
 
 function count_profile_comments($profileUserId)
@@ -485,7 +485,7 @@ function create_profile_comment($profileUserId, $authorUserId, $content)
         return [false, 'Profilis nerastas.', null];
     }
     if ($content === '') {
-        return [false, 'Komentaras negali buti tuscias.', null];
+        return [false, 'Komentaras negali būti tuščias.', null];
     }
 
     $stmt = $GLOBALS['pdo']->prepare('
@@ -515,7 +515,7 @@ function delete_profile_comment($commentId, $actor = null)
         return [false, 'Komentaras nerastas.', null];
     }
     if (!can_manage_profile_comment($comment, $actor)) {
-        return [false, 'Nepakanka teisiu istrinti komentara.', null];
+        return [false, 'Nepakanka teisių ištrinti komentaro.', null];
     }
 
     $stmt = $GLOBALS['pdo']->prepare('DELETE FROM ' . profile_comment_table() . ' WHERE id = :id');
@@ -526,7 +526,7 @@ function delete_profile_comment($commentId, $actor = null)
         'profile_user_id' => (int)$comment['profile_user_id'],
     ]);
 
-    return [true, 'Komentaras istrintas.', (int)$comment['profile_user_id']];
+    return [true, 'Komentaras ištrintas.', (int)$comment['profile_user_id']];
 }
 
 function render_profile_rating_stars($averageRating, $ratingCount)
@@ -535,7 +535,7 @@ function render_profile_rating_stars($averageRating, $ratingCount)
     $filled = (int)round($averageRating);
     $label = $ratingCount > 0
         ? number_format($averageRating, 1) . ' / 5'
-        : 'Kol kas neivertinta';
+        : 'Kol kas neįvertinta';
 
     $html = '<span class="rating-stars" aria-label="' . e($label) . '">';
     foreach (profile_rating_options() as $option) {

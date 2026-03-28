@@ -2,7 +2,8 @@
 if (!defined('IN_ADMIN')) {
     define('IN_ADMIN', true);
 }
-$siteTitle = setting('site_name', 'Mini CMS');
+
+$siteTitle = setting('site_name', __('site.title'));
 $me = current_user();
 $can = function ($permission) use ($me) {
     return $me && has_permission($GLOBALS['pdo'], $me['id'], $permission);
@@ -11,15 +12,18 @@ $canUsers = $can('users.view') || $can('users.manage');
 $canDiagnostics = $can('settings.manage') || $can('logs.view');
 ?>
 <!DOCTYPE html>
-<html lang="lt">
+<html lang="<?= e(site_locale()) ?>">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title><?= e($siteTitle) ?> - Administracija</title>
+<title><?= e($siteTitle) ?> - <?= e(__('admin.title')) ?></title>
 
 <link rel="stylesheet" href="<?= asset_path('themes/default/bootstrap.min.css') ?>">
 <link rel="stylesheet" href="<?= asset_path('themes/default/admin.css') ?>">
 <link rel="stylesheet" href="<?= asset_path('themes/default/css/all.min.css') ?>">
+<?php foreach (get_registered_page_styles() as $stylePath): ?>
+<link rel="stylesheet" href="<?= asset_path($stylePath) ?>">
+<?php endforeach; ?>
 </head>
 <body>
 
@@ -27,10 +31,10 @@ $canDiagnostics = $can('settings.manage') || $can('logs.view');
 <div class="container-fluid">
 
 <a class="navbar-brand" href="<?= public_path('administration/index.php') ?>">
-<i class="fa-solid fa-screwdriver-wrench"></i> Admin
+<i class="fa-solid fa-screwdriver-wrench"></i> <?= e(__('admin.title')) ?>
 </a>
 
-<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav">
+<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav" aria-label="<?= e(__('admin.title')) ?>">
 <span class="navbar-toggler-icon"></span>
 </button>
 
@@ -39,14 +43,14 @@ $canDiagnostics = $can('settings.manage') || $can('logs.view');
 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 <li class="nav-item">
 <a class="nav-link" href="<?= public_path('administration/index.php') ?>">
-<i class="fa-solid fa-gauge"></i> Dashboard
+<i class="fa-solid fa-gauge"></i> <?= e(__('admin.dashboard')) ?>
 </a>
 </li>
 
 <?php if ($canUsers): ?>
 <li class="nav-item">
 <a class="nav-link" href="<?= public_path('administration/users.php') ?>">
-<i class="fa-solid fa-users"></i> Nariai
+<i class="fa-solid fa-users"></i> <?= e(__('nav.admin.members')) ?>
 </a>
 </li>
 <?php endif; ?>
@@ -54,7 +58,7 @@ $canDiagnostics = $can('settings.manage') || $can('logs.view');
 <?php if ($can('roles.manage')): ?>
 <li class="nav-item">
 <a class="nav-link" href="<?= public_path('administration/roles.php') ?>">
-<i class="fa-solid fa-user-shield"></i> Rolės
+<i class="fa-solid fa-user-shield"></i> <?= e(__('nav.admin.roles')) ?>
 </a>
 </li>
 <?php endif; ?>
@@ -62,7 +66,7 @@ $canDiagnostics = $can('settings.manage') || $can('logs.view');
 <?php if ($can('permissions.manage')): ?>
 <li class="nav-item">
 <a class="nav-link" href="<?= public_path('administration/permissions.php') ?>">
-<i class="fa-solid fa-key"></i> Leidimai
+<i class="fa-solid fa-key"></i> <?= e(__('nav.admin.permissions')) ?>
 </a>
 </li>
 <?php endif; ?>
@@ -70,7 +74,7 @@ $canDiagnostics = $can('settings.manage') || $can('logs.view');
 <?php if ($can('audit.view')): ?>
 <li class="nav-item">
 <a class="nav-link" href="<?= public_path('administration/audit-logs.php') ?>">
-<i class="fa-solid fa-clipboard-list"></i> Audit
+<i class="fa-solid fa-clipboard-list"></i> <?= e(__('admin.audit')) ?>
 </a>
 </li>
 <?php endif; ?>
@@ -78,7 +82,7 @@ $canDiagnostics = $can('settings.manage') || $can('logs.view');
 <?php if ($can('logs.view')): ?>
 <li class="nav-item">
 <a class="nav-link" href="<?= public_path('administration/error-logs.php') ?>">
-<i class="fa-solid fa-triangle-exclamation"></i> Error Log
+<i class="fa-solid fa-triangle-exclamation"></i> <?= e(__('admin.error_log')) ?>
 </a>
 </li>
 <?php endif; ?>
@@ -86,7 +90,7 @@ $canDiagnostics = $can('settings.manage') || $can('logs.view');
 <?php if ($canDiagnostics): ?>
 <li class="nav-item">
 <a class="nav-link" href="<?= public_path('administration/diagnostics.php') ?>">
-<i class="fa-solid fa-stethoscope"></i> Diagnostika
+<i class="fa-solid fa-stethoscope"></i> <?= e(__('nav.admin.diagnostics')) ?>
 </a>
 </li>
 <?php endif; ?>
@@ -94,7 +98,7 @@ $canDiagnostics = $can('settings.manage') || $can('logs.view');
 <?php if ($can('panels.manage')): ?>
 <li class="nav-item">
 <a class="nav-link" href="<?= public_path('administration/panels.php') ?>">
-<i class="fa-solid fa-table-columns"></i> Panelės
+<i class="fa-solid fa-table-columns"></i> <?= e(__('nav.admin.panels')) ?>
 </a>
 </li>
 <?php endif; ?>
@@ -102,7 +106,7 @@ $canDiagnostics = $can('settings.manage') || $can('logs.view');
 <?php if ($can('infusions.manage')): ?>
 <li class="nav-item">
 <a class="nav-link" href="<?= public_path('administration/infusions.php') ?>">
-<i class="fa-solid fa-puzzle-piece"></i> Infusions
+<i class="fa-solid fa-puzzle-piece"></i> <?= e(__('nav.admin.infusions')) ?>
 </a>
 </li>
 <?php endif; ?>
@@ -117,14 +121,14 @@ $canDiagnostics = $can('settings.manage') || $can('logs.view');
 
 <li class="nav-item">
 <a class="nav-link" href="<?= public_path('index.php') ?>">
-<i class="fa-solid fa-globe"></i> Svetainė
+<i class="fa-solid fa-globe"></i> <?= e(__('admin.site')) ?>
 </a>
 </li>
 
 <li class="nav-item">
 <form method="post" action="<?= public_path('logout.php') ?>" class="mb-0">
 <?= csrf_field() ?>
-<button class="nav-link btn btn-link border-0 p-0" type="submit" title="Atsijungti">
+<button class="nav-link btn btn-link border-0 p-0" type="submit" title="<?= e(__('admin.logout')) ?>">
 <i class="fa-solid fa-right-from-bracket"></i>
 </button>
 </form>

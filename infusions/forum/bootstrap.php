@@ -1,4 +1,10 @@
 <?php
+function forum_register_assets()
+{
+    register_page_style('infusions/forum/assets/css/forum.css');
+    register_page_script('infusions/forum/assets/js/forum.js');
+}
+
 function forum_table_categories()
 {
     return 'infusion_forum_categories';
@@ -293,7 +299,7 @@ function forum_seed_defaults()
         ':category_id' => $categoryId,
         ':title' => $forumTitle,
         ':slug' => $forumSlug,
-        ':description' => 'Prisistatykite bendruomenei ir pradekite pokalbi.',
+            ':description' => 'Prisistatykite bendruomenei ir pradėkite pokalbį.',
         ':sort_order' => 1,
     ]);
     $forumIdStmt = $GLOBALS['pdo']->prepare('SELECT id FROM ' . forum_table_forums() . ' WHERE slug = :slug LIMIT 1');
@@ -303,7 +309,7 @@ function forum_seed_defaults()
         return;
     }
 
-    $subforumTitle = 'Naujoku zona';
+    $subforumTitle = 'Naujokų zona';
     $subforumSlug = 'naujoku-zona';
     $stmt = $GLOBALS['pdo']->prepare('
         INSERT IGNORE INTO ' . forum_table_forums() . ' (category_id, parent_id, title, slug, description, sort_order, is_active, created_at)
@@ -324,7 +330,7 @@ function forum_seed_defaults()
         return;
     }
 
-    $topicTitle = 'Sveiki atvyke i foruma';
+    $topicTitle = 'Sveiki atvykę į forumą';
     $topicSlug = 'sveiki-atvyke-i-foruma';
     $stmt = $GLOBALS['pdo']->prepare('
         INSERT IGNORE INTO ' . forum_table_topics() . ' (forum_id, user_id, title, slug, content, views, is_locked, is_pinned, created_at, updated_at, last_post_at, last_post_user_id)
@@ -335,7 +341,7 @@ function forum_seed_defaults()
         ':user_id' => $defaultUserId,
         ':title' => $topicTitle,
         ':slug' => $topicSlug,
-        ':content' => "Sveiki atvyke i nauja foruma.\n\nNaudokite [b]BBCode[/b], smailus :) ir drasiai kurkite savo temas.",
+        ':content' => "Sveiki atvykę į naują forumą.\n\nNaudokite [b]BBCode[/b], smailus :) ir drąsiai kurkite savo temas.",
         ':last_post_user_id' => $defaultUserId,
     ]);
 }
@@ -670,7 +676,7 @@ function forum_create_category($title, $description, $sortOrder = 0)
     $sortOrder = (int)$sortOrder;
 
     if (mb_strlen($title) < 2 || mb_strlen($title) > 190) {
-        return [false, 'Kategorijos pavadinimas turi buti nuo 2 iki 190 simboliu.'];
+        return [false, 'Kategorijos pavadinimas turi būti nuo 2 iki 190 simbolių.'];
     }
 
     $slug = forum_unique_slug(forum_table_categories(), $title, 'kategorija');
@@ -703,7 +709,7 @@ function forum_create_forum($categoryId, $parentId, $title, $description, $sortO
     $sortOrder = (int)$sortOrder;
 
     if (mb_strlen($title) < 2 || mb_strlen($title) > 190) {
-        return [false, 'Forumo pavadinimas turi buti nuo 2 iki 190 simboliu.'];
+        return [false, 'Forumo pavadinimas turi būti nuo 2 iki 190 simbolių.'];
     }
 
     $categoryStmt = $GLOBALS['pdo']->prepare('SELECT id FROM ' . forum_table_categories() . ' WHERE id = :id AND is_active = 1 LIMIT 1');
@@ -726,7 +732,7 @@ function forum_create_forum($categoryId, $parentId, $title, $description, $sortO
         }
 
         if ((int)$parent['parent_id'] > 0) {
-            return [false, 'Leidziamas tik vienas subforumu lygis.'];
+            return [false, 'Leidžiamas tik vienas subforumų lygis.'];
         }
 
         $categoryId = (int)$parent['category_id'];
@@ -760,7 +766,7 @@ function forum_create_topic($forumId, $title, $content)
 
     $user = current_user();
     if (!$user) {
-        return [false, 'Tema gali kurti tik prisijunge nariai.', null];
+        return [false, 'Temą gali kurti tik prisijungę nariai.', null];
     }
 
     $forum = forum_get_forum($forumId);
@@ -772,10 +778,10 @@ function forum_create_topic($forumId, $title, $content)
     $content = forum_prepare_body($content, 15000);
 
     if (mb_strlen($title) < 3 || mb_strlen($title) > 190) {
-        return [false, 'Temos pavadinimas turi buti nuo 3 iki 190 simboliu.', null];
+        return [false, 'Temos pavadinimas turi būti nuo 3 iki 190 simbolių.', null];
     }
     if ($content === '') {
-        return [false, 'Temos turinys negali buti tuscias.', null];
+        return [false, 'Temos turinys negali būti tuščias.', null];
     }
 
     $slug = forum_unique_slug(forum_table_topics(), $title, 'tema', 0, 'forum_id = :forum_id', [
@@ -810,7 +816,7 @@ function forum_create_reply($topicId, $content)
 
     $user = current_user();
     if (!$user) {
-        return [false, 'Atsakyti gali tik prisijunge nariai.', null];
+        return [false, 'Atsakyti gali tik prisijungę nariai.', null];
     }
 
     $topic = forum_get_topic($topicId);
@@ -818,12 +824,12 @@ function forum_create_reply($topicId, $content)
         return [false, 'Tema nerasta.', null];
     }
     if ((int)$topic['is_locked'] === 1) {
-        return [false, 'Tema uzrakinta.', null];
+        return [false, 'Tema užrakinta.', null];
     }
 
     $content = forum_prepare_body($content, 15000);
     if ($content === '') {
-        return [false, 'Atsakymas negali buti tuscias.', null];
+        return [false, 'Atsakymas negali būti tuščias.', null];
     }
 
     $stmt = $GLOBALS['pdo']->prepare('
@@ -877,17 +883,17 @@ function forum_update_topic($topicId, $title, $content)
         return [false, 'Tema nerasta.', null];
     }
     if (!forum_can_moderate_topic($topic)) {
-        return [false, 'Nepakanka teisiu redaguoti tema.', null];
+        return [false, 'Nepakanka teisių redaguoti temą.', null];
     }
 
     $title = trim((string)$title);
     $content = forum_prepare_body($content, 15000);
 
     if (mb_strlen($title) < 3 || mb_strlen($title) > 190) {
-        return [false, 'Temos pavadinimas turi buti nuo 3 iki 190 simboliu.', null];
+        return [false, 'Temos pavadinimas turi būti nuo 3 iki 190 simbolių.', null];
     }
     if ($content === '') {
-        return [false, 'Temos turinys negali buti tuscias.', null];
+        return [false, 'Temos turinys negali būti tuščias.', null];
     }
 
     $slug = forum_unique_slug(forum_table_topics(), $title, 'tema', (int)$topic['id'], 'forum_id = :forum_id', [
@@ -922,7 +928,7 @@ function forum_set_topic_flag($topicId, $flag, $value)
 
     $allowed = ['is_pinned', 'is_locked'];
     if (!in_array($flag, $allowed, true)) {
-        return [false, 'Nezinomas moderavimo veiksmas.', null];
+        return [false, 'Nežinomas moderavimo veiksmas.', null];
     }
 
     $topic = forum_get_topic($topicId);
@@ -930,7 +936,7 @@ function forum_set_topic_flag($topicId, $flag, $value)
         return [false, 'Tema nerasta.', null];
     }
     if (!forum_can_moderate_topic($topic)) {
-        return [false, 'Nepakanka teisiu moderuoti tema.', null];
+        return [false, 'Nepakanka teisių moderuoti temą.', null];
     }
 
     $stmt = $GLOBALS['pdo']->prepare('UPDATE ' . forum_table_topics() . ' SET ' . $flag . ' = :value WHERE id = :id');
@@ -945,7 +951,7 @@ function forum_set_topic_flag($topicId, $flag, $value)
 
     return [true, $flag === 'is_pinned'
         ? ($value ? 'Tema prisegta.' : 'Temos prisegimas nuimtas.')
-        : ($value ? 'Tema uzrakinta.' : 'Tema atrakinta.'),
+        : ($value ? 'Tema užrakinta.' : 'Tema atrakinta.'),
         (int)$topic['forum_id']];
 }
 
@@ -958,7 +964,7 @@ function forum_delete_topic($topicId)
         return [false, 'Tema nerasta.', null];
     }
     if (!forum_can_moderate_topic($topic)) {
-        return [false, 'Nepakanka teisiu istrinti tema.', null];
+        return [false, 'Nepakanka teisių ištrinti temos.', null];
     }
 
     $GLOBALS['pdo']->beginTransaction();
@@ -974,14 +980,14 @@ function forum_delete_topic($topicId)
         if ($GLOBALS['pdo']->inTransaction()) {
             $GLOBALS['pdo']->rollBack();
         }
-        return [false, 'Nepavyko istrinti temos.', null];
+        return [false, 'Nepavyko ištrinti temos.', null];
     }
 
     audit_log(current_user()['id'] ?? null, 'forum_topic_delete', 'infusion_forum_topics', (int)$topic['id'], [
         'title' => $topic['title'],
     ]);
 
-    return [true, 'Tema istrinta.', (int)$topic['forum_id']];
+    return [true, 'Tema ištrinta.', (int)$topic['forum_id']];
 }
 
 function forum_update_reply($replyId, $content)
@@ -993,12 +999,12 @@ function forum_update_reply($replyId, $content)
         return [false, 'Atsakymas nerastas.', null];
     }
     if (!forum_can_moderate_reply($reply)) {
-        return [false, 'Nepakanka teisiu redaguoti atsakyma.', null];
+        return [false, 'Nepakanka teisių redaguoti atsakymą.', null];
     }
 
     $content = forum_prepare_body($content, 15000);
     if ($content === '') {
-        return [false, 'Atsakymas negali buti tuscias.', null];
+        return [false, 'Atsakymas negali būti tuščias.', null];
     }
 
     $stmt = $GLOBALS['pdo']->prepare('
@@ -1031,7 +1037,7 @@ function forum_delete_reply($replyId)
         return [false, 'Atsakymas nerastas.', null];
     }
     if (!forum_can_moderate_reply($reply)) {
-        return [false, 'Nepakanka teisiu istrinti atsakyma.', null];
+        return [false, 'Nepakanka teisių ištrinti atsakymą.', null];
     }
 
     $stmt = $GLOBALS['pdo']->prepare('DELETE FROM ' . forum_table_posts() . ' WHERE id = :id');
@@ -1042,20 +1048,20 @@ function forum_delete_reply($replyId)
         'topic_id' => (int)$reply['topic_id'],
     ]);
 
-    return [true, 'Atsakymas istrintas.', (int)$reply['topic_id']];
+    return [true, 'Atsakymas ištrintas.', (int)$reply['topic_id']];
 }
 
 function forum_render_editor_toolbar($textareaId)
 {
     foreach (forum_bbcode_buttons() as $button) {
-        echo '<button type="button" class="btn btn-sm btn-outline-secondary" data-editor-target="' . e($textareaId) . '" data-insert-text="' . e($button['insert']) . '">' . e($button['label']) . '</button>';
+        echo '<button type="button" class="btn btn-sm btn-outline-secondary" data-forum-editor-target="' . e($textareaId) . '" data-forum-insert-text="' . e($button['insert']) . '">' . e($button['label']) . '</button>';
     }
 }
 
 function forum_render_smileys($textareaId)
 {
     foreach (forum_smileys() as $code => $emoji) {
-        echo '<button type="button" class="btn btn-sm btn-outline-warning" data-editor-target="' . e($textareaId) . '" data-smiley-code="' . e($code) . '">' . $emoji . '</button>';
+        echo '<button type="button" class="btn btn-sm btn-outline-warning" data-forum-editor-target="' . e($textareaId) . '" data-forum-smiley-code="' . e($code) . '">' . $emoji . '</button>';
     }
 }
 
@@ -1074,4 +1080,5 @@ function forum_render_breadcrumb(array $items)
     echo '</ol></nav>';
 }
 
+forum_register_assets();
 forum_ensure_schema();
