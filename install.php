@@ -232,7 +232,7 @@ $defaults = install_defaults($root);
             <div class="col-12"><button class="btn btn-primary" name="save_config" value="1">Issaugoti config</button></div>
           </form>
         <?php elseif ($step === 'db'): ?>
-          <div class="alert alert-info">Bus sukurta duombaze, pagrindines lenteles ir numatytieji moduliai.</div>
+          <div class="alert alert-info">Bus sukurta branduolio duombaze. Moduliu lenteles lieka paciuose <code>/infusions/</code> moduliuose ir tvarkomos per ju schema/upgrade logika.</div>
           <form method="post">
             <?= install_csrf_field() ?>
             <button class="btn btn-primary" name="run_sql" value="1">Sukurti ir importuoti DB</button>

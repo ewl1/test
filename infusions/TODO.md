@@ -17,6 +17,7 @@
 - Modulio tekstai laikomi `infusions/<modulis>/locale/`.
 - Modulio CSS ir JS laikomi `infusions/<modulis>/assets/`.
 - Jei modulis turi savo klases, jos laikomos `infusions/<modulis>/classes/`.
+- Modulio schema, seed'ai ir upgrade failai laikomi paciame `infusions/<modulis>/` kataloge.
 - Tik bendri svetaines vaizdai keliauja i `/images/`.
 
 ## Likusieji darbai
@@ -32,6 +33,7 @@
 - [ ] Susitarti, kaip moduliai naudos bendra ikon biblioteka ir kada galima papildoma rinkini naudoti lokaliai.
 - [ ] Vienodai rodyti `installed version`, `manifest version` ir `available upgrade`.
 - [ ] Apibrezti bendras `install / upgrade / rollback` taisykles visiems moduliams.
+- [ ] Sutarti, kad core Installer iraso tik branduolio DB, o moduliai savo lenteles ir nustatymus susikuria per savo install/upgrade mechanizma.
 - [ ] Isplesti manifest standarta papildomais laukais:
 - `min_core_version`
 - `min_php_version`

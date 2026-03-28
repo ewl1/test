@@ -249,87 +249,6 @@ CREATE TABLE IF NOT EXISTS ip_bans (
     KEY idx_ip_bans_until (banned_until)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 SQL,
-            <<<'SQL'
-CREATE TABLE IF NOT EXISTS infusion_forum_categories (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(190) NOT NULL,
-    slug VARCHAR(190) NOT NULL,
-    description TEXT NULL,
-    sort_order INT NOT NULL DEFAULT 0,
-    is_active TINYINT(1) NOT NULL DEFAULT 1,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY uniq_forum_category_slug (slug),
-    KEY idx_forum_category_sort (sort_order, id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-SQL,
-            <<<'SQL'
-CREATE TABLE IF NOT EXISTS infusion_forum_forums (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    category_id INT UNSIGNED NOT NULL,
-    parent_id INT UNSIGNED NULL DEFAULT NULL,
-    title VARCHAR(190) NOT NULL,
-    slug VARCHAR(190) NOT NULL,
-    description TEXT NULL,
-    sort_order INT NOT NULL DEFAULT 0,
-    is_active TINYINT(1) NOT NULL DEFAULT 1,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY uniq_forum_slug (slug),
-    KEY idx_forum_category_parent (category_id, parent_id, sort_order, id),
-    KEY idx_forum_parent (parent_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-SQL,
-            <<<'SQL'
-CREATE TABLE IF NOT EXISTS infusion_forum_topics (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    forum_id INT UNSIGNED NOT NULL,
-    user_id INT UNSIGNED NULL DEFAULT NULL,
-    title VARCHAR(190) NOT NULL,
-    slug VARCHAR(190) NOT NULL,
-    content MEDIUMTEXT NOT NULL,
-    views INT UNSIGNED NOT NULL DEFAULT 0,
-    is_locked TINYINT(1) NOT NULL DEFAULT 0,
-    is_pinned TINYINT(1) NOT NULL DEFAULT 0,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NULL DEFAULT NULL,
-    last_post_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    last_post_user_id INT UNSIGNED NULL DEFAULT NULL,
-    UNIQUE KEY uniq_forum_topic_forum_slug (forum_id, slug),
-    KEY idx_forum_topics_forum_last_post (forum_id, is_pinned, last_post_at, id),
-    KEY idx_forum_topics_last_post_user (last_post_user_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-SQL,
-            <<<'SQL'
-CREATE TABLE IF NOT EXISTS infusion_forum_posts (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    topic_id INT UNSIGNED NOT NULL,
-    forum_id INT UNSIGNED NOT NULL,
-    user_id INT UNSIGNED NULL DEFAULT NULL,
-    content MEDIUMTEXT NOT NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NULL DEFAULT NULL,
-    KEY idx_forum_posts_topic_created (topic_id, created_at, id),
-    KEY idx_forum_posts_forum (forum_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-SQL,
-            <<<'SQL'
-CREATE TABLE IF NOT EXISTS infusion_news (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(190) NOT NULL,
-    summary TEXT NULL,
-    slug VARCHAR(190) DEFAULT NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY uniq_infusion_news_slug (slug)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-SQL,
-            <<<'SQL'
-CREATE TABLE IF NOT EXISTS infusion_shoutbox_messages (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    user_id INT UNSIGNED DEFAULT NULL,
-    message TEXT NOT NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-SQL,
         ];
     }
 
@@ -366,16 +285,11 @@ SQL,
             ['name' => 'Vartotoju redagavimas', 'slug' => 'users.edit', 'description' => 'Vartotoju redagavimas'],
             ['name' => 'Vartotoju busenos valdymas', 'slug' => 'users.status', 'description' => 'Vartotoju aktyvavimas ir blokavimas'],
             ['name' => 'Vartotoju trynimas', 'slug' => 'users.delete', 'description' => 'Vartotoju trynimas'],
-            ['name' => 'Forumo perziura', 'slug' => 'forum.view', 'description' => 'Leidzia matyti forumo turini'],
-            ['name' => 'Forumo administravimas', 'slug' => 'forum.admin', 'description' => 'Leidzia valdyti forumo struktura'],
-            ['name' => 'Naujienu perziura', 'slug' => 'news.view', 'description' => 'Leidzia matyti naujienu moduli'],
-            ['name' => 'Naujienu administravimas', 'slug' => 'news.admin', 'description' => 'Leidzia valdyti naujienu moduli'],
-            ['name' => 'Saukyklos moderavimas', 'slug' => 'shoutbox.moderate', 'description' => 'Leidzia moderuoti saukyklos zinutes'],
         ], 'name = VALUES(name), description = VALUES(description)');
 
         $statements[] = "INSERT IGNORE INTO role_permissions (role_id, permission_id) SELECT 1, id FROM permissions";
-        $statements[] = "INSERT IGNORE INTO role_permissions (role_id, permission_id) SELECT 2, id FROM permissions WHERE slug IN ('admin.access','posts.create','posts.edit','posts.delete','users.manage','permissions.manage','audit.view','logs.view','ipban.manage','settings.manage','themes.manage','navigation.manage','infusions.manage','panels.manage','roles.manage','users.view','users.create','users.edit','users.status','users.delete','forum.view','forum.admin','news.view','news.admin','shoutbox.moderate')";
-        $statements[] = "INSERT IGNORE INTO role_permissions (role_id, permission_id) SELECT 3, id FROM permissions WHERE slug IN ('forum.view','shoutbox.moderate','users.view','audit.view')";
+        $statements[] = "INSERT IGNORE INTO role_permissions (role_id, permission_id) SELECT 2, id FROM permissions WHERE slug IN ('admin.access','posts.create','posts.edit','posts.delete','users.manage','permissions.manage','audit.view','logs.view','ipban.manage','settings.manage','themes.manage','navigation.manage','infusions.manage','panels.manage','roles.manage','users.view','users.create','users.edit','users.status','users.delete')";
+        $statements[] = "INSERT IGNORE INTO role_permissions (role_id, permission_id) SELECT 3, id FROM permissions WHERE slug IN ('users.view','audit.view')";
 
         $statements[] = $this->buildInsertSql('site_settings', ['setting_key', 'setting_value'], [
             ['setting_key' => 'site_name', 'setting_value' => 'Mini CMS Pro'],
@@ -394,35 +308,7 @@ SQL,
             ['setting_key' => 'copyright_text', 'setting_value' => '© Mini CMS Pro'],
             ['setting_key' => 'current_theme', 'setting_value' => 'default'],
             ['setting_key' => 'admin_theme', 'setting_value' => 'default'],
-            ['setting_key' => 'shoutbox_order', 'setting_value' => 'desc'],
-            ['setting_key' => 'shoutbox_messages_per_page', 'setting_value' => '20'],
-            ['setting_key' => 'shoutbox_panel_messages', 'setting_value' => '5'],
         ], 'setting_value = VALUES(setting_value)');
-
-        $statements[] = $this->buildInsertSql('infusions', ['name', 'folder', 'is_installed', 'is_enabled', 'created_at'], [
-            ['name' => 'Forumas', 'folder' => 'forum', 'is_installed' => 1, 'is_enabled' => 1, 'created_at' => 'NOW()'],
-            ['name' => 'Naujienos', 'folder' => 'news', 'is_installed' => 1, 'is_enabled' => 1, 'created_at' => 'NOW()'],
-            ['name' => 'Saukykla', 'folder' => 'shoutbox', 'is_installed' => 1, 'is_enabled' => 1, 'created_at' => 'NOW()'],
-        ], 'name = VALUES(name), is_installed = VALUES(is_installed), is_enabled = VALUES(is_enabled)');
-
-        $statements[] = "INSERT IGNORE INTO infusion_versions (infusion_id, version) SELECT id, '2.0.0' FROM infusions WHERE folder = 'forum'";
-        $statements[] = "INSERT IGNORE INTO infusion_versions (infusion_id, version) SELECT id, '1.1.0' FROM infusions WHERE folder = 'news'";
-        $statements[] = "INSERT IGNORE INTO infusion_versions (infusion_id, version) SELECT id, '1.0.0' FROM infusions WHERE folder = 'shoutbox'";
-
-        $statements[] = "INSERT INTO infusion_admin_menu (infusion_id, title, slug, permission_slug, sort_order, is_active) SELECT id, 'Naujienos', 'news-admin', 'news.admin', 100, 1 FROM infusions WHERE folder = 'news' ON DUPLICATE KEY UPDATE title = VALUES(title), permission_slug = VALUES(permission_slug), sort_order = VALUES(sort_order), is_active = VALUES(is_active)";
-        $statements[] = "INSERT INTO infusion_admin_menu (infusion_id, title, slug, permission_slug, sort_order, is_active) SELECT id, 'Forumas', 'forum-admin', 'forum.admin', 110, 1 FROM infusions WHERE folder = 'forum' ON DUPLICATE KEY UPDATE title = VALUES(title), permission_slug = VALUES(permission_slug), sort_order = VALUES(sort_order), is_active = VALUES(is_active)";
-        $statements[] = "INSERT INTO infusion_admin_menu (infusion_id, title, slug, permission_slug, sort_order, is_active) SELECT id, 'Saukykla', 'shoutbox-admin', 'shoutbox.moderate', 120, 1 FROM infusions WHERE folder = 'shoutbox' ON DUPLICATE KEY UPDATE title = VALUES(title), permission_slug = VALUES(permission_slug), sort_order = VALUES(sort_order), is_active = VALUES(is_active)";
-
-        $statements[] = "INSERT INTO infusion_panels (infusion_id, panel_name, position, sort_order, is_enabled) SELECT id, 'Naujienu panele', 'left', 1, 1 FROM infusions WHERE folder = 'news' AND NOT EXISTS (SELECT 1 FROM infusion_panels p WHERE p.infusion_id = infusions.id)";
-        $statements[] = "INSERT INTO infusion_panels (infusion_id, panel_name, position, sort_order, is_enabled) SELECT id, 'Forumo panele', 'right', 1, 1 FROM infusions WHERE folder = 'forum' AND NOT EXISTS (SELECT 1 FROM infusion_panels p WHERE p.infusion_id = infusions.id)";
-        $statements[] = "INSERT INTO infusion_panels (infusion_id, panel_name, position, sort_order, is_enabled) SELECT id, 'Saukykla', 'right', 2, 1 FROM infusions WHERE folder = 'shoutbox' AND NOT EXISTS (SELECT 1 FROM infusion_panels p WHERE p.infusion_id = infusions.id)";
-
-        $statements[] = "INSERT IGNORE INTO navigation_links (title, url, parent_id, sort_order, is_active) VALUES ('Forumas', 'forum.php', NULL, 10, 1)";
-        $statements[] = "INSERT IGNORE INTO infusion_forum_categories (title, slug, description, sort_order, is_active, created_at) VALUES ('Bendros diskusijos', 'bendros-diskusijos', 'Bendruomenei skirtos diskusijos, klausimai ir naujienos.', 1, 1, NOW())";
-        $statements[] = "INSERT IGNORE INTO infusion_forum_forums (category_id, parent_id, title, slug, description, sort_order, is_active, created_at) SELECT id, NULL, 'Pristatymai', 'pristatymai', 'Prisistatykite bendruomenei ir pradekite pokalbi.', 1, 1, NOW() FROM infusion_forum_categories WHERE slug = 'bendros-diskusijos'";
-        $statements[] = "INSERT IGNORE INTO infusion_forum_forums (category_id, parent_id, title, slug, description, sort_order, is_active, created_at) SELECT c.id, f.id, 'Naujoku zona', 'naujoku-zona', 'Vieta pirmai temai, klausimams ir pagalbai naujiems nariams.', 1, 1, NOW() FROM infusion_forum_categories c INNER JOIN infusion_forum_forums f ON f.slug = 'pristatymai' WHERE c.slug = 'bendros-diskusijos'";
-        $statements[] = "INSERT IGNORE INTO infusion_forum_topics (forum_id, user_id, title, slug, content, views, is_locked, is_pinned, created_at, updated_at, last_post_at, last_post_user_id) SELECT f.id, NULL, 'Sveiki atvyke i foruma', 'sveiki-atvyke-i-foruma', 'Sveiki atvyke i nauja foruma.\\n\\nNaudokite [b]BBCode[/b], smailus :) ir drasiai kurkite savo temas.', 0, 0, 1, NOW(), NOW(), NOW(), NULL FROM infusion_forum_forums f WHERE f.slug = 'naujoku-zona'";
-        $statements[] = "INSERT IGNORE INTO infusion_news (title, summary, slug, created_at) VALUES ('Pirma naujiena', 'Cia pavyzdine naujienu modulio zinute.', 'pirma-naujiena', NOW())";
 
         return $statements;
     }

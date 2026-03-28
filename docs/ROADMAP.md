@@ -228,6 +228,10 @@
 - checksum validacija
 - backup before update
 - rollback info
+- Installer architektura:
+- `includes/classes/MiniCMS/Installer/` turi likti branduolio diegimo sluoksniu
+- moduliu DB schema, seed'ai ir upgrade logika turi likti `infusions/<modulis>/`
+- core diegimas tik paruosta bazine sistema, po kurios moduliai diegiasi ar atsinaujina savo keliu
 - Branduolio paslaugos ir registrai:
 - system settings registry
 - feature flags

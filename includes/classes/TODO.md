@@ -18,6 +18,8 @@
 - Moduliu klases neturi gyventi `includes/classes/`.
 - `App\\Forum\\*` klases turi likti `infusions/forum/classes/`.
 - Naujienu, shoutbox ir kitu moduliu klasems galioja ta pati taisykle.
+- `includes/classes/MiniCMS/Installer/` skirtas tik branduolio diegimui.
+- Moduliu schema, seed'ai ir upgrade logika turi likti `infusions/<modulis>/` kataloguose.
 
 ## Planuojamos branduolio klases
 
@@ -110,4 +112,5 @@
 - [ ] Po pagrindiniu paslaugu pradeti bendro `comments engine` klasiu rinkini, kad naujienos ir profiliai nebesilaikytu ant atskiros logikos.
 - [ ] Tuo paciu sluoksniu pradeti ir bendra paieskos klasiu rinkini, kad `search.php` netaptu vieninteliu paieskos centru.
 - [ ] Kartu su bendru turinio sluoksniu pradeti media/embed klases, kad forumas ir naujienos nenaudotu skirtingu taisykliu.
+- [ ] Islaikyti riba, kad Installer niekada neprarytu modulio DB logikos ir tik paruostu core pagrinda moduliu diegimui.
 - [ ] Tik po to skaidyti tolimesnes pagalbines sritis i siauresnes paslaugas.
