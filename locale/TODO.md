@@ -1,7 +1,7 @@
 # Locale TODO
 
 ## Paskirtis
-- Branduolio kalbų failai ir bendra lokalizacijos strategija.
+- Branduolio ir moduliu kalbu failai, locale uzkrovimas ir kalbu strategija.
 
 ## Formatas
 - `[ ]` laukia
@@ -9,17 +9,25 @@
 - `[x]` padaryta
 
 ## Etapai
-- `v1.1`: pilnas antriniu admin ir paieskos puslapiu perkelimas.
-- `v1.2`: namespace ir helperiu stabilizavimas aplink locale sluoksni.
-- `v1.3`: papildomos kalbos ir aktyvios kalbos pasirinkimas administracijoje.
+- `v1.1`: pilnas admin, paieskos ir diagnostikos tekstu perkelimas.
+- `v1.2`: komunikacijos, profilio ir pranesimu centro tekstai.
+- `v1.3`: forumo ir naujienu papildomu funkciju tekstai.
+- `v1.5`: papildomos kalbos ir aktyvios kalbos pasirinkimas.
 
-## Svarbūs failai
+## Svarbus failai
 - `lt.php`: pagrindiniai branduolio, auth, profile ir validation tekstai.
-- `../includes/locale.php`: locale užkrovimas branduoliui ir infusion moduliams.
+- `../includes/locale.php`: locale uzkrovimas branduoliui ir moduliams.
+- `../infusions/<modulis>/locale/`: modulio specifiniai tekstai.
 
-## Likę darbai
-- [x] Pridėtas pradinis `lt` locale failas.
-- [x] Pridėtas modulių locale užkrovimas per `infusions/<modulis>/locale/`.
-- [~] Antriniai admin ir paieškos puslapiai palaipsniui perkeliami į locale raktus.
-- [ ] Paruošti struktūrą papildomoms kalboms (`en`, `pl` ar kt.), jei jų reikės.
-- [ ] Pridėti nustatymą administracijoje aktyviai kalbai pasirinkti.
+## Likusieji darbai
+- [x] Pridetas pradinis `lt` locale failas.
+- [x] Pridetas moduliu locale uzkrovimas per `infusions/<modulis>/locale/`.
+- [~] Antriniai admin ir paieskos puslapiai palaipsniui perkeliami i locale raktus.
+- [ ] Uzbaigti likusiu admin puslapiu locale perkelima.
+- [ ] Prideti locale raktus asmeninems zinutems ir pranesimu centrui.
+- [ ] Prideti locale raktus perrasytam profiliui ir `security` skirtukui.
+- [ ] Prideti locale raktus versijoms, update channel ir update center.
+- [ ] Prideti locale raktus SEO audit, redirect manager ir broken links checker puslapiams.
+- [ ] Prideti locale raktus naujienu papildomoms funkcijoms: tagams, planuotam publikavimui, RSS, SEO laukams.
+- [ ] Paruosti struktura papildomoms kalboms (`en`, `pl` ar kt.), jei ju reikes.
+- [ ] Prideti nustatyma administracijoje aktyviai kalbai pasirinkti.

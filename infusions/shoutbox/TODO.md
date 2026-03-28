@@ -1,7 +1,7 @@
 # Shoutbox TODO
 
 ## Paskirtis
-- Šaukyklos modulis su forma, BBCode, smailais, puslapiavimu ir moderavimu.
+- Saugus ir greitas shoutbox modulis su forma, BBCode, smailais, puslapiavimu ir moderavimu.
 
 ## Formatas
 - `[ ]` laukia
@@ -10,21 +10,23 @@
 
 ## Etapai
 - `v1.1`: flood control, teises ir patikimumas.
-- `v1.2`: jei reikes, logikos skaidymas i siauresnes klases.
-- `v1.3`: realtime ir papildomas UX.
+- `v1.3`: papildomas bendruomenes sluoksnis ir UX.
+- `v1.4`: jei prireiks, isskaidyti logika i siauresnes klases.
 
-## Svarbūs failai
-- `bootstrap.php`: žinučių logika, renderinimas ir POST srautas.
-- `admin.php`: moderavimo UI.
-- `panel.php`: šaukyklos panelė pagrindiniame puslapyje.
+## Svarbus failai
+- `bootstrap.php`: zinuciu logika, renderinimas ir POST srautas.
+- `admin.php`: moderavimo UI ir nustatymai.
+- `panel.php`: shoutbox panele pagrindiniame puslapyje.
 - `assets/css/shoutbox.css`, `assets/js/shoutbox.js`: modulio assetai.
 - `locale/lt.php`: modulio tekstai.
 
-## Likę darbai
-- [x] CSS perkeltas į `assets/css/shoutbox.css`.
-- [x] JS perkeltas į `assets/js/shoutbox.js`.
-- [x] Modulio tekstai perkelti į `locale/lt.php`.
-- [x] Šaukyklos nustatymai perkelti į modulio admin puslapį.
-- [ ] Pridėti flood protection nustatymus per administraciją.
-- [ ] Pridėti moderavimo veiksmus viešame puslapyje pagal teises.
-- [ ] Apsvarstyti realaus laiko atnaujinimą be pilno perkrovimo.
+## Likusieji darbai
+- [x] CSS perkeltas i `assets/css/shoutbox.css`.
+- [x] JS perkeltas i `assets/js/shoutbox.js`.
+- [x] Modulio tekstai perkelti i `locale/lt.php`.
+- [x] Shoutbox nustatymai perkelti i modulio admin puslapi.
+- [ ] Prideti flood protection nustatymus per administracija.
+- [ ] Prideti moderavimo veiksmus viesame puslapyje pagal teises.
+- [ ] Prideti blokavimo / mute integracija su naudotoju bendru nustatymu sluoksniu.
+- [ ] Prideti pranesimu ivykius, jei atsiras mention ar atsakymo logika.
+- [ ] Apsvarstyti lengva auto-refresh arba dalini realtime atnaujinima.

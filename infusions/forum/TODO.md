@@ -9,22 +9,29 @@
 - `[x]` padaryta
 
 ## Etapai
-- `v1.1`: baziniai moderatoriu ir saugumo patobulinimai.
-- `v1.2`: logikos skaidymas i klases.
-- `v1.3`: moderavimo istorija, UX ir bendruomenes funkcijos.
+- `v1.1`: anti-spam, teises ir moderatoriu patikimumas.
+- `v1.3`: funkciju brandinimas ir bendruomenes sluoksnis.
+- `v1.4`: logikos skaidymas i papildomas modulio klases.
 
-## Svarbūs failai
+## Svarbus failai
 - `bootstrap.php`: schema, CRUD, moderavimo logika, BBCode ir smailai.
-- `admin.php`: forumo struktūros valdymas.
-- `classes/ForumService.php`: modulio servisas, skirtas temų ir atsakymų darbams per `App\\Forum\\`.
+- `admin.php`: forumo strukturos valdymas.
+- `classes/ForumService.php`: pagrindinis modulio servisas.
 - `assets/css/forum.css`, `assets/js/forum.js`: modulio UI assetai.
-- `locale/lt.php`: forumo tekstai ir pranešimai.
+- `locale/lt.php`: forumo tekstai ir pranesimai.
 
-## Likę darbai
-- [x] CSS perkeltas į `assets/css/forum.css`.
-- [x] JS perkeltas į `assets/js/forum.js`.
-- [x] Modulio tekstai perkelti į `locale/lt.php`.
-- [x] `App\\Forum\\ForumService` perkeltas į `classes/`.
-- [ ] Pridėti temų ir atsakymų paieškos filtrus pačiame forume.
-- [ ] Pridėti moderavimo istoriją ir „redagavo“ audit detalėse.
-- [ ] Išskaidyti daugiau forumo logikos iš `bootstrap.php` į atskiras modulio klases.
+## Likusieji darbai
+- [x] CSS perkeltas i `assets/css/forum.css`.
+- [x] JS perkeltas i `assets/js/forum.js`.
+- [x] Modulio tekstai perkelti i `locale/lt.php`.
+- [x] `App\\Forum\\ForumService` perkeltas i `classes/`.
+- [ ] Prideti temoms ir atsakymams paieskos filtrus paciame forume.
+- [ ] Prideti moderavimo istorija ir `redagavo` informacija.
+- [ ] Prideti `unread tracking`.
+- [ ] Prideti priedus (`attachments`).
+- [ ] Prideti `mention` sistema.
+- [ ] Prideti `like / reaction` sistema.
+- [ ] Prideti report/mygtukus ir jungti su bendra `moderation queue`.
+- [ ] Prideti anti-spam ir flood control nustatymus.
+- [ ] Paruosti pranesimu centro ivykius: naujas atsakymas, mention, uzrakinta tema.
+- [ ] Toliau isskaidyti daugiau forumo logikos is `bootstrap.php` i atskiras klases.

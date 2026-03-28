@@ -1,7 +1,7 @@
 # Includes Functions TODO
 
 ## Paskirtis
-- Mažesni domeniniai helperiai, pvz. įrašai, šūktelėjimai ir puslapiavimas.
+- Vieta mazesniems helperiams ir pereinamajam sluoksniui tarp seno funkcinio kodo ir nauju paslaugu.
 
 ## Formatas
 - `[ ]` laukia
@@ -9,17 +9,24 @@
 - `[x]` padaryta
 
 ## Etapai
-- `v1.1`: tik locale ir suderinamumo tvarkymas.
-- `v1.2`: helperiu skaidymas i paslaugas.
-- `v1.3`: tik tie helperiai, kurie turi likti del patogumo ar suderinamumo.
+- `v1.1`: tik locale, suderinamumo ir mazu helperiu tvarkymas.
+- `v1.2`: komunikacijos ir profilio helperiu perziura.
+- `v1.4`: helperiu mazinimas ten, kur atsiras servisai.
 
-## Svarbūs failai
-- `posts.php`: įrašų kūrimas, atnaujinimas ir trynimas.
-- `shouts.php`: senasis shout helperis dėl suderinamumo.
+## Svarbus failai
+- `posts.php`: irasu pagalbininkai.
+- `shouts.php`: senasis shout helperis del suderinamumo.
 - `pagination.php`: puslapiavimo logika.
-- `output.php`: pagalbinės išvedimo funkcijos.
+- `output.php`: isvedimo helperiai.
 
-## Likę darbai
-- [ ] Nuspręsti, kiek ilgai dar laikyti senus `posts/shouts` helperius suderinamumui.
-- [ ] Sudėti daugiau locale raktų į senesnius helperius, jei jie dar naudojami.
-- [ ] Jei bus pereinama prie OOP, šituos helperius perkelti į aiškias paslaugas.
+## Likusieji darbai
+- [ ] Nuspresti, kiek ilgai laikyti senus `posts/shouts` helperius suderinamumui.
+- [ ] Sudeti daugiau locale raktu i senesnius helperius, jei jie dar naudojami.
+- [ ] Palikti helperiuose tik tai, kas turi likti patogu vaizdui: `output`, `pagination`, paprasti formatteriai.
+- [ ] Kai atsiras servisai, is helperiu perkelti:
+- komentaru logika
+- reakciju logika
+- favorites / bookmarks logika
+- report / moderation queue logika
+- notification skaiciavimo logika
+- [ ] Paruosti plona suderinamumo sluoksni, kad perejimas i klases nelauzytu senu kvietimu.
