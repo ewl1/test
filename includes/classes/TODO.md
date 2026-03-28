@@ -24,7 +24,7 @@
 ## Planuojamos branduolio klases
 
 ### Auth ir saugumas
-- [ ] `App\\Auth\\AuthService`
+- [ ] `App\\MiniCMS\\Auth\\AuthService`
 - [ ] `App\\Security\\SecurityHeadersManager`
 - [ ] `App\\Security\\LoginAlertService`
 - [ ] `App\\Security\\SuspiciousActivityDetector`
@@ -32,7 +32,7 @@
 - [ ] `App\\Security\\UploadQuarantineService`
 
 ### Mail, komunikacija ir pranesimai
-- [ ] `App\\Mail\\Mailer`
+- [ ] `App\\MiniCMS\\Mail\\Mailer`
 - [ ] `App\\Messaging\\ConversationService`
 - [ ] `App\\Messaging\\MessageService`
 - [ ] `App\\Messaging\\BlockListService`
@@ -108,7 +108,7 @@
 - [x] Paruosta `composer.json` autoload sekcija (`psr-4`) su `App\\`.
 - [x] `App\\Forum\\ForumService` iskeltas is branduolio i forumo moduli.
 - [x] Pridetas pradinis `Module SDK` branduolys (`InfusionManifest`, `InfusionContext`, `AbstractInfusionModule`, `HookRegistry`, `InfusionSdk`, `ModuleScaffolder`).
-- [ ] Pradeti nuo `App\\Auth\\AuthService`, `App\\Mail\\Mailer` ir `App\\Cache\\CacheStore`.
+- [ ] Pradeti nuo `App\\MiniCMS\\Auth\\AuthService`, `App\\MiniCMS\\Mail\\Mailer` ir `App\\Cache\\CacheStore`.
 - [ ] Po to pereiti prie `NotificationCenter`, activity feed sluoksnio ir `ProfileService`.
 - [ ] Po pagrindiniu paslaugu pradeti bendro `comments engine` klasiu rinkini, kad naujienos ir profiliai nebesilaikytu ant atskiros logikos.
 - [ ] Tuo paciu sluoksniu pradeti ir bendra paieskos klasiu rinkini, kad `search.php` netaptu vieninteliu paieskos centru.

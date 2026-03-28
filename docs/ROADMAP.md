@@ -248,8 +248,8 @@
 - dependency graph viewer
 - hook debugger
 - OOP/PSR-4 kryptis:
-- `App\\Auth\\AuthService`
-- `App\\Mail\\Mailer`
+- `App\\MiniCMS\\Auth\\AuthService`
+- `App\\MiniCMS\\Mail\\Mailer`
 - `App\\Cache\\CacheStore`
 - bazinis `Module SDK` moduliams:
 - `InfusionManifest`, `InfusionContext`, `AbstractInfusionModule`, `HookRegistry`, `InfusionSdk`
