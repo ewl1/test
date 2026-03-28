@@ -18,6 +18,7 @@
 - `login.php`: atskiras admin prisijungimas.
 - `index.php`: dashboard santrauka ir greitos nuorodos.
 - `settings.php`, `users.php`, `roles.php`, `permissions.php`: pagrindinis valdymo branduolys.
+- `panels.php`: paneliu kurimas, isdestymas ir ateities paneliu valdymo centras.
 - `diagnostics.php`, `audit-logs.php`, `error-logs.php`: diagnostika ir stebesena.
 - `infusions.php`: moduliu versijos, busenos ir valdymas.
 
@@ -28,11 +29,27 @@
 - [ ] Uzbaigti kontrasto audita visoms maziau naudojamoms kortelems, badge ir lenteliu busenoms.
 - [ ] Suvienodinti filtrus, paieska, rusiavima ir `bulk actions` administracijos lentelese.
 
+### Panels valdymas
+- [ ] `panels.php` prideti paneliu matomuma pagal role ir puslapi.
+- [ ] Prideti paneles tipo ir saltinio rodyma: branduolio, infusion, custom.
+- [ ] Prideti paneliu perziura (`preview`) ir trumpa informacija, kur panele rodoma.
+- [ ] Prideti `duplicate / delete / reset defaults` veiksmus paneliu valdyme.
+- [ ] Prideti layout `import / export` ir `restore default layout`.
+- [ ] Prideti paneliu cache valdyma ir badge, ar panele cache'inama.
+
 ### Diagnostika ir versijos
 - [ ] Diagnostikoje galutinai suskirstyti pletinius i `butini`, `rekomenduojami`, `pasirenkami`.
 - [ ] Diagnostics puslapyje rodyti MiniCMS versija, PHP versija, update channel ir OPcache busena.
 - [ ] `infusions.php` rodyti `installed version`, `manifest version` ir `available upgrade`.
 - [ ] Paruosti atskira `updates.php` arba panasu puslapi core ir infusion atnaujinimams.
+
+### Infusions valdymas
+- [ ] `infusions.php` prideti filtrus pagal busena: idiegta, ijungta, isjungta, turi atnaujinima.
+- [ ] Rodyti modulio suderinamuma su MiniCMS versija, PHP versija ir reikalaujamais pletiniais.
+- [ ] Rodyti modulio priklausomybes ir konfliktus.
+- [ ] Rodyti, ka modulis prideda: route'us, teises, paneles, paieskos saltinius, hook'us.
+- [ ] Prideti aiskesni `upgrade preview`: changelog, migracijos zingsniai, rollback pastabos.
+- [ ] Prideti modulio sveikatos patikra: ar yra manifest, locale, assets, admin failas, schema.
 
 ### Admin irankiai ir saugumas
 - [ ] Prideti `Clear cache / Clear rate limits / Clear reset tokens` irankius.

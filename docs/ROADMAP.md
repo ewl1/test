@@ -26,6 +26,7 @@
 - Diagnostikoje aiskiai suskirstyti pletinius i `butini`, `rekomenduojami`, `pasirenkami`.
 - Uzbaigti forumo ir shoutbox flood/spam pagrindus.
 - Sutvarkyti centralizuota klaidu ir saugumo ivykiu registravima.
+- Pagerinti `administration/panels.php` ir `administration/infusions.php` darbo eiga: aiskesnes busenos, filtrai, sveikatos patikros ir patikimesni admin veiksmai.
 
 ### Baigtumo kriterijai
 - Nebelieka akivaizdziu locale, kontrasto ar encoding problemu administracijoje.
@@ -54,6 +55,10 @@
 - user statistics
 - user groups / roles rodymas
 - security skirtukas: slaptazodis, sesijos, 2FA
+- Paneles kaip naudotojo patirties dalis:
+- matomumas pagal role ir puslapi
+- lankstesni `member panel` scenarijai
+- atskiros paneles pranesimams, aktyvumui ir statistikoms
 
 ### Baigtumo kriterijai
 - Naudotojas turi pilna paskyros centra.
@@ -96,6 +101,10 @@
 - user reputation
 - badges / achievements
 - polls
+- Paneliu sistema:
+- paneliu presetai puslapiams
+- paneliu `duplicate`, `preview`, `restore defaults`
+- paneliu cache ir rodymo taisykles
 
 ### Baigtumo kriterijai
 - Forumas ir naujienos turi ne tik bazini CRUD, bet ir bendruomenes funkcijas.
@@ -114,6 +123,11 @@
 - installed version
 - manifest version
 - available upgrade
+- Infusion valdymo centras:
+- priklausomybes ir konfliktai
+- suderinamumas su MiniCMS / PHP / pletiniais
+- ka modulis prideda: route'us, teises, paneles, hook'us
+- sveikatos patikra ir `upgrade preview`
 - Core update center:
 - changelog
 - checksum validacija
