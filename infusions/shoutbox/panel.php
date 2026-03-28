@@ -19,7 +19,7 @@ $redirectPath = normalize_local_path($_SERVER['REQUEST_URI'] ?? 'index.php', 'in
                 <?php endif; ?>
             </div>
             <div class="small text-secondary mb-1"><?= e(format_dt($message['created_at'])) ?></div>
-            <div class="small shoutbox-panel-excerpt"><?= e(shoutbox_plain_excerpt($message['message'], 120)) ?></div>
+            <div class="small shoutbox-panel-excerpt"><?= shoutbox_escape_and_format($message['message']) ?></div>
         </article>
     <?php endforeach; ?>
     </div>
