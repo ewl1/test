@@ -25,6 +25,7 @@
 - [~] Antriniai admin ir paieskos puslapiai palaipsniui perkeliami i locale raktus.
 - [ ] Uzbaigti likusiu admin puslapiu locale perkelima.
 - [ ] Prideti locale raktus asmeninems zinutems ir pranesimu centrui.
+- [ ] Prideti locale raktus `captcha` tekstams: klausimai, klaidos, eskalavimo zinutes, providerio pavadinimai.
 - [ ] Prideti locale raktus perrasytam profiliui ir `security` skirtukui.
 - [ ] Prideti locale raktus versijoms, update channel ir update center.
 - [ ] Prideti locale raktus SEO audit, redirect manager ir broken links checker puslapiams.

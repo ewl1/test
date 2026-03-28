@@ -67,6 +67,8 @@
 ### Admin irankiai ir saugumas
 - [ ] Prideti `Clear cache / Clear rate limits / Clear reset tokens` irankius.
 - [ ] Prideti admin action confirmations jautriems veiksmams.
+- [ ] Prideti `captcha` nustatymu puslapi arba skilti: kur ijungta, koks provideris, kada eskaluoti po rate-limit.
+- [ ] Diagnostikoje rodyti, ar `captcha` sluoksnis sukonfiguruotas ir kuriems srautams aktyvus.
 - [ ] Prideti login alerts ir suspicious activity perziuros vieta administracijoje.
 - [ ] Prideti password reset audit ir upload quarantine perziuros vieta.
 - [ ] Prideti `read-only maintenance mode` valdyma administracijoje.
@@ -75,6 +77,7 @@
 - [ ] Paruosti moderatoriu `moderation queue` puslapi.
 - [ ] Prideti pranesimu centro administravima ir sistemos pranesimu siuntima.
 - [ ] Paruosti privaciu zinuciu prieziuros ir abuse/report perziuros ekranus.
+- [ ] Paruosti asmeniniu zinuciu administravimo/diagnostikos santrauka: abuse atvejai, flood, blokavimai, archyvavimo busenos.
 
 ### SEO ir techninis auditavimas
 - [ ] Prideti `SEO audit` puslapi.

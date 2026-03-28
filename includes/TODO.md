@@ -25,8 +25,11 @@
 
 ### Komunikacija ir paskyros
 - [ ] Paruosti asmeniniu zinuciu duomenu modeli: pokalbiai, zinutes, archyvas, soft delete.
+- [ ] Paruosti naujos zinutes kurimo ir pokalbio atsakymu srauta.
 - [ ] Prideti unread skaiciavimo logika privacioms zinutems ir pranesimu centrui.
 - [ ] Prideti naudotoju blokavimo logika zinutems ir kontaktams.
+- [ ] Prideti abuse/report logika asmeninems zinutems ir moderatoriu perziurai.
+- [ ] Nuspresti, ar privacioms zinutems bus leidziami prisegtukai ar media embed'ai.
 - [ ] Isgryninti bendra `notifications` varikli visam MiniCMS.
 - [ ] Apibrezti pranesimu tipus: nauja zinute, forumo atsakymas, komentaras, paminejimas, moderavimo ivykis, sistemos pranesimas.
 - [ ] Prideti pranesimu statusus: unread, read, archived, dismissed.
@@ -58,6 +61,10 @@
 - [ ] Toliau mazinti hardcoded tekstus helperiuose ir baigti locale perkelima.
 - [ ] Prideti daugiau smoke test helperiu svarbiausiems srautams.
 - [ ] Ivesti vieninga cache sluoksni su `APCu` arba failu fallback.
+- [ ] Paruosti bendra `captcha` sluoksni branduoliui su galimybe ijungti ji atskiroms formoms.
+- [ ] Apibrezti `captcha` providerius: vietinis klausimas, honeypot ir pasirenkamas isorinis provideris.
+- [ ] Prideti `captcha` eskalavima po rate-limit ar itartinos veiklos.
+- [ ] Integruoti `captcha` i registracija, password reset, komentarus, abuse/report ir pasirenkamai login forma.
 - [ ] Ivesti `security headers manager`.
 - [ ] Prideti `login alerts`.
 - [ ] Prideti `suspicious activity detector`.

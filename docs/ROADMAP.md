@@ -57,6 +57,8 @@
 - Uzbaigti lietuvisku raidziu ir kontrasto audita admin zonoje.
 - Prideti `session_regenerate_id()` po prisijungimo ir po admin prisijungimo.
 - Jautriems admin veiksmams prideti papildomus patvirtinimus.
+- Paruosti bendra `captcha` sluoksni svarbiausioms formoms: login, registracija, password reset, komentarai ir abuse/report formos.
+- Apsibrezti `captcha` strategija: vietinis klausimas, honeypot, rate-limit eskalacija ir pasirenkamas isorinis provideris.
 - Prideti `Clear cache / Clear rate limits / Clear reset tokens` irankius administracijoje.
 - Diagnostikoje aiskiai suskirstyti pletinius i `butini`, `rekomenduojami`, `pasirenkami`.
 - Uzbaigti forumo ir shoutbox flood/spam pagrindus.
@@ -66,6 +68,7 @@
 ### Baigtumo kriterijai
 - Nebelieka akivaizdziu locale, kontrasto ar encoding problemu administracijoje.
 - Prisijungimo ir admin sesiju srautai turi papildoma apsauga.
+- `captcha` gali buti ijungiama pagal srauta ir nenaudojama aklai visur.
 - Diagnostikos puslapis aiskiai paaiskina, ko projektui tikrai reikia.
 - Admin puslapiai turi minimalius prieziuros ir saugumo irankius.
 
@@ -76,8 +79,11 @@
 
 ### Prioritetai
 - Asmenines zinutes: `inbox`, `sent`, `archive`, neperskaitytu zinuciu skaicius.
+- Naujos zinutes kurimas, pokalbio vaizdas ir atsakymo srautas.
 - Flood control asmeninems zinutems ir galimybe blokuoti kita naudotoja.
 - Soft delete zinutems, kad naudotojas galetu jas pasisalinti neprarasdamas audito.
+- Abuse/report srautas privacioms zinutems ir moderatoriu perziura.
+- Prisegtuku/medijos strategija asmeninems zinutems, jei tai bus leidziama ateityje.
 - Pranesimu centras:
 - nauja asmenine zinute
 - naujas atsakymas forume
@@ -104,7 +110,7 @@
 
 ### Baigtumo kriterijai
 - Naudotojas turi pilna paskyros centra.
-- Zinutems ir pranesimams yra aiskus UI ir duomenu modelis.
+- Zinutems ir pranesimams yra aiskus UI, duomenu modelis ir moderavimo taisykles.
 - Profilis tampa vienu is pagrindiniu bendruomenes tasku.
 
 ## v1.3 Moduliai ir bendruomenes funkcijos
@@ -250,6 +256,8 @@
 - OOP/PSR-4 kryptis:
 - `App\\MiniCMS\\Auth\\AuthService`
 - `App\\MiniCMS\\Mail\\Mailer`
+- `App\\Security\\CaptchaService`
+- `App\\Security\\CaptchaProviderInterface`
 - `App\\Cache\\CacheStore`
 - bazinis `Module SDK` moduliams:
 - `InfusionManifest`, `InfusionContext`, `AbstractInfusionModule`, `HookRegistry`, `InfusionSdk`
