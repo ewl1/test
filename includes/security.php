@@ -24,6 +24,17 @@ function verify_csrf()
     $requestToken = (string)($_POST['csrf_token'] ?? ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? ''));
 
     if ($sessionToken === '' || $requestToken === '' || !hash_equals($sessionToken, $requestToken)) {
+        if (function_exists('auth_security_log')) {
+            $user = function_exists('current_user') ? current_user() : null;
+            auth_security_log($user['id'] ?? null, 'csrf_invalid', 'csrf', null, [
+                'subject_label' => 'csrf',
+                'reason' => 'token_mismatch',
+                'details' => [
+                    'session_token_present' => $sessionToken !== '',
+                    'request_token_present' => $requestToken !== '',
+                ],
+            ]);
+        }
         abort_http(400, __('security.csrf'));
     }
 }

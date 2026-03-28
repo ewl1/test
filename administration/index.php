@@ -42,6 +42,7 @@ include THEMES . 'default/admin_header.php';
                 <a class="list-group-item list-group-item-action" href="permissions.php"><?= e(__('nav.admin.permissions')) ?></a>
                 <a class="list-group-item list-group-item-action" href="users.php"><?= e(__('nav.admin.members')) ?></a>
                 <a class="list-group-item list-group-item-action" href="audit-logs.php"><?= e(__('admin.audit')) ?></a>
+                <a class="list-group-item list-group-item-action" href="security-logs.php">Saugumo &#382;urnalas</a>
                 <a class="list-group-item list-group-item-action" href="moderation-logs.php">Moderavimo &#382;urnalas</a>
                 <a class="list-group-item list-group-item-action" href="error-logs.php"><?= e(__('admin.error_log')) ?></a>
             </div>

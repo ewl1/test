@@ -80,6 +80,11 @@ $canDiagnostics = $can('settings.manage') || $can('logs.view');
 </a>
 </li>
 <li class="nav-item">
+<a class="nav-link" href="<?= public_path('administration/security-logs.php') ?>">
+<i class="fa-solid fa-user-lock"></i> Saugumo &#382;urnalas
+</a>
+</li>
+<li class="nav-item">
 <a class="nav-link" href="<?= public_path('administration/moderation-logs.php') ?>">
 <i class="fa-solid fa-shield-halved"></i> Moderavimo &#382;urnalas
 </a>

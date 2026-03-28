@@ -29,6 +29,9 @@ function audit_log($user_id, $action = null, $entity_type = null, $entity_id = n
         if (function_exists('moderation_sync_from_audit')) {
             moderation_sync_from_audit($user_id, $action, $entity_type, $entity_id, $details);
         }
+        if (function_exists('auth_security_sync_from_audit')) {
+            auth_security_sync_from_audit($user_id, $action, $entity_type, $entity_id, $details);
+        }
     } catch (Throwable $e) {
     }
 }
