@@ -45,7 +45,7 @@ function forum_bbcode_buttons()
         ['label' => 'Quote', 'insert' => '[quote][/quote]'],
         ['label' => 'Link', 'insert' => '[url=https://][/url]'],
         ['label' => 'Img', 'insert' => '[img]https://[/img]'],
-        ['label' => 'YouTube', 'insert' => '[youtube]https://youtu.be/dQw4w9WgXcQ[/youtube]'],
+        ['label' => 'YouTube', 'insert' => '[youtube]https://youtu.be/VIDEO_ID[/youtube]'],
     ];
 }
 
