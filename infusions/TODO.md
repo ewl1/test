@@ -21,6 +21,8 @@
 - Tik bendri svetaines vaizdai keliauja i `/images/`.
 
 ## Likusieji darbai
+- [x] Prideti pradine `Module SDK` baze su manifest parseriu, context objektu, hook registry ir scaffold generatoriumi.
+- [x] Leisti moduliams nurodyti `module_class` ir palaipsniui pereiti nuo vien failu prie klasiu.
 - [ ] Ta pacia `assets/locale/classes` struktura pritaikyti visiems aktyviems moduliams.
 - [ ] Sukurti vieninga manifest lokalizavimo strategija.
 - [ ] Apibrezti bendra moduliu UI sutarti:
@@ -34,6 +36,7 @@
 - [ ] Vienodai rodyti `installed version`, `manifest version` ir `available upgrade`.
 - [ ] Apibrezti bendras `install / upgrade / rollback` taisykles visiems moduliams.
 - [ ] Sutarti, kad core Installer iraso tik branduolio DB, o moduliai savo lenteles ir nustatymus susikuria per savo install/upgrade mechanizma.
+- [ ] Po SDK branduolio pradeti perkelti esamus modulius i klases po viena, pradedant nuo `news`, tada `shoutbox`, o po to `forum`.
 - [ ] Isplesti manifest standarta papildomais laukais:
 - `min_core_version`
 - `min_php_version`

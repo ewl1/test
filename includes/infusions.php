@@ -5,33 +5,39 @@ function infusion_schema_path($folder) { return INFUSIONS . trim((string)$folder
 function infusion_upgrade_path($folder) { return INFUSIONS . trim((string)$folder) . '/upgrade.php'; }
 function infusion_migrations_dir($folder) { return INFUSIONS . trim((string)$folder) . '/migrations'; }
 
+function infusion_hook_registry()
+{
+    return \App\MiniCMS\Infusions\InfusionSdk::hooks();
+}
+
+function infusion_add_hook($name, callable $listener, $priority = 10)
+{
+    infusion_hook_registry()->add((string)$name, $listener, (int)$priority);
+}
+
+function infusion_do_hook($name, $payload = null, array $context = [])
+{
+    return infusion_hook_registry()->dispatch((string)$name, $payload, $context);
+}
+
+function infusion_apply_filters($name, $value, array $context = [])
+{
+    return infusion_hook_registry()->filter((string)$name, $value, $context);
+}
+
+function infusion_context($folder, $infusionId = 0, ?array $manifest = null)
+{
+    return \App\MiniCMS\Infusions\InfusionSdk::context((string)$folder, (int)$infusionId, $manifest);
+}
+
+function infusion_sdk_module($folder, $infusionId = 0, ?array $manifest = null)
+{
+    return \App\MiniCMS\Infusions\InfusionSdk::module((string)$folder, (int)$infusionId, $manifest);
+}
+
 function read_infusion_manifest($folder)
 {
-    $path = infusion_manifest_path($folder);
-    if (!file_exists($path)) throw new RuntimeException('Manifest nerastas: ' . $folder);
-
-    $data = json_decode(file_get_contents($path), true);
-    if (!is_array($data)) throw new RuntimeException('Manifest JSON klaidingas: ' . $folder);
-
-    return [
-        'folder' => $folder,
-        'name' => $data['name'] ?? ucwords(str_replace(['-','_'], ' ', $folder)),
-        'description' => $data['description'] ?? '',
-        'version' => $data['version'] ?? '1.0.0',
-        'author' => $data['author'] ?? '',
-        'website' => $data['website'] ?? '',
-        'default_position' => $data['default_position'] ?? 'left',
-        'default_panel_name' => $data['default_panel_name'] ?? (($data['name'] ?? $folder) . ' Panel'),
-        'admin' => !empty($data['admin']),
-        'bootstrap' => !empty($data['bootstrap']),
-        'panel' => !empty($data['panel']),
-        'schema' => !empty($data['schema']),
-        'upgrade' => !empty($data['upgrade']),
-        'dependencies' => is_array($data['dependencies'] ?? null) ? $data['dependencies'] : [],
-        'permissions' => is_array($data['permissions'] ?? null) ? $data['permissions'] : [],
-        'admin_menu' => is_array($data['admin_menu'] ?? null) ? $data['admin_menu'] : [],
-        'min_core_version' => $data['min_core_version'] ?? '1.0.0',
-    ];
+    return \App\MiniCMS\Infusions\InfusionSdk::manifest((string)$folder)->toArray();
 }
 
 function scan_infusions()
@@ -255,6 +261,12 @@ function list_migration_steps($folder)
 
 function execute_schema_install($folder, $infusionId, array $manifest)
 {
+    $module = infusion_sdk_module($folder, (int)$infusionId, $manifest);
+    if ($module) {
+        $module->install();
+        return;
+    }
+
     if ($manifest['schema'] && file_exists(infusion_schema_path($folder))) {
         $INFUSION = ['id' => $infusionId, 'folder' => $folder, 'manifest' => $manifest];
         include infusion_schema_path($folder);
@@ -432,18 +444,23 @@ function upgrade_infusion_by_id($id)
         if (is_dir($migrationDir)) {
             $executedSteps = run_migration_steps($infusion['folder'], (int)$id, $installedVersion, $targetVersion);
         } else {
-            $upgradeFile = infusion_upgrade_path($infusion['folder']);
-            if (!file_exists($upgradeFile)) {
-                throw new RuntimeException('Atnaujinimo failas nerastas.');
+            $module = infusion_sdk_module($infusion['folder'], (int)$id, $manifest);
+            if ($module) {
+                $module->upgrade($installedVersion, $targetVersion);
+            } else {
+                $upgradeFile = infusion_upgrade_path($infusion['folder']);
+                if (!file_exists($upgradeFile)) {
+                    throw new RuntimeException('Atnaujinimo failas nerastas.');
+                }
+                $INFUSION = [
+                    'id' => (int)$id,
+                    'folder' => $infusion['folder'],
+                    'manifest' => $manifest,
+                    'installed_version' => $installedVersion,
+                    'target_version' => $targetVersion,
+                ];
+                include $upgradeFile;
             }
-            $INFUSION = [
-                'id' => (int)$id,
-                'folder' => $infusion['folder'],
-                'manifest' => $manifest,
-                'installed_version' => $installedVersion,
-                'target_version' => $targetVersion,
-            ];
-            include $upgradeFile;
         }
 
         register_infusion_permissions((int)$id, $manifest['permissions']);
@@ -474,7 +491,17 @@ function uninstall_infusion_by_id($id)
 
     $GLOBALS['pdo']->beginTransaction();
     try {
-        if (file_exists($path . '/uninstall.php')) {
+        $manifest = [];
+        try {
+            $manifest = read_infusion_manifest($infusion['folder']);
+        } catch (Throwable $e) {
+            $manifest = [];
+        }
+
+        $module = infusion_sdk_module($infusion['folder'], (int)$id, $manifest ?: null);
+        if ($module) {
+            $module->uninstall();
+        } elseif (file_exists($path . '/uninstall.php')) {
             $INFUSION = ['id' => (int)$id, 'folder' => $infusion['folder']];
             include $path . '/uninstall.php';
         }
@@ -497,13 +524,64 @@ function load_enabled_infusions()
 {
     $stmt = $GLOBALS['pdo']->query("SELECT * FROM infusions WHERE is_installed = 1 AND is_enabled = 1 ORDER BY id ASC");
     foreach ($stmt->fetchAll() as $infusion) {
+        $manifest = [];
+        try {
+            $manifest = read_infusion_manifest($infusion['folder']);
+        } catch (Throwable $e) {
+            $manifest = [];
+        }
+
         $bootstrap = INFUSIONS . $infusion['folder'] . '/bootstrap.php';
-        if (file_exists($bootstrap)) include_once $bootstrap;
+        if (file_exists($bootstrap)) {
+            include_once $bootstrap;
+        }
+
+        $module = infusion_sdk_module($infusion['folder'], (int)$infusion['id'], $manifest ?: null);
+        if ($module) {
+            $module->registerHooks(infusion_hook_registry());
+            $module->boot();
+        }
     }
+}
+
+function render_infusion_panel($folder, array $panelData = [])
+{
+    $installed = get_installed_infusion_by_folder($folder);
+    $infusionId = $installed ? (int)$installed['id'] : (int)($panelData['infusion_id'] ?? 0);
+
+    $manifest = [];
+    try {
+        $manifest = read_infusion_manifest($folder);
+    } catch (Throwable $e) {
+        $manifest = [];
+    }
+
+    $module = infusion_sdk_module($folder, $infusionId, $manifest ?: null);
+    if ($module) {
+        return $module->renderPanel($panelData);
+    }
+
+    $panelFile = INFUSIONS . $folder . '/panel.php';
+    if (!file_exists($panelFile)) {
+        return '';
+    }
+
+    ob_start();
+    include $panelFile;
+    return (string)ob_get_clean();
 }
 
 function render_infusion_admin($folder)
 {
+    $installed = get_installed_infusion_by_folder($folder);
+    $manifest = read_infusion_manifest($folder);
+    $module = infusion_sdk_module($folder, $installed ? (int)$installed['id'] : 0, $manifest);
+
+    if ($module) {
+        echo $module->renderAdmin();
+        return;
+    }
+
     $path = infusion_admin_path($folder);
     if (!file_exists($path)) throw new RuntimeException('Infusion admin failas nerastas.');
     include $path;

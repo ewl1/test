@@ -251,6 +251,10 @@
 - `App\\Auth\\AuthService`
 - `App\\Mail\\Mailer`
 - `App\\Cache\\CacheStore`
+- bazinis `Module SDK` moduliams:
+- `InfusionManifest`, `InfusionContext`, `AbstractInfusionModule`, `HookRegistry`, `InfusionSdk`
+- `tools/make-infusion-sdk.php` scaffold naujiems moduliams
+- palaipsnis esamu moduliu perkelimas i SDK klases po viena
 - bendras `comments engine` klasiu rinkinys branduolyje
 - bendras `notifications / activity feed` klasiu rinkinys branduolyje
 - bendras `media/embed` klasiu rinkinys branduolyje

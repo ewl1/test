@@ -8,6 +8,7 @@
   "panel": true,
   "schema": true,
   "upgrade": true,
+  "module_class": "App\\News\\NewsModule",
   "default_position": "left",
   "default_panel_name": "Naujienų panelė",
   "min_core_version": "1.0.0",

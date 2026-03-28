@@ -95,9 +95,21 @@ function register_module_namespace_autoloaders()
     }
     $registered = true;
 
-    $moduleNamespaces = [
-        'App\\Forum\\' => INFUSIONS . 'forum/classes/',
-    ];
+    $moduleNamespaces = [];
+    foreach (glob(INFUSIONS . '*', GLOB_ONLYDIR) ?: [] as $dir) {
+        $classesDir = $dir . '/classes';
+        if (!is_dir($classesDir)) {
+            continue;
+        }
+
+        $folder = basename($dir);
+        $studly = \App\MiniCMS\Infusions\InfusionManifest::studly($folder);
+        if ($studly === '') {
+            continue;
+        }
+
+        $moduleNamespaces['App\\' . $studly . '\\'] = rtrim($classesDir, '/\\') . DIRECTORY_SEPARATOR;
+    }
 
     spl_autoload_register(static function ($class) use ($moduleNamespaces) {
         foreach ($moduleNamespaces as $prefix => $basePath) {

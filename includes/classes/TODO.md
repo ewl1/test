@@ -107,6 +107,7 @@
 ## Likusieji darbai
 - [x] Paruosta `composer.json` autoload sekcija (`psr-4`) su `App\\`.
 - [x] `App\\Forum\\ForumService` iskeltas is branduolio i forumo moduli.
+- [x] Pridetas pradinis `Module SDK` branduolys (`InfusionManifest`, `InfusionContext`, `AbstractInfusionModule`, `HookRegistry`, `InfusionSdk`, `ModuleScaffolder`).
 - [ ] Pradeti nuo `App\\Auth\\AuthService`, `App\\Mail\\Mailer` ir `App\\Cache\\CacheStore`.
 - [ ] Po to pereiti prie `NotificationCenter`, activity feed sluoksnio ir `ProfileService`.
 - [ ] Po pagrindiniu paslaugu pradeti bendro `comments engine` klasiu rinkini, kad naujienos ir profiliai nebesilaikytu ant atskiros logikos.

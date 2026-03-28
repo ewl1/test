@@ -87,12 +87,9 @@ function render_panel_item(array $panel)
     $rendered = false;
 
     if (!empty($panel['folder'])) {
-        $panelFile = INFUSIONS . $panel['folder'] . '/panel.php';
-        if (file_exists($panelFile)) {
-            ob_start();
-            $panelData = $panel;
-            include $panelFile;
-            $html .= ob_get_clean();
+        $renderedPanel = render_infusion_panel($panel['folder'], $panel);
+        if ($renderedPanel !== '') {
+            $html .= $renderedPanel;
             $rendered = true;
         }
     }
