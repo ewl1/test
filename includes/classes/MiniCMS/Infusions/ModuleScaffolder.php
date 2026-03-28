@@ -34,8 +34,10 @@ final class ModuleScaffolder
             $moduleRoot . '/panel.php' => self::panelTemplate($name),
             $moduleRoot . '/admin.php' => self::adminTemplate($name, $folder),
             $moduleRoot . '/schema.php' => self::schemaTemplate($folder),
+            $moduleRoot . '/upgrade.php' => self::upgradeTemplate($name),
             $moduleRoot . '/uninstall.php' => self::uninstallTemplate($folder),
             $moduleRoot . '/migrations/.gitkeep' => '',
+            $moduleRoot . '/migrations/README.md' => self::migrationsReadmeTemplate($name),
             $moduleRoot . '/locale/lt.php' => self::localeTemplate($folder, $name),
             $moduleRoot . '/assets/css/' . $folder . '.css' => self::cssTemplate($folder),
             $moduleRoot . '/assets/js/' . $folder . '.js' => self::jsTemplate($folder),
@@ -64,7 +66,7 @@ final class ModuleScaffolder
             'bootstrap' => false,
             'panel' => true,
             'schema' => true,
-            'upgrade' => false,
+            'upgrade' => true,
             'default_position' => 'right',
             'default_panel_name' => $name,
             'min_core_version' => '1.0.0',
@@ -160,6 +162,16 @@ PHP;
 PHP;
     }
 
+    private static function upgradeTemplate(string $name): string
+    {
+        return <<<PHP
+<?php
+// Legacy fallback upgrade file.
+// Core first looks for versioned files in migrations/.
+// If migrations/ neturi vykdomu zingsniu, galima naudoti upgrade.php kaip bendra upgrade logika.
+PHP;
+    }
+
     private static function localeTemplate(string $folder, string $name): string
     {
         return <<<PHP
@@ -204,10 +216,36 @@ Sis modulis sugeneruotas per MiniCMS Module SDK scaffold.
 - `panel.php`: paneles turinys ir legacy `openside()/closeside()` apvalkalas
 - `admin.php`: admin vaizdas
 - `schema.php`: diegimo DB schema
+- `upgrade.php`: legacy fallback atnaujinimo failas
 - `migrations/`: versijiniai atnaujinimu ir rollback zingsniai
 - `uninstall.php`: pasalinimo logika
 - `locale/`: modulio tekstai
 - `assets/`: modulio CSS ir JS
+
+## Migrations
+- Core automatikai uzdeda lock per install / upgrade / uninstall, todel du adminai negali paleisti to paties proceso vienu metu.
+- `administration/infusions.php` rodo aktyvu migraciju lock, paskutinius zingsnius ir rollback istorija.
+- Rekomenduojamas failu formatas:
+  - `migrations/001_1.0.1.php`
+  - `migrations/001_1.0.1.rollback.php`
+- Jei `migrations/` neturi vykdomu zingsniu, galima naudoti `upgrade.php` kaip fallback mechanizma.
+MD;
+    }
+
+    private static function migrationsReadmeTemplate(string $name): string
+    {
+        return <<<MD
+# {$name} migrations
+
+## Naming
+- `001_1.0.1.php`
+- `001_1.0.1.rollback.php`
+
+## Flow
+- Core pirmiausia iesko vykdytinu zingsniu siame kataloge.
+- Jei nauju zingsniu nera, gali buti naudojamas `upgrade.php` fallback failas.
+- Install / upgrade / uninstall yra apsaugoti bendru DB lock mechanizmu.
+- Migraciju ir rollback istorija rodoma per `administration/infusions.php`.
 MD;
     }
 }

@@ -14,6 +14,12 @@
 - `App\MiniCMS\Infusions\InfusionSdk`
 - `App\MiniCMS\Infusions\ModuleScaffolder`
 
+## Kas nauja dabartiniame modelyje
+- `migrations/` yra pirmaeilis modulio atnaujinimu kelias.
+- `upgrade.php` lieka kaip legacy fallback, jei nera vykdytinu versioned migration failu.
+- Core automatikai uzdeda DB lock per `install / upgrade / uninstall`.
+- `administration/infusions.php` rodo aktyvu migraciju lock, paskutinius zingsnius ir rollback istorija.
+
 ## Modulio struktura
 ```text
 infusions/<modulis>/
@@ -66,12 +72,28 @@ final class NewsModule extends AbstractInfusionModule
 
 `AbstractInfusionModule` pagal nutylejima:
 - `install()` vykdo `schema.php`
-- `upgrade()` vykdo `upgrade.php`
+- `upgrade()` vykdo `upgrade.php` kaip fallback
 - `uninstall()` vykdo `uninstall.php`
 - `renderAdmin()` renderina `admin.php`
 - `renderPanel()` renderina `panel.php`
 
 Tai reiskia, kad galima pereiti prie SDK ir nekeisti viso modulio is karto.
+
+Papildomi helperiai moduliui:
+- `InfusionContext::migrationsPath()`
+- `InfusionContext::hasMigrations()`
+- `AbstractInfusionModule::migrationsPath()`
+- `AbstractInfusionModule::hasMigrations()`
+
+## Migration naming
+Rekomenduojamas pavadinimu formatas:
+- `migrations/001_1.0.1.php`
+- `migrations/001_1.0.1.rollback.php`
+
+Veikimo taisykle:
+- core pirma paleidzia versioned failus is `migrations/`
+- jei nauju zingsniu nera, gali buti vykdomas `upgrade.php`
+- rollback istorija ir statusai rodomi admin `infusions` puslapyje
 
 ## SimplePanelModule
 Jei norite paneles logika laikyti klaseje, galite naudoti:
@@ -153,7 +175,9 @@ Generatorius sukuria:
 - `panel.php` su `openside()` / `closeside()` pavyzdziu
 - `admin.php`
 - `schema.php`
+- `upgrade.php`
 - `migrations/.gitkeep`
+- `migrations/README.md`
 - `uninstall.php`
 - `locale/lt.php`
 - `assets/css/*`
@@ -163,4 +187,5 @@ Generatorius sukuria:
 ## Taisykle
 - `includes/classes/MiniCMS/Installer/` yra tik branduolio installeris.
 - Moduliu schema, seed'ai, uninstall ir upgrade logika lieka paciuose `infusions/<modulis>/`.
-- `migrations/` katalogas yra privaloma modulio struktūros dalis, net jei pradžioje dar tuščias.
+- `migrations/` katalogas yra privaloma modulio strukturos dalis, net jei pradzioje dar tuscias.
+- Naujiems moduliams rekomenduojama pirma naudoti `migrations/`, o ne visa atnaujinimo logika krauti i viena `upgrade.php`.

@@ -64,6 +64,22 @@ final class InfusionContext
         return is_file($this->path($relative));
     }
 
+    public function hasDirectory(string $relative): bool
+    {
+        return is_dir($this->path($relative));
+    }
+
+    public function migrationsPath(string $relative = ''): string
+    {
+        $base = $this->path('migrations');
+        return $relative === '' ? $base : rtrim($base, '/\\') . DIRECTORY_SEPARATOR . ltrim($relative, '/\\');
+    }
+
+    public function hasMigrations(): bool
+    {
+        return $this->hasDirectory('migrations');
+    }
+
     public function pdo(): PDO
     {
         return $GLOBALS['pdo'];

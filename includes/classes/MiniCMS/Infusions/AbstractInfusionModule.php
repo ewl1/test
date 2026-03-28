@@ -84,4 +84,14 @@ abstract class AbstractInfusionModule implements InfusionModuleInterface
             register_page_script($this->context->publicPath($relativePath));
         }
     }
+
+    protected function migrationsPath(string $relative = ''): string
+    {
+        return $this->context->migrationsPath($relative);
+    }
+
+    protected function hasMigrations(): bool
+    {
+        return $this->context->hasMigrations();
+    }
 }
