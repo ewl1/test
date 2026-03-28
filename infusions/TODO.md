@@ -43,3 +43,10 @@
 - paieskos saltinius
 - pranesimu ivykius
 - hook'us i branduoli
+- [ ] Vienodai apibrezti, kaip modulis pateikia paieskos metaduomenis:
+- indeksuojami laukai
+- rezultato URL
+- rezultato pavadinimas ir santrauka
+- kategorija / tipas
+- leidimu filtras
+- svoris/relevancija

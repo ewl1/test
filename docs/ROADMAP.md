@@ -118,6 +118,14 @@
 - kiek naujienu rodyti, puslapiavimas ir paneliu limitai
 - redagavimo istorija, preview ir approval workflow
 - Bendri bendruomenes varikliai:
+- paieskos variklis:
+- vieningi paieskos saltiniai visiems moduliams
+- rezultatu skaidymas pagal tipa ir sekcija
+- filtrai pagal data, autoriu, kategorija, taga ir moduli
+- relevancijos ir svoriu modelis
+- teisiu filtras, kad paieska gerbtu privataus turinio ribas
+- `autocomplete`, `highlight` ir paieskos analitika
+- `reindex` ir paieskos diagnostika admin dalyje
 - comments engine
 - vieningas komentaru taikinio modelis skirtingiems moduliams
 - `flat` ir `threaded` scenarijai pagal poreiki
@@ -174,6 +182,7 @@
 - request logger
 - task scheduler / cron registry
 - search index abstraction
+- search provider registry ir paieskos perindeksavimo sluoksnis
 - content revision history
 - draft / preview engine
 - trash / recycle bin
@@ -232,6 +241,7 @@
 - page cache
 - panel cache
 - query profiling
+- paieskos uzklausu profiliavimas ir paieskos cache
 - asset bundling / minify
 - image optimization
 - lazy loading

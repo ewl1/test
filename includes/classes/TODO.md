@@ -57,6 +57,14 @@
 
 ### Turinys ir paieska
 - [ ] `App\\Search\\SearchIndexService`
+- [ ] `App\\Search\\SearchProviderRegistry`
+- [ ] `App\\Search\\SearchQueryService`
+- [ ] `App\\Search\\SearchRanker`
+- [ ] `App\\Search\\SearchHighlighter`
+- [ ] `App\\Search\\SearchSuggestionService`
+- [ ] `App\\Search\\SearchAnalyticsService`
+- [ ] `App\\Search\\SearchReindexService`
+- [ ] `App\\Search\\SearchPermissionFilter`
 - [ ] `App\\Content\\RevisionService`
 - [ ] `App\\Content\\DraftPreviewService`
 - [ ] `App\\Content\\TrashService`
@@ -91,4 +99,5 @@
 - [ ] Pradeti nuo `App\\Auth\\AuthService`, `App\\Mail\\Mailer` ir `App\\Cache\\CacheStore`.
 - [ ] Po to pereiti prie `NotificationCenter` ir `ProfileService`.
 - [ ] Po pagrindiniu paslaugu pradeti bendro `comments engine` klasiu rinkini, kad naujienos ir profiliai nebesilaikytu ant atskiros logikos.
+- [ ] Tuo paciu sluoksniu pradeti ir bendra paieskos klasiu rinkini, kad `search.php` netaptu vieninteliu paieskos centru.
 - [ ] Tik po to skaidyti tolimesnes pagalbines sritis i siauresnes paslaugas.

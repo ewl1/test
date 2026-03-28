@@ -39,6 +39,7 @@
 - [ ] Prideti `request logger`.
 - [ ] Paruosti `task scheduler / cron registry`.
 - [ ] Prideti `search index abstraction`.
+- [ ] Prideti vieninga paieskos saltiniu registravimo modeli branduoliui ir moduliams.
 - [ ] Prideti `content revision history`.
 - [ ] Prideti `draft / preview engine`.
 - [ ] Prideti `trash / recycle bin`.
@@ -56,6 +57,19 @@
 - [ ] Prideti `read-only maintenance mode` logika.
 
 ### Funkcionalumas
+- [ ] Isgryninti bendra paieskos varikli visam MiniCMS.
+- [ ] Apibrezti paieskos saltinius: naujienos, forumas, naudotojai, komentarai, navigacija, paneles ir moduliai.
+- [ ] Prideti paieskos rezultatu skaidyma pagal sekcija ir tipa.
+- [ ] Prideti filtrus pagal moduli, data, autoriu, kategorija, taga ir role.
+- [ ] Prideti relevancijos ir svoriu logika skirtingiems saltiniams.
+- [ ] Prideti teisiu filtra, kad paieska nerodytu privataus ar neleistino turinio.
+- [ ] Prideti `highlight` ir isskirto raktazodzio zymejimo logika rezultatuose.
+- [ ] Prideti paieskos pasiulymus (`autocomplete`) ir populiariu paiesku logika.
+- [ ] Prideti typo/synonym paieskos sluoksni, jei to reikes.
+- [ ] Prideti paieskos analitika: dazniausios uzklausos, tuscios paieskos, neveikiantys raktazodziai.
+- [ ] Prideti perindeksavimo (`reindex`) ir paieskos cache valymo logika.
+- [ ] Prideti paieskos puslapiavimo, limito ir rusiavimo nustatymus.
+- [ ] Prideti admin paieskos diagnostika: kas indeksuojama, kada paskutini karta atnaujinta, kiek irasu.
 - [ ] Isgryninti bendra `comments engine`, kad ji naudotu profiliai, naujienos ir kiti moduliai.
 - [ ] Apibrezti vieninga komentaru taikinio modeli: naujienos, profiliai, puslapiai, paneles ar kiti moduliai.
 - [ ] Nuspresti, kur reikia `flat` komentaru, o kur `threaded replies`.
@@ -83,6 +97,7 @@
 - [ ] Prideti `page cache`.
 - [ ] Prideti `panel cache`.
 - [ ] Prideti `query profiling`.
+- [ ] Prideti paieskos uzklausu profiliavima ir letos paieskos diagnostika.
 - [ ] Prideti `asset bundling / minify` strategija.
 - [ ] Prideti `image optimization`.
 - [ ] Plesti `lazy loading` ir `cache warmup` logika.
