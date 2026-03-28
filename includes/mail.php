@@ -5,9 +5,11 @@ function ensure_phpmailer_loaded()
         return true;
     }
 
-    $autoloadPath = BASEDIR . 'vendor/autoload.php';
-    if (is_file($autoloadPath)) {
-        require_once $autoloadPath;
+    foreach ([INCLUDES . 'vendor/autoload.php', BASEDIR . 'vendor/autoload.php'] as $autoloadPath) {
+        if (is_file($autoloadPath)) {
+            require_once $autoloadPath;
+            break;
+        }
     }
 
     return class_exists('PHPMailer\\PHPMailer\\PHPMailer');

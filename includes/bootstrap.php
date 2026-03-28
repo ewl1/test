@@ -80,8 +80,11 @@ function send_security_headers()
 send_security_headers();
 
 require_once dirname(__DIR__) . '/maincore.php';
-if (is_file(BASEDIR . 'vendor/autoload.php')) {
-    require_once BASEDIR . 'vendor/autoload.php';
+foreach ([INCLUDES . 'vendor/autoload.php', BASEDIR . 'vendor/autoload.php'] as $autoloadPath) {
+    if (is_file($autoloadPath)) {
+        require_once $autoloadPath;
+        break;
+    }
 }
 
 function register_module_namespace_autoloaders()
