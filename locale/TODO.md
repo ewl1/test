@@ -8,6 +8,11 @@
 - `[~]` vyksta
 - `[x]` padaryta
 
+## Etapai
+- `v1.1`: pilnas antriniu admin ir paieskos puslapiu perkelimas.
+- `v1.2`: namespace ir helperiu stabilizavimas aplink locale sluoksni.
+- `v1.3`: papildomos kalbos ir aktyvios kalbos pasirinkimas administracijoje.
+
 ## Svarbūs failai
 - `lt.php`: pagrindiniai branduolio, auth, profile ir validation tekstai.
 - `../includes/locale.php`: locale užkrovimas branduoliui ir infusion moduliams.

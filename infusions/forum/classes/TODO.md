@@ -8,6 +8,10 @@
 - `[~]` vyksta
 - `[x]` padaryta
 
+## Etapai
+- `v1.2` yra pagrindinis sio katalogo etapas.
+- `v1.3` cia turetu atsirasti siauresni servisai vietoje vieno augancio serviso.
+
 ## Esamos klasės
 - `ForumService.php`: temos ir atsakymai per `App\\Forum\\ForumService`.
 

@@ -8,6 +8,11 @@
 - `[~]` vyksta
 - `[x]` padaryta
 
+## Etapai
+- `v1.1`: flood control, teises ir patikimumas.
+- `v1.2`: jei reikes, logikos skaidymas i siauresnes klases.
+- `v1.3`: realtime ir papildomas UX.
+
 ## Svarbūs failai
 - `bootstrap.php`: žinučių logika, renderinimas ir POST srautas.
 - `admin.php`: moderavimo UI.

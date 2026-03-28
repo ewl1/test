@@ -8,6 +8,11 @@
 - `[~]` vyksta
 - `[x]` padaryta
 
+## Etapai
+- `v1.1`: baziniai moderatoriu ir saugumo patobulinimai.
+- `v1.2`: logikos skaidymas i klases.
+- `v1.3`: moderavimo istorija, UX ir bendruomenes funkcijos.
+
 ## Svarbūs failai
 - `bootstrap.php`: schema, CRUD, moderavimo logika, BBCode ir smailai.
 - `admin.php`: forumo struktūros valdymas.

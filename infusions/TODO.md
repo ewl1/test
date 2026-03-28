@@ -8,6 +8,11 @@
 - `[~]` vyksta
 - `[x]` padaryta
 
+## Etapai
+- `v1.1`: suvienodinti locale ir asset struktura visiems esamiems moduliams.
+- `v1.2`: daugiau moduliniu klasiu ir aiskesnes ribos su branduoliu.
+- `v1.3`: modulio kokybes sluoksniai, papildomi assetai ir moderavimo/UX plėtra.
+
 ## Taisyklės
 - Modulio specifiniai tekstai laikomi `infusions/<modulis>/locale/`.
 - Modulio specifiniai CSS ir JS laikomi `infusions/<modulis>/assets/`.

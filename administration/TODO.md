@@ -8,6 +8,10 @@
 - `[~]` vyksta
 - `[x]` padaryta
 
+## Etapas
+- Dabartinis prioritetas: `v1.1 Stabilumas ir saugumas`.
+- Siejasi su `docs/ROADMAP.md`.
+
 ## Svarbūs failai
 - `login.php`: atskiras admin prisijungimas ir sesijos patikra.
 - `index.php`: dashboard santrauka ir greitos nuorodos.

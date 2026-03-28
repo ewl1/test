@@ -8,6 +8,11 @@
 - `[~]` vyksta
 - `[x]` padaryta
 
+## Etapai
+- `v1.1`: locale, saugumas, smoke test helperiai.
+- `v1.2`: `Auth`, `Mail`, `Cache` branduolio paslaugos.
+- `v1.3`: papildomas polish ir mazesniu helperiu konsolidacija.
+
 ## Svarbūs failai
 - `bootstrap.php`: sesijos, saugumo antraštės, bendras įkrovimas.
 - `locale.php`: locale failų užkrovimas branduoliui ir infusion moduliams.

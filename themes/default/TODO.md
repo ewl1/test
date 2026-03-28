@@ -8,6 +8,11 @@
 - `[~]` vyksta
 - `[x]` padaryta
 
+## Etapai
+- `v1.1`: kontrastas, lietuviskos raides, svarbiausi UI neatitikimai.
+- `v1.2`: bendro stiliaus isskaidymas, kai daugėja branduolio ir moduliu sluoksniu.
+- `v1.3`: pilnesnis UX polish ir SEO/UI komponentai.
+
 ## Svarbūs failai
 - `header.php`, `footer.php`: viešas karkasas ir globalūs assetai.
 - `admin_header.php`, `admin_footer.php`: administracijos karkasas.

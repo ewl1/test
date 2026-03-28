@@ -8,6 +8,11 @@
 - `[~]` vyksta
 - `[x]` padaryta
 
+## Etapai
+- `v1.1`: tik locale ir suderinamumo tvarkymas.
+- `v1.2`: helperiu skaidymas i paslaugas.
+- `v1.3`: tik tie helperiai, kurie turi likti del patogumo ar suderinamumo.
+
 ## Svarbūs failai
 - `posts.php`: įrašų kūrimas, atnaujinimas ir trynimas.
 - `shouts.php`: senasis shout helperis dėl suderinamumo.
