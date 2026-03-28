@@ -83,6 +83,37 @@ require_once dirname(__DIR__) . '/maincore.php';
 if (is_file(BASEDIR . 'vendor/autoload.php')) {
     require_once BASEDIR . 'vendor/autoload.php';
 }
+
+function register_module_namespace_autoloaders()
+{
+    static $registered = false;
+    if ($registered) {
+        return;
+    }
+    $registered = true;
+
+    $moduleNamespaces = [
+        'App\\Forum\\' => INFUSIONS . 'forum/classes/',
+    ];
+
+    spl_autoload_register(static function ($class) use ($moduleNamespaces) {
+        foreach ($moduleNamespaces as $prefix => $basePath) {
+            if (strncmp($class, $prefix, strlen($prefix)) !== 0) {
+                continue;
+            }
+
+            $relativeClass = substr($class, strlen($prefix));
+            $relativePath = str_replace('\\', DIRECTORY_SEPARATOR, $relativeClass) . '.php';
+            $classFile = $basePath . $relativePath;
+
+            if (is_file($classFile)) {
+                require_once $classFile;
+            }
+        }
+    });
+}
+
+register_module_namespace_autoloaders();
 require_once INCLUDES . 'http.php';
 register_http_error_handlers();
 
