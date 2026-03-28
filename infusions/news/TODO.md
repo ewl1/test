@@ -26,6 +26,7 @@
 - [ ] Prideti kategorijas.
 - [ ] Prideti daugiau nei viena kategorija vienai naujienai, jei to reikes.
 - [ ] Prideti `draft / review / scheduled / published / archived` statusus.
+- [ ] Prideti aisku `juodrastis` darba su issaugojimu nepublikuojant.
 - [ ] Prideti `scheduled publish`.
 - [ ] Prideti publikavimo pabaigos data (`expire / archive after`).
 - [ ] Prideti `sticky / featured / breaking news` busenas.
@@ -35,13 +36,17 @@
 - [ ] Prideti `author profile integration`.
 - [ ] Prideti redaktoriaus / patvirtintojo rodyma.
 - [ ] Prideti perziuros (`preview`) ir juodrascio perziuros nuorodas.
+- [ ] Prideti `WYSIWYG` integravima naujienos turinio redagavimui.
 - [ ] Prideti redagavimo istorija ir revision palyginima.
 - [ ] Prideti `change notes` redaguojant naujiena.
 - [ ] Prideti galimybe reikalauti patvirtinimo pries publikavima.
 
 ### Turinys ir media
+- [ ] Prideti aisku atskyrima tarp naujienos dalies (`excerpt / summary`) ir pilnos naujienos (`full body`).
 - [ ] Prideti pilna naujienos turinio lauka, ne tik santrauka.
 - [ ] Prideti `featured image`.
+- [ ] Prideti paveiksliuku ikelima naujienai per admin forma.
+- [ ] Prideti paveiksliuku rodymo taisykles sarasuose, pilname naujienos puslapyje ir panelese.
 - [ ] Prideti galerija arba papildomus media failus.
 - [ ] Prideti failu/priedu prisegima ten, kur tai prasminga.
 - [ ] Prideti saltinio ir autoriaus nuorodas.
@@ -50,6 +55,7 @@
 ### Bendruomenes funkcijos
 - [ ] Prideti komentarus.
 - [ ] Prideti reakcijas / `like`.
+- [ ] Prideti reitingavimus naujienoms.
 - [ ] Prideti `bookmarks / favorites`.
 - [ ] Prideti tagus.
 - [ ] Prideti `related news`.
@@ -70,7 +76,10 @@
 - [ ] Prideti filtrus administravime pagal statusa, kategorija, autoriu ir data.
 - [ ] Prideti greitus veiksmus: publish, unpublish, feature, archive.
 - [ ] Prideti masines operacijas (`bulk publish`, `bulk archive`, `bulk delete`).
+- [ ] Prideti nustatyma, kiek naujienu rodyti puslapyje.
+- [ ] Prideti puslapiavima naujienu sarasui.
 - [ ] Prideti naujienu paneles variantus: naujausios, populiariausios, `featured`, pagal kategorija.
+- [ ] Prideti nustatyma, kiek naujienu rodyti kiekvienoje naujienu paneleje.
 - [ ] Prideti locale tekstus modulio admin ir viesiems vaizdams.
 
 ### Architektura

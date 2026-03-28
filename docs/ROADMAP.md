@@ -93,17 +93,21 @@
 - Naujienu infusion:
 - kategorijos
 - `draft / review / scheduled / published / archived`
+- aiskus `juodrastis` workflow
 - scheduled publish
 - publish pabaigos data ir archyvavimas
 - `sticky / featured / breaking news`
 - author profile integration
 - redaktoriaus / patvirtintojo rodymai
-- pilnas turinio laukas, ne tik santrauka
+- `WYSIWYG` integracija redagavimui
+- dalis naujienos (`excerpt`) ir pilna naujiena (`full body`)
 - komentarai
+- reitingavimai
 - reakcijos, favorites ir perziuru skaiciavimas
 - tagai
 - related news
 - featured image
+- paveiksliuku ikelimas ir rodymas
 - galerija / media / priedai
 - saltiniai, autoriaus nuorodos ir `reading time`
 - SEO laukai kiekvienai naujienai
@@ -111,6 +115,7 @@
 - `article schema`, OG/Twitter ir social share paveiksliukas
 - RSS / Atom feed
 - feed'ai pagal kategorijas ir tagus
+- kiek naujienu rodyti, puslapiavimas ir paneliu limitai
 - redagavimo istorija, preview ir approval workflow
 - Bendri bendruomenes varikliai:
 - comments engine
