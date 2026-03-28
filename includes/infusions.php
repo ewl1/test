@@ -128,6 +128,78 @@ function ensure_infusion_tables()
     ");
 }
 
+function infusion_migration_lock_name()
+{
+    static $lockName = null;
+    if ($lockName !== null) {
+        return $lockName;
+    }
+
+    $databaseName = 'default';
+    try {
+        $resolved = (string)$GLOBALS['pdo']->query('SELECT DATABASE()')->fetchColumn();
+        if ($resolved !== '') {
+            $databaseName = $resolved;
+        }
+    } catch (Throwable $e) {
+    }
+
+    $databaseName = preg_replace('/[^a-z0-9_:-]+/i', '_', $databaseName);
+    $lockName = 'minicms:' . $databaseName . ':infusion-migrations';
+    return $lockName;
+}
+
+function acquire_infusion_migration_lock($operation = 'upgrade', $resource = '', $timeoutSeconds = 0)
+{
+    $lockName = infusion_migration_lock_name();
+
+    try {
+        $stmt = $GLOBALS['pdo']->prepare('SELECT GET_LOCK(:lock_name, :timeout_seconds)');
+        $stmt->bindValue(':lock_name', $lockName, PDO::PARAM_STR);
+        $stmt->bindValue(':timeout_seconds', max(0, (int)$timeoutSeconds), PDO::PARAM_INT);
+        $stmt->execute();
+        $status = (int)$stmt->fetchColumn();
+    } catch (Throwable $e) {
+        $status = 0;
+    }
+
+    if ($status !== 1) {
+        audit_log(current_user()['id'] ?? null, 'infusion_lock_blocked', 'infusions', null, [
+            'operation' => (string)$operation,
+            'resource' => (string)$resource,
+            'lock_name' => $lockName,
+        ]);
+        throw new RuntimeException('Šiuo metu kitas administratorius jau vykdo modulio diegimą, atnaujinimą arba pašalinimą. Palaukite kelias sekundes ir bandykite dar kartą.');
+    }
+
+    return $lockName;
+}
+
+function release_infusion_migration_lock($lockName = null)
+{
+    $lockName = trim((string)($lockName ?: infusion_migration_lock_name()));
+    if ($lockName === '') {
+        return;
+    }
+
+    try {
+        $stmt = $GLOBALS['pdo']->prepare('SELECT RELEASE_LOCK(:lock_name)');
+        $stmt->execute([':lock_name' => $lockName]);
+    } catch (Throwable $e) {
+    }
+}
+
+function with_infusion_migration_lock(callable $callback, $operation = 'upgrade', $resource = '', $timeoutSeconds = 0)
+{
+    $lockName = acquire_infusion_migration_lock($operation, $resource, $timeoutSeconds);
+
+    try {
+        return $callback();
+    } finally {
+        release_infusion_migration_lock($lockName);
+    }
+}
+
 function get_infusion_core_version()
 {
     return app_version();
@@ -366,158 +438,169 @@ function rollback_migration_steps($folder, $infusionId, array $executedSteps)
 function install_infusion_from_folder($folder)
 {
     $folder = trim((string)$folder);
-    $path = INFUSIONS . $folder;
-    if (!is_dir($path)) throw new RuntimeException('Infusion katalogas nerastas.');
 
-    ensure_infusion_tables();
-    $manifest = read_infusion_manifest($folder);
-    validate_infusion_dependencies($manifest);
+    return with_infusion_migration_lock(function () use ($folder) {
+        $path = INFUSIONS . $folder;
+        if (!is_dir($path)) throw new RuntimeException('Infusion katalogas nerastas.');
 
-    $GLOBALS['pdo']->beginTransaction();
-    try {
-        $stmt = $GLOBALS['pdo']->prepare("
-            INSERT INTO infusions (name, folder, is_installed, is_enabled, created_at)
-            VALUES (:n,:f,1,1,NOW())
-            ON DUPLICATE KEY UPDATE name=VALUES(name), is_installed=1, is_enabled=1
-        ");
-        $stmt->execute([':n' => $manifest['name'], ':f' => $folder]);
+        ensure_infusion_tables();
+        $manifest = read_infusion_manifest($folder);
+        validate_infusion_dependencies($manifest);
 
-        $idStmt = $GLOBALS['pdo']->prepare("SELECT id FROM infusions WHERE folder = :f LIMIT 1");
-        $idStmt->execute([':f' => $folder]);
-        $infusionId = (int)$idStmt->fetchColumn();
+        $GLOBALS['pdo']->beginTransaction();
+        try {
+            $stmt = $GLOBALS['pdo']->prepare("
+                INSERT INTO infusions (name, folder, is_installed, is_enabled, created_at)
+                VALUES (:n,:f,1,1,NOW())
+                ON DUPLICATE KEY UPDATE name=VALUES(name), is_installed=1, is_enabled=1
+            ");
+            $stmt->execute([':n' => $manifest['name'], ':f' => $folder]);
 
-        execute_schema_install($folder, $infusionId, $manifest);
-        register_infusion_permissions($infusionId, $manifest['permissions']);
-        register_infusion_admin_menu($infusionId, $manifest['admin_menu']);
+            $idStmt = $GLOBALS['pdo']->prepare("SELECT id FROM infusions WHERE folder = :f LIMIT 1");
+            $idStmt->execute([':f' => $folder]);
+            $infusionId = (int)$idStmt->fetchColumn();
 
-        $versionStmt = $GLOBALS['pdo']->prepare("INSERT IGNORE INTO infusion_versions (infusion_id, version) VALUES (:iid,:v)");
-        $versionStmt->execute([':iid' => $infusionId, ':v' => $manifest['version']]);
+            execute_schema_install($folder, $infusionId, $manifest);
+            register_infusion_permissions($infusionId, $manifest['permissions']);
+            register_infusion_admin_menu($infusionId, $manifest['admin_menu']);
 
-        if ($manifest['panel'] && file_exists($path . '/panel.php')) {
-            $exists = $GLOBALS['pdo']->prepare("SELECT COUNT(*) FROM infusion_panels WHERE infusion_id = :iid");
-            $exists->execute([':iid' => $infusionId]);
-            if ((int)$exists->fetchColumn() === 0) {
-                $panelStmt = $GLOBALS['pdo']->prepare("
-                    INSERT INTO infusion_panels (infusion_id, panel_name, position, sort_order, is_enabled)
-                    VALUES (:iid,:n,:p,999,1)
-                ");
-                $panelStmt->execute([
-                    ':iid' => $infusionId,
-                    ':n' => $manifest['default_panel_name'],
-                    ':p' => $manifest['default_position'],
-                ]);
+            $versionStmt = $GLOBALS['pdo']->prepare("INSERT IGNORE INTO infusion_versions (infusion_id, version) VALUES (:iid,:v)");
+            $versionStmt->execute([':iid' => $infusionId, ':v' => $manifest['version']]);
+
+            if ($manifest['panel'] && file_exists($path . '/panel.php')) {
+                $exists = $GLOBALS['pdo']->prepare("SELECT COUNT(*) FROM infusion_panels WHERE infusion_id = :iid");
+                $exists->execute([':iid' => $infusionId]);
+                if ((int)$exists->fetchColumn() === 0) {
+                    $panelStmt = $GLOBALS['pdo']->prepare("
+                        INSERT INTO infusion_panels (infusion_id, panel_name, position, sort_order, is_enabled)
+                        VALUES (:iid,:n,:p,999,1)
+                    ");
+                    $panelStmt->execute([
+                        ':iid' => $infusionId,
+                        ':n' => $manifest['default_panel_name'],
+                        ':p' => $manifest['default_position'],
+                    ]);
+                }
             }
-        }
 
-        if ($GLOBALS['pdo']->inTransaction()) {
-            $GLOBALS['pdo']->commit();
+            if ($GLOBALS['pdo']->inTransaction()) {
+                $GLOBALS['pdo']->commit();
+            }
+            return $infusionId;
+        } catch (Throwable $e) {
+            if ($GLOBALS['pdo']->inTransaction()) $GLOBALS['pdo']->rollBack();
+            throw $e;
         }
-        return $infusionId;
-    } catch (Throwable $e) {
-        if ($GLOBALS['pdo']->inTransaction()) $GLOBALS['pdo']->rollBack();
-        throw $e;
-    }
+    }, 'install', $folder);
 }
 
 function upgrade_infusion_by_id($id)
 {
-    ensure_infusion_tables();
-    $infusion = get_installed_infusion($id);
-    if (!$infusion) throw new RuntimeException('Infusion nerasta.');
+    $id = (int)$id;
 
-    $manifest = read_infusion_manifest($infusion['folder']);
-    validate_infusion_dependencies($manifest);
+    return with_infusion_migration_lock(function () use ($id) {
+        ensure_infusion_tables();
+        $infusion = get_installed_infusion($id);
+        if (!$infusion) throw new RuntimeException('Infusion nerasta.');
 
-    $installedVersion = get_installed_infusion_version($id) ?: '0.0.0';
-    $targetVersion = $manifest['version'];
+        $manifest = read_infusion_manifest($infusion['folder']);
+        validate_infusion_dependencies($manifest);
 
-    if (version_compare($targetVersion, $installedVersion, '<=')) {
-        register_infusion_permissions((int)$id, $manifest['permissions']);
-        register_infusion_admin_menu((int)$id, $manifest['admin_menu']);
-        return ['upgraded' => false, 'from' => $installedVersion, 'to' => $targetVersion];
-    }
+        $installedVersion = get_installed_infusion_version($id) ?: '0.0.0';
+        $targetVersion = $manifest['version'];
 
-    $executedSteps = [];
-    $GLOBALS['pdo']->beginTransaction();
-    try {
-        $migrationDir = infusion_migrations_dir($infusion['folder']);
-        if (is_dir($migrationDir)) {
-            $executedSteps = run_migration_steps($infusion['folder'], (int)$id, $installedVersion, $targetVersion);
-        } else {
-            $module = infusion_sdk_module($infusion['folder'], (int)$id, $manifest);
-            if ($module) {
-                $module->upgrade($installedVersion, $targetVersion);
-            } else {
-                $upgradeFile = infusion_upgrade_path($infusion['folder']);
-                if (!file_exists($upgradeFile)) {
-                    throw new RuntimeException('Atnaujinimo failas nerastas.');
-                }
-                $INFUSION = [
-                    'id' => (int)$id,
-                    'folder' => $infusion['folder'],
-                    'manifest' => $manifest,
-                    'installed_version' => $installedVersion,
-                    'target_version' => $targetVersion,
-                ];
-                include $upgradeFile;
-            }
+        if (version_compare($targetVersion, $installedVersion, '<=')) {
+            register_infusion_permissions((int)$id, $manifest['permissions']);
+            register_infusion_admin_menu((int)$id, $manifest['admin_menu']);
+            return ['upgraded' => false, 'from' => $installedVersion, 'to' => $targetVersion];
         }
 
-        register_infusion_permissions((int)$id, $manifest['permissions']);
-        register_infusion_admin_menu((int)$id, $manifest['admin_menu']);
-
-        $stmt = $GLOBALS['pdo']->prepare("INSERT INTO infusion_versions (infusion_id, version) VALUES (:iid,:v)");
-        $stmt->execute([':iid' => (int)$id, ':v' => $targetVersion]);
-
-        if ($GLOBALS['pdo']->inTransaction()) {
-            $GLOBALS['pdo']->commit();
-        }
-        return ['upgraded' => true, 'from' => $installedVersion, 'to' => $targetVersion, 'steps' => array_map(fn($s) => $s['version'], $executedSteps)];
-    } catch (Throwable $e) {
-        if ($GLOBALS['pdo']->inTransaction()) $GLOBALS['pdo']->rollBack();
+        $executedSteps = [];
+        $GLOBALS['pdo']->beginTransaction();
         try {
-            rollback_migration_steps($infusion['folder'], (int)$id, $executedSteps);
-        } catch (Throwable $re) {}
-        throw $e;
-    }
+            $migrationDir = infusion_migrations_dir($infusion['folder']);
+            if (is_dir($migrationDir)) {
+                $executedSteps = run_migration_steps($infusion['folder'], (int)$id, $installedVersion, $targetVersion);
+            } else {
+                $module = infusion_sdk_module($infusion['folder'], (int)$id, $manifest);
+                if ($module) {
+                    $module->upgrade($installedVersion, $targetVersion);
+                } else {
+                    $upgradeFile = infusion_upgrade_path($infusion['folder']);
+                    if (!file_exists($upgradeFile)) {
+                        throw new RuntimeException('Atnaujinimo failas nerastas.');
+                    }
+                    $INFUSION = [
+                        'id' => (int)$id,
+                        'folder' => $infusion['folder'],
+                        'manifest' => $manifest,
+                        'installed_version' => $installedVersion,
+                        'target_version' => $targetVersion,
+                    ];
+                    include $upgradeFile;
+                }
+            }
+
+            register_infusion_permissions((int)$id, $manifest['permissions']);
+            register_infusion_admin_menu((int)$id, $manifest['admin_menu']);
+
+            $stmt = $GLOBALS['pdo']->prepare("INSERT INTO infusion_versions (infusion_id, version) VALUES (:iid,:v)");
+            $stmt->execute([':iid' => (int)$id, ':v' => $targetVersion]);
+
+            if ($GLOBALS['pdo']->inTransaction()) {
+                $GLOBALS['pdo']->commit();
+            }
+            return ['upgraded' => true, 'from' => $installedVersion, 'to' => $targetVersion, 'steps' => array_map(fn($s) => $s['version'], $executedSteps)];
+        } catch (Throwable $e) {
+            if ($GLOBALS['pdo']->inTransaction()) $GLOBALS['pdo']->rollBack();
+            try {
+                rollback_migration_steps($infusion['folder'], (int)$id, $executedSteps);
+            } catch (Throwable $re) {}
+            throw $e;
+        }
+    }, 'upgrade', 'infusion:' . $id);
 }
 
 function uninstall_infusion_by_id($id)
 {
-    ensure_infusion_tables();
-    $infusion = get_installed_infusion($id);
-    if (!$infusion) throw new RuntimeException('Infusion nerasta.');
-    $path = INFUSIONS . $infusion['folder'];
+    $id = (int)$id;
 
-    $GLOBALS['pdo']->beginTransaction();
-    try {
-        $manifest = [];
+    return with_infusion_migration_lock(function () use ($id) {
+        ensure_infusion_tables();
+        $infusion = get_installed_infusion($id);
+        if (!$infusion) throw new RuntimeException('Infusion nerasta.');
+        $path = INFUSIONS . $infusion['folder'];
+
+        $GLOBALS['pdo']->beginTransaction();
         try {
-            $manifest = read_infusion_manifest($infusion['folder']);
-        } catch (Throwable $e) {
             $manifest = [];
-        }
+            try {
+                $manifest = read_infusion_manifest($infusion['folder']);
+            } catch (Throwable $e) {
+                $manifest = [];
+            }
 
-        $module = infusion_sdk_module($infusion['folder'], (int)$id, $manifest ?: null);
-        if ($module) {
-            $module->uninstall();
-        } elseif (file_exists($path . '/uninstall.php')) {
-            $INFUSION = ['id' => (int)$id, 'folder' => $infusion['folder']];
-            include $path . '/uninstall.php';
+            $module = infusion_sdk_module($infusion['folder'], (int)$id, $manifest ?: null);
+            if ($module) {
+                $module->uninstall();
+            } elseif (file_exists($path . '/uninstall.php')) {
+                $INFUSION = ['id' => (int)$id, 'folder' => $infusion['folder']];
+                include $path . '/uninstall.php';
+            }
+            $GLOBALS['pdo']->prepare("DELETE FROM infusion_admin_menu WHERE infusion_id = :id")->execute([':id' => (int)$id]);
+            $GLOBALS['pdo']->prepare("DELETE FROM infusion_panels WHERE infusion_id = :id")->execute([':id' => (int)$id]);
+            $GLOBALS['pdo']->prepare("DELETE FROM infusion_versions WHERE infusion_id = :id")->execute([':id' => (int)$id]);
+            $GLOBALS['pdo']->prepare("DELETE FROM infusion_migration_log WHERE infusion_id = :id")->execute([':id' => (int)$id]);
+            $GLOBALS['pdo']->prepare("DELETE FROM infusion_rollback_log WHERE infusion_id = :id")->execute([':id' => (int)$id]);
+            $GLOBALS['pdo']->prepare("DELETE FROM infusions WHERE id = :id")->execute([':id' => (int)$id]);
+            if ($GLOBALS['pdo']->inTransaction()) {
+                $GLOBALS['pdo']->commit();
+            }
+        } catch (Throwable $e) {
+            if ($GLOBALS['pdo']->inTransaction()) $GLOBALS['pdo']->rollBack();
+            throw $e;
         }
-        $GLOBALS['pdo']->prepare("DELETE FROM infusion_admin_menu WHERE infusion_id = :id")->execute([':id' => (int)$id]);
-        $GLOBALS['pdo']->prepare("DELETE FROM infusion_panels WHERE infusion_id = :id")->execute([':id' => (int)$id]);
-        $GLOBALS['pdo']->prepare("DELETE FROM infusion_versions WHERE infusion_id = :id")->execute([':id' => (int)$id]);
-        $GLOBALS['pdo']->prepare("DELETE FROM infusion_migration_log WHERE infusion_id = :id")->execute([':id' => (int)$id]);
-        $GLOBALS['pdo']->prepare("DELETE FROM infusion_rollback_log WHERE infusion_id = :id")->execute([':id' => (int)$id]);
-        $GLOBALS['pdo']->prepare("DELETE FROM infusions WHERE id = :id")->execute([':id' => (int)$id]);
-        if ($GLOBALS['pdo']->inTransaction()) {
-            $GLOBALS['pdo']->commit();
-        }
-    } catch (Throwable $e) {
-        if ($GLOBALS['pdo']->inTransaction()) $GLOBALS['pdo']->rollBack();
-        throw $e;
-    }
+    }, 'uninstall', 'infusion:' . $id);
 }
 
 function load_enabled_infusions()
