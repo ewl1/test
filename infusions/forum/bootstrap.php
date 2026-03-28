@@ -573,6 +573,63 @@ function forum_get_replies($topicId, $limit, $offset)
     return $stmt->fetchAll();
 }
 
+function forum_get_reply($replyId)
+{
+    forum_ensure_schema();
+
+    $stmt = $GLOBALS['pdo']->prepare('
+        SELECT p.*,
+               t.title AS topic_title,
+               t.slug AS topic_slug,
+               t.is_locked AS topic_is_locked,
+               u.username,
+               u.avatar,
+               u.email
+        FROM ' . forum_table_posts() . ' p
+        INNER JOIN ' . forum_table_topics() . ' t ON t.id = p.topic_id
+        LEFT JOIN users u ON u.id = p.user_id
+        WHERE p.id = :id
+        LIMIT 1
+    ');
+    $stmt->execute([':id' => (int)$replyId]);
+
+    return $stmt->fetch() ?: null;
+}
+
+function forum_sync_topic_activity($topicId)
+{
+    $topic = forum_get_topic($topicId);
+    if (!$topic) {
+        return;
+    }
+
+    $lastReplyStmt = $GLOBALS['pdo']->prepare('
+        SELECT created_at, user_id
+        FROM ' . forum_table_posts() . '
+        WHERE topic_id = :topic_id
+        ORDER BY created_at DESC, id DESC
+        LIMIT 1
+    ');
+    $lastReplyStmt->execute([':topic_id' => (int)$topicId]);
+    $lastReply = $lastReplyStmt->fetch();
+
+    $lastPostAt = $lastReply['created_at'] ?? $topic['created_at'];
+    $lastPostUserId = isset($lastReply['user_id']) ? (int)$lastReply['user_id'] : (int)$topic['user_id'];
+
+    $updateTopic = $GLOBALS['pdo']->prepare('
+        UPDATE ' . forum_table_topics() . '
+        SET last_post_at = :last_post_at,
+            last_post_user_id = :last_post_user_id,
+            updated_at = NOW()
+        WHERE id = :id
+    ');
+    $updateTopic->execute([
+        ':last_post_at' => $lastPostAt,
+        ':last_post_user_id' => $lastPostUserId > 0 ? $lastPostUserId : null,
+        ':id' => (int)$topicId,
+    ]);
+}
+
 function forum_topic_last_page($topicId)
 {
     $replies = forum_count_replies($topicId);
@@ -806,6 +863,11 @@ function forum_can_moderate_topic(array $topic)
     return forum_can_admin();
 }
 
+function forum_can_moderate_reply(array $reply)
+{
+    return forum_can_admin();
+}
+
 function forum_update_topic($topicId, $title, $content)
 {
     forum_ensure_schema();
@@ -920,6 +982,67 @@ function forum_delete_topic($topicId)
     ]);
 
     return [true, 'Tema istrinta.', (int)$topic['forum_id']];
+}
+
+function forum_update_reply($replyId, $content)
+{
+    forum_ensure_schema();
+
+    $reply = forum_get_reply($replyId);
+    if (!$reply) {
+        return [false, 'Atsakymas nerastas.', null];
+    }
+    if (!forum_can_moderate_reply($reply)) {
+        return [false, 'Nepakanka teisiu redaguoti atsakyma.', null];
+    }
+
+    $content = forum_prepare_body($content, 15000);
+    if ($content === '') {
+        return [false, 'Atsakymas negali buti tuscias.', null];
+    }
+
+    $stmt = $GLOBALS['pdo']->prepare('
+        UPDATE ' . forum_table_posts() . '
+        SET content = :content,
+            updated_at = NOW()
+        WHERE id = :id
+    ');
+    $stmt->execute([
+        ':content' => $content,
+        ':id' => (int)$reply['id'],
+    ]);
+
+    $topicUpdate = $GLOBALS['pdo']->prepare('UPDATE ' . forum_table_topics() . ' SET updated_at = NOW() WHERE id = :id');
+    $topicUpdate->execute([':id' => (int)$reply['topic_id']]);
+
+    audit_log(current_user()['id'] ?? null, 'forum_reply_update', 'infusion_forum_posts', (int)$reply['id'], [
+        'topic_id' => (int)$reply['topic_id'],
+    ]);
+
+    return [true, 'Atsakymas atnaujintas.', (int)$reply['topic_id']];
+}
+
+function forum_delete_reply($replyId)
+{
+    forum_ensure_schema();
+
+    $reply = forum_get_reply($replyId);
+    if (!$reply) {
+        return [false, 'Atsakymas nerastas.', null];
+    }
+    if (!forum_can_moderate_reply($reply)) {
+        return [false, 'Nepakanka teisiu istrinti atsakyma.', null];
+    }
+
+    $stmt = $GLOBALS['pdo']->prepare('DELETE FROM ' . forum_table_posts() . ' WHERE id = :id');
+    $stmt->execute([':id' => (int)$reply['id']]);
+    forum_sync_topic_activity((int)$reply['topic_id']);
+
+    audit_log(current_user()['id'] ?? null, 'forum_reply_delete', 'infusion_forum_posts', (int)$reply['id'], [
+        'topic_id' => (int)$reply['topic_id'],
+    ]);
+
+    return [true, 'Atsakymas istrintas.', (int)$reply['topic_id']];
 }
 
 function forum_render_editor_toolbar($textareaId)

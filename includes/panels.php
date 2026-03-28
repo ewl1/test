@@ -32,6 +32,42 @@ function render_member_panel()
     return $html;
 }
 
+function render_latest_comments_panel()
+{
+    $comments = fetch_latest_profile_comments(6);
+
+    $html = '<div class="card mb-3 latest-comments-panel">';
+    $html .= '<div class="card-header">Latest comments</div>';
+    $html .= '<div class="card-body">';
+
+    if (!$comments) {
+        $html .= '<div class="text-secondary small">Kol kas komentaru dar nera.</div>';
+        $html .= '</div></div>';
+        return $html;
+    }
+
+    foreach ($comments as $comment) {
+        $html .= '<article class="latest-comment-item">';
+        $html .= '<div class="d-flex align-items-start gap-3">';
+        $html .= '<img src="' . escape_url(user_avatar_url([
+            'avatar' => $comment['author_avatar'] ?? null,
+            'email' => $comment['author_email'] ?? null,
+        ])) . '" alt="" class="member-panel-avatar">';
+        $html .= '<div class="min-w-0 flex-grow-1">';
+        $html .= '<div class="small fw-semibold">';
+        $html .= '<a class="text-decoration-none" href="' . e(user_profile_url((int)$comment['author_user_id'])) . '">' . e($comment['author_username'] ?? 'Narys') . '</a>';
+        $html .= ' <span class="text-secondary fw-normal">apie</span> ';
+        $html .= '<a class="text-decoration-none" href="' . e(profile_comment_url((int)$comment['profile_user_id'], (int)$comment['id'])) . '">' . e($comment['profile_username'] ?? 'profili') . '</a>';
+        $html .= '</div>';
+        $html .= '<div class="small text-secondary mb-1">' . e(format_dt($comment['created_at'])) . '</div>';
+        $html .= '<a class="latest-comment-excerpt text-decoration-none" href="' . e(profile_comment_url((int)$comment['profile_user_id'], (int)$comment['id'])) . '">' . e(profile_comment_excerpt($comment['content'], 100)) . '</a>';
+        $html .= '</div></div></article>';
+    }
+
+    $html .= '</div></div>';
+    return $html;
+}
+
 function fetch_panels_by_position($position)
 {
     $stmt = $GLOBALS['pdo']->prepare("
@@ -71,7 +107,11 @@ function render_panel_item(array $panel)
 
 function render_panels($position)
 {
-    $out = $position === 'right' ? render_member_panel() : '';
+    $out = '';
+    if ($position === 'right') {
+        $out .= render_member_panel();
+        $out .= render_latest_comments_panel();
+    }
     foreach (fetch_panels_by_position($position) as $panel) {
         $out .= render_panel_item($panel);
     }

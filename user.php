@@ -9,45 +9,218 @@ if (!$profile) {
 
 $viewer = current_user();
 $viewerIsAdmin = $viewer && has_permission($GLOBALS['pdo'], (int)$viewer['id'], 'admin.access');
+$isOwnProfile = $viewer && (int)$viewer['id'] === (int)$profile['id'];
+$ratingError = null;
+$commentError = null;
+$commentDraft = '';
+
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+    verify_csrf();
+    if (!$viewer) {
+        abort_http(401, 'Prisijungimas reikalingas.');
+    }
+
+    $action = (string)($_POST['profile_action'] ?? '');
+    if ($action === 'rate') {
+        [$ok, $message] = save_profile_rating((int)$profile['id'], (int)$viewer['id'], (int)($_POST['rating'] ?? 0));
+        if ($ok) {
+            flash('profile_success', $message);
+            redirect(user_profile_url((int)$profile['id']));
+        }
+        $ratingError = $message;
+    } elseif ($action === 'comment') {
+        $commentDraft = (string)($_POST['comment'] ?? '');
+        [$ok, $message, $commentId] = create_profile_comment((int)$profile['id'], (int)$viewer['id'], $commentDraft);
+        if ($ok) {
+            flash('profile_success', $message);
+            redirect(profile_comment_url((int)$profile['id'], (int)$commentId));
+        }
+        $commentError = $message;
+    } elseif ($action === 'delete_comment') {
+        [$ok, $message] = delete_profile_comment((int)($_POST['comment_id'] ?? 0), $viewer);
+        if ($ok) {
+            flash('profile_success', $message);
+            redirect(user_profile_url((int)$profile['id']));
+        }
+        $commentError = $message;
+    }
+}
+
 $latestIp = $viewerIsAdmin ? fetch_user_latest_ip((int)$profile['id']) : null;
 $banStatus = $viewerIsAdmin && $latestIp ? fetch_ip_ban_status($latestIp) : null;
 $shoutCount = count_user_shoutbox_messages((int)$profile['id']);
+$ratingSummary = fetch_profile_rating_summary((int)$profile['id']);
+$viewerRating = $viewer ? fetch_profile_rating_for_viewer((int)$profile['id'], (int)$viewer['id']) : 0;
+$profileCommentCount = count_profile_comments((int)$profile['id']);
+$profileComments = fetch_profile_comments((int)$profile['id'], 20);
+$successMessage = flash('profile_success');
 
 include __DIR__ . '/themes/default/header.php';
 ?>
-<div class="row justify-content-center">
-    <div class="col-lg-8">
+<div class="row g-4">
+    <div class="col-xl-8">
+        <?php if ($successMessage): ?>
+            <div class="alert alert-success"><?= e($successMessage) ?></div>
+        <?php endif; ?>
+
         <div class="card mb-4">
             <div class="card-body">
                 <div class="d-flex flex-column flex-md-row align-items-md-center gap-4">
                     <img src="<?= escape_url(user_avatar_url($profile)) ?>" alt="" class="user-profile-avatar">
-                    <div>
+                    <div class="flex-grow-1">
                         <h1 class="h3 mb-1"><?= e($profile['username']) ?></h1>
                         <div class="text-secondary mb-2"><?= e($profile['role_name'] ?? 'Narys') ?></div>
+                        <div class="d-flex align-items-center gap-3 flex-wrap mb-3">
+                            <div class="user-rating-display">
+                                <?= render_profile_rating_stars((float)$ratingSummary['average_rating'], (int)$ratingSummary['rating_count']) ?>
+                            </div>
+                            <div class="text-secondary small">
+                                <?= e(number_format((float)$ratingSummary['average_rating'], 1)) ?> / 5
+                                · balsai: <?= (int)$ratingSummary['rating_count'] ?>
+                            </div>
+                        </div>
                         <?php if (!empty($profile['signature'])): ?>
                             <div class="user-signature"><?= render_user_signature($profile['signature']) ?></div>
                         <?php else: ?>
-                            <div class="text-secondary">Narys dar nepridėjo parašo.</div>
+                            <div class="text-secondary">Narys dar nepridejo paraso.</div>
                         <?php endif; ?>
                     </div>
                 </div>
             </div>
         </div>
 
+        <div class="card mb-4">
+            <div class="card-header">Profilio ivertinimas</div>
+            <div class="card-body">
+                <?php if ($ratingError): ?>
+                    <div class="alert alert-danger"><?= e($ratingError) ?></div>
+                <?php endif; ?>
+
+                <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                    <div>
+                        <div class="h4 mb-1"><?= e(number_format((float)$ratingSummary['average_rating'], 1)) ?> / 5</div>
+                        <div class="text-secondary small">Is viso ivertinimu: <?= (int)$ratingSummary['rating_count'] ?></div>
+                    </div>
+                    <div class="user-rating-display">
+                        <?= render_profile_rating_stars((float)$ratingSummary['average_rating'], (int)$ratingSummary['rating_count']) ?>
+                    </div>
+                </div>
+
+                <?php if (!$viewer): ?>
+                    <div class="alert alert-info mt-3 mb-0">Profili ivertinti gali tik prisijunge nariai.</div>
+                <?php elseif ($isOwnProfile): ?>
+                    <div class="alert alert-secondary mt-3 mb-0">Savo profilio ivertinti negalima.</div>
+                <?php else: ?>
+                    <form method="post" class="mt-3">
+                        <?= csrf_field() ?>
+                        <input type="hidden" name="profile_action" value="rate">
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            <?php foreach (profile_rating_options() as $option): ?>
+                                <button class="btn <?= $viewerRating === $option ? 'btn-primary' : 'btn-outline-primary' ?>" type="submit" name="rating" value="<?= (int)$option ?>">
+                                    <?= (int)$option ?> ★
+                                </button>
+                            <?php endforeach; ?>
+                        </div>
+                        <div class="form-text mt-2">
+                            <?php if ($viewerRating > 0): ?>
+                                Jusu paskutinis ivertinimas: <?= (int)$viewerRating ?> / 5. Galite bet kada pakeisti.
+                            <?php else: ?>
+                                Pasirinkite bala nuo 1 iki 5.
+                            <?php endif; ?>
+                        </div>
+                    </form>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">Profilio komentarai</div>
+            <div class="card-body">
+                <?php if ($commentError): ?>
+                    <div class="alert alert-danger"><?= e($commentError) ?></div>
+                <?php endif; ?>
+
+                <?php if (!$viewer): ?>
+                    <div class="alert alert-info">Komentuoti gali tik prisijunge nariai.</div>
+                <?php elseif ($isOwnProfile): ?>
+                    <div class="alert alert-secondary">Savo profilio komentuoti negalima.</div>
+                <?php else: ?>
+                    <form method="post" class="mb-4">
+                        <?= csrf_field() ?>
+                        <input type="hidden" name="profile_action" value="comment">
+                        <div class="mb-3">
+                            <label class="form-label" for="profile-comment">Komentaras</label>
+                            <textarea class="form-control" id="profile-comment" name="comment" rows="5" maxlength="2000" required><?= e($commentDraft) ?></textarea>
+                            <div class="form-text">Leidziamas basic BBCode: [b], [i], [u], [quote], [url=...][/url] ir smailai :)</div>
+                        </div>
+                        <button class="btn btn-primary">Paskelbti komentara</button>
+                    </form>
+                <?php endif; ?>
+
+                <div class="profile-comments-list">
+                    <?php if (!$profileComments): ?>
+                        <div class="text-secondary">Kol kas komentaru dar nera.</div>
+                    <?php else: ?>
+                        <?php foreach ($profileComments as $comment): ?>
+                            <article class="profile-comment-item" id="profile-comment-<?= (int)$comment['id'] ?>">
+                                <div class="d-flex align-items-start gap-3">
+                                    <a href="<?= user_profile_url((int)$comment['author_user_id']) ?>" class="text-decoration-none">
+                                        <img
+                                            src="<?= escape_url(user_avatar_url([
+                                                'avatar' => $comment['author_avatar'] ?? null,
+                                                'email' => $comment['author_email'] ?? null,
+                                            ])) ?>"
+                                            alt=""
+                                            class="member-panel-avatar"
+                                        >
+                                    </a>
+                                    <div class="min-w-0 flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
+                                            <div>
+                                                <a class="fw-semibold text-decoration-none" href="<?= user_profile_url((int)$comment['author_user_id']) ?>"><?= e($comment['author_username'] ?? 'Narys') ?></a>
+                                                <div class="small text-secondary"><?= e(format_dt($comment['created_at'])) ?></div>
+                                            </div>
+                                            <?php if (can_manage_profile_comment($comment, $viewer)): ?>
+                                                <form method="post">
+                                                    <?= csrf_field() ?>
+                                                    <input type="hidden" name="profile_action" value="delete_comment">
+                                                    <input type="hidden" name="comment_id" value="<?= (int)$comment['id'] ?>">
+                                                    <button class="btn btn-sm btn-outline-danger" type="submit" data-confirm-message="Ar tikrai norite istrinti si komentara?">Istrinti</button>
+                                                </form>
+                                            <?php endif; ?>
+                                        </div>
+                                        <div class="profile-comment-body mt-2"><?= profile_render_comment_body($comment['content']) ?></div>
+                                    </div>
+                                </div>
+                            </article>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <aside class="col-xl-4">
         <div class="row g-3 mb-4">
-            <div class="col-md-4">
+            <div class="col-sm-6 col-xl-12">
                 <div class="user-stat-card">
-                    <div class="small text-secondary mb-1">Šaukyklos žinutės</div>
+                    <div class="small text-secondary mb-1">Shoutbox zinutes</div>
                     <div class="h3 mb-0"><?= (int)$shoutCount ?></div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-sm-6 col-xl-12">
                 <div class="user-stat-card">
-                    <div class="small text-secondary mb-1">Prisijungė</div>
+                    <div class="small text-secondary mb-1">Profilio komentarai</div>
+                    <div class="h3 mb-0"><?= (int)$profileCommentCount ?></div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-12">
+                <div class="user-stat-card">
+                    <div class="small text-secondary mb-1">Prisijunge</div>
                     <div class="h6 mb-0"><?= e(format_dt($profile['created_at'])) ?></div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-sm-6 col-xl-12">
                 <div class="user-stat-card">
                     <div class="small text-secondary mb-1">Statusas</div>
                     <div class="h6 mb-0"><?= e($profile['status'] ?? 'active') ?></div>
@@ -60,15 +233,15 @@ include __DIR__ . '/themes/default/header.php';
                 <div class="card-header">Admin informacija</div>
                 <div class="card-body">
                     <div class="row g-3">
-                        <div class="col-md-6">
+                        <div class="col-12">
                             <div class="small text-secondary mb-1">Paskutinis IP</div>
-                            <div><?= e($latestIp ?: 'Nėra duomenų') ?></div>
+                            <div><?= e($latestIp ?: 'Nera duomenu') ?></div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-12">
                             <div class="small text-secondary mb-1">BAN</div>
                             <?php if ($banStatus): ?>
                                 <div class="fw-semibold text-danger">Taip</div>
-                                <div class="small text-secondary">Priežastis: <?= e($banStatus['reason'] ?? '-') ?></div>
+                                <div class="small text-secondary">Priezastis: <?= e($banStatus['reason'] ?? '-') ?></div>
                                 <div class="small text-secondary">Iki: <?= e(format_dt($banStatus['banned_until'], 'neribotai')) ?></div>
                             <?php else: ?>
                                 <div class="fw-semibold text-success">Ne</div>
@@ -78,6 +251,6 @@ include __DIR__ . '/themes/default/header.php';
                 </div>
             </div>
         <?php endif; ?>
-    </div>
+    </aside>
 </div>
 <?php include __DIR__ . '/themes/default/footer.php'; ?>
