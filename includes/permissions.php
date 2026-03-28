@@ -1,4 +1,57 @@
 <?php
+function core_permission_catalog()
+{
+    return [
+        'admin.access' => ['name' => 'Admin prieiga', 'description' => 'Patekti į administracijos skydelį'],
+        'posts.create' => ['name' => 'Įrašų kūrimas', 'description' => 'Kurti įrašus'],
+        'posts.edit' => ['name' => 'Įrašų redagavimas', 'description' => 'Redaguoti įrašus'],
+        'posts.delete' => ['name' => 'Įrašų trynimas', 'description' => 'Trinti įrašus'],
+        'users.manage' => ['name' => 'Valdyti narius', 'description' => 'Aktyvuoti, blokuoti, trinti, redaguoti'],
+        'permissions.manage' => ['name' => 'Leidimų valdymas', 'description' => 'Valdyti rolių leidimus'],
+        'audit.view' => ['name' => 'Audit žurnalo peržiūra', 'description' => 'Peržiūrėti audit žurnalą'],
+        'logs.view' => ['name' => 'Klaidų žurnalų peržiūra', 'description' => 'Peržiūrėti klaidų žurnalus'],
+        'ipban.manage' => ['name' => 'IP draudimų valdymas', 'description' => 'Valdyti IP draudimų sąrašą'],
+        'settings.manage' => ['name' => 'Nustatymų valdymas', 'description' => 'Svetainės nustatymų valdymas'],
+        'themes.manage' => ['name' => 'Temų valdymas', 'description' => 'Temų valdymas'],
+        'navigation.manage' => ['name' => 'Navigacijos valdymas', 'description' => 'Navigacijos valdymas'],
+        'infusions.manage' => ['name' => 'Infusion modulių valdymas', 'description' => 'Valdyti infusion modulius'],
+        'panels.manage' => ['name' => 'Panelių valdymas', 'description' => 'Panelių išdėstymo valdymas'],
+        'roles.manage' => ['name' => 'Rolių valdymas', 'description' => 'Rolių valdymas'],
+        'users.view' => ['name' => 'Vartotojų peržiūra', 'description' => 'Vartotojų peržiūra'],
+        'users.create' => ['name' => 'Vartotojų kūrimas', 'description' => 'Vartotojų kūrimas'],
+        'users.edit' => ['name' => 'Vartotojų redagavimas', 'description' => 'Vartotojų redagavimas'],
+        'users.status' => ['name' => 'Vartotojų būsenos valdymas', 'description' => 'Vartotojų aktyvavimas ir blokavimas'],
+        'users.delete' => ['name' => 'Vartotojų trynimas', 'description' => 'Vartotojų trynimas'],
+    ];
+}
+
+function sync_core_permission_catalog()
+{
+    static $synced = false;
+    if ($synced || empty($GLOBALS['pdo']) || !($GLOBALS['pdo'] instanceof PDO)) {
+        return;
+    }
+    $synced = true;
+
+    try {
+        $stmt = $GLOBALS['pdo']->prepare("
+            INSERT INTO permissions (name, slug, description)
+            VALUES (:name, :slug, :description)
+            ON DUPLICATE KEY UPDATE name = VALUES(name), description = VALUES(description)
+        ");
+
+        foreach (core_permission_catalog() as $slug => $meta) {
+            $stmt->execute([
+                ':name' => $meta['name'],
+                ':slug' => $slug,
+                ':description' => $meta['description'],
+            ]);
+        }
+    } catch (Throwable $e) {
+        // The install flow may include this file before every table exists.
+    }
+}
+
 function permission_candidates($permission)
 {
     $permission = (string)$permission;
@@ -104,3 +157,5 @@ function can_manage_role_id($roleId)
 
     return $myLevel >= $targetLevel;
 }
+
+sync_core_permission_catalog();
