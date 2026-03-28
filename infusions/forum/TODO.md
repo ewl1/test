@@ -33,6 +33,7 @@
 - [ ] Prideti forumo ir temu prenumeratas (`watch forum`, `watch topic`).
 - [ ] Prideti forumo bookmark/favorite temas naudotojui.
 - [ ] Prideti drafto / auto-save logika kuriant temas ir atsakymus.
+- [ ] Prideti forumo kurima ir prieigos taisykles pagal roles.
 
 ### Moderavimas
 - [ ] Prideti moderavimo istorija ir `redagavo` informacija.
@@ -41,12 +42,18 @@
 - [ ] Prideti moderatoriaus vidines pastabas temai ar naudotojui.
 - [ ] Prideti per-forum teises ir galimybe tureti `staff only` forumus.
 - [ ] Prideti report/mygtukus ir jungti su bendra `moderation queue`.
+- [ ] Rodyti IP adresa moderatoriams ir administratoriams, bet ne paprastiems nariams.
+- [ ] Prideti redagavimo priezasties lauka moderavimo veiksmams ir atsakymu redagavimui.
+- [ ] Rodyti `redaguota del priezasties` informacija ir saugoti ja moderavimo istorijoje.
 
 ### Bendruomenes funkcijos
 - [ ] Prideti `unread tracking`.
 - [ ] Prideti priedus (`attachments`).
 - [ ] Prideti `mention` sistema.
 - [ ] Prideti `like / reaction` sistema.
+- [ ] Prideti forumo rango / statuso rodyma prie nario vardo ir avataro.
+- [ ] Prideti badge'u rodyma prie posto arba profilio korteles.
+- [ ] Prideti `padeka / thanks` mygtuka prie atsakymu.
 - [ ] Prideti `solved / accepted answer` temoms, kur tai prasminga.
 - [ ] Prideti apklausas (`polls`) prie temu.
 - [ ] Prideti naudotojo forumo statistika: sukurtos temos, atsakymai, paskutinis aktyvumas.

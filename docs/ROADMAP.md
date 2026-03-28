@@ -82,11 +82,14 @@
 - like / reaction sistema
 - anti-spam ir flood control
 - per-forum teises ir `staff only` forumai
+- forumu kurimas ir matomumas pagal roles
 - `move / split / merge`, soft delete ir restore
 - `solved / accepted answer`
 - temu prefiksai, tagai, prenumeratos ir favorites
 - draft / auto-save, quick reply, multi-quote
 - moderatoriu vidines pastabos ir aktyvumo/statistikos sluoksnis
+- rango / statuso rodymas, badge'ai ir `thanks` mygtukai
+- IP rodymas moderatoriams ir redagavimo priezastys moderavimo veiksmams
 - Naujienu infusion:
 - kategorijos
 - `draft / published`
