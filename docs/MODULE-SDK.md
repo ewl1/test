@@ -18,6 +18,7 @@
 infusions/<modulis>/
   manifest.json
   classes/
+  migrations/
   assets/css/
   assets/js/
   locale/
@@ -101,6 +102,7 @@ Generatorius sukuria:
 - `panel.php`
 - `admin.php`
 - `schema.php`
+- `migrations/.gitkeep`
 - `uninstall.php`
 - `locale/lt.php`
 - `assets/css/*`
@@ -110,3 +112,4 @@ Generatorius sukuria:
 ## Taisykle
 - `includes/classes/MiniCMS/Installer/` yra tik branduolio installeris.
 - Moduliu schema, seed'ai, uninstall ir upgrade logika lieka paciuose `infusions/<modulis>/`.
+- `migrations/` katalogas yra privaloma modulio struktūros dalis, net jei pradžioje dar tuščias.

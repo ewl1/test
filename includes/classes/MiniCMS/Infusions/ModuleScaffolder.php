@@ -35,6 +35,7 @@ final class ModuleScaffolder
             $moduleRoot . '/admin.php' => self::adminTemplate($name, $folder),
             $moduleRoot . '/schema.php' => self::schemaTemplate($folder),
             $moduleRoot . '/uninstall.php' => self::uninstallTemplate($folder),
+            $moduleRoot . '/migrations/.gitkeep' => '',
             $moduleRoot . '/locale/lt.php' => self::localeTemplate($folder, $name),
             $moduleRoot . '/assets/css/' . $folder . '.css' => self::cssTemplate($folder),
             $moduleRoot . '/assets/js/' . $folder . '.js' => self::jsTemplate($folder),
@@ -201,6 +202,7 @@ Sis modulis sugeneruotas per MiniCMS Module SDK scaffold.
 - `panel.php`: paneles turinys
 - `admin.php`: admin vaizdas
 - `schema.php`: diegimo DB schema
+- `migrations/`: versijiniai atnaujinimu ir rollback zingsniai
 - `uninstall.php`: pasalinimo logika
 - `locale/`: modulio tekstai
 - `assets/`: modulio CSS ir JS
