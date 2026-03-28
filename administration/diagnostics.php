@@ -30,9 +30,9 @@ include THEMES . 'default/admin_header.php';
                     <dt class="col-sm-4">Versija</dt>
                     <dd class="col-sm-8"><?= e($diagnostics['application']['version']) ?></dd>
                     <dt class="col-sm-4">SITE_URL</dt>
-                    <dd class="col-sm-8"><code class="admin-path-code"><?= e($diagnostics['application']['site_url']) ?></code></dd>
+                    <dd class="col-sm-8"><code class="admin-path-code admin-path-code-strong"><?= e($diagnostics['application']['site_url']) ?></code></dd>
                     <dt class="col-sm-4">Katalogas</dt>
-                    <dd class="col-sm-8"><code class="admin-path-code"><?= e($diagnostics['application']['basedir']) ?></code></dd>
+                    <dd class="col-sm-8"><code class="admin-path-code admin-path-code-strong"><?= e($diagnostics['application']['basedir']) ?></code></dd>
                     <dt class="col-sm-4">Maintenance</dt>
                     <dd class="col-sm-8"><span class="badge <?= $diagnostics['application']['maintenance'] ? 'text-bg-warning' : 'text-bg-success' ?>"><?= $diagnostics['application']['maintenance'] ? 'On' : 'Off' ?></span></dd>
                 </dl>
@@ -118,6 +118,11 @@ include THEMES . 'default/admin_header.php';
                         <?= e($extension) ?>
                     </span>
                 <?php endforeach; ?>
+                <div class="alert alert-info mt-3 mb-0 w-100">
+                    <strong>Būtini:</strong> `pdo`, `pdo_mysql`, `mbstring`, `json`, `session`, `fileinfo`, `openssl`.
+                    <strong class="ms-2">Rekomenduojami:</strong> `curl`, `gd`, `intl`, `Zend OPcache`.
+                    <strong class="ms-2">Pasirenkami:</strong> `zip`, `sodium`, `exif`, XML šeimos plėtiniai, jei jų konkrečiai reikia moduliams.
+                </div>
             </div>
         </div>
     </div>
@@ -127,7 +132,7 @@ include THEMES . 'default/admin_header.php';
             <div class="card-header">Keliai ir teisės</div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-sm align-middle mb-0">
+                    <table class="table table-sm align-middle mb-0 admin-table-strong">
                         <thead><tr><th>Kelias</th><th>Yra</th><th>Writable</th></tr></thead>
                         <tbody>
                         <?php foreach ($diagnostics['paths'] as $pathInfo): ?>

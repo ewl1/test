@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             redirect('roles.php');
         }
 
-        $stmt = $GLOBALS['pdo']->prepare("INSERT INTO roles (name, slug, level) VALUES (:name, :slug, :level)");
+        $stmt = $GLOBALS['pdo']->prepare('INSERT INTO roles (name, slug, level) VALUES (:name, :slug, :level)');
         $stmt->execute([
             ':name' => $name,
             ':slug' => $slug,
@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             redirect('roles.php');
         }
 
-        $stmt = $GLOBALS['pdo']->prepare("UPDATE roles SET name=:name, slug=:slug, level=:level WHERE id=:id");
+        $stmt = $GLOBALS['pdo']->prepare('UPDATE roles SET name = :name, slug = :slug, level = :level WHERE id = :id');
         $stmt->execute([
             ':id' => $id,
             ':name' => $name,
@@ -63,22 +63,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             redirect('roles.php');
         }
 
-        $check = $GLOBALS['pdo']->prepare("SELECT COUNT(*) FROM users WHERE role_id = :id");
+        $check = $GLOBALS['pdo']->prepare('SELECT COUNT(*) FROM users WHERE role_id = :id');
         $check->execute([':id' => $id]);
         if ((int)$check->fetchColumn() > 0) {
             flash('error', 'Rolė naudojama vartotojų.');
             redirect('roles.php');
         }
 
-        $GLOBALS['pdo']->prepare("DELETE FROM role_permissions WHERE role_id = :id")->execute([':id' => $id]);
-        $GLOBALS['pdo']->prepare("DELETE FROM roles WHERE id = :id")->execute([':id' => $id]);
+        $GLOBALS['pdo']->prepare('DELETE FROM role_permissions WHERE role_id = :id')->execute([':id' => $id]);
+        $GLOBALS['pdo']->prepare('DELETE FROM roles WHERE id = :id')->execute([':id' => $id]);
         audit_log(current_user()['id'], 'role_delete', 'roles', $id);
         flash('success', 'Rolė ištrinta.');
         redirect('roles.php');
     }
 }
 
-$roles = $GLOBALS['pdo']->query("SELECT r.*, (SELECT COUNT(*) FROM users u WHERE u.role_id = r.id) AS users_count FROM roles r ORDER BY level DESC, id ASC")->fetchAll();
+$roles = $GLOBALS['pdo']->query('SELECT r.*, (SELECT COUNT(*) FROM users u WHERE u.role_id = r.id) AS users_count FROM roles r ORDER BY level DESC, id ASC')->fetchAll();
 include THEMES . 'default/admin_header.php';
 ?>
 <h1 class="h3 mb-3">Rolės</h1>
@@ -106,7 +106,7 @@ include THEMES . 'default/admin_header.php';
         <div class="card">
             <div class="card-header">Esamos rolės</div>
             <div class="table-responsive">
-                <table class="table align-middle mb-0">
+                <table class="table align-middle mb-0 admin-table-strong">
                     <thead><tr><th>ID</th><th>Pavadinimas</th><th>Slug</th><th>Lygis</th><th>Nariai</th><th></th></tr></thead>
                     <tbody>
                     <?php foreach ($roles as $role): ?>
@@ -131,7 +131,7 @@ include THEMES . 'default/admin_header.php';
                                         <button class="btn btn-primary">Išsaugoti</button>
                                         <a class="btn btn-outline-primary admin-action-button" href="permissions.php?role_id=<?= (int)$role['id'] ?>">Leidimai</a>
                                         <?php if ((int)$role['id'] > 5): ?>
-                                            <button class="btn btn-outline-danger" type="submit" name="action" value="delete" data-confirm-message="Tikrai trinti rolę?">Trinti</button>
+                                            <button class="btn btn-outline-danger admin-danger-button" type="submit" name="action" value="delete" data-confirm-message="Tikrai trinti rolę?">Trinti</button>
                                         <?php endif; ?>
                                     </div>
                                 </form>

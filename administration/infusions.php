@@ -67,17 +67,17 @@ include THEMES . 'default/admin_header.php';
         <div class="card">
             <div class="card-header"><?= e(__('infusions.available')) ?></div>
             <div class="table-responsive">
-                <table class="table align-middle mb-0">
+                <table class="table align-middle mb-0 admin-table-strong">
                     <thead><tr><th>Folder</th><th>Pavadinimas</th><th>Versija</th><th></th></tr></thead>
                     <tbody>
                     <?php foreach ($scanned as $folder => $meta): ?>
                         <tr>
                             <td><code class="admin-mono-pill admin-folder-label"><?= e($folder) ?></code></td>
                             <td>
-                                <div class="fw-semibold"><?= e($meta['name']) ?></div>
-                                <div class="small admin-table-description"><?= e($meta['description'] ?? '') ?></div>
+                                <div class="fw-semibold admin-strong-cell"><?= e($meta['name']) ?></div>
+                                <div class="small admin-table-description admin-description-strong"><?= e($meta['description'] ?? '') ?></div>
                             </td>
-                            <td><span class="admin-table-note"><?= e($meta['version'] ?? '0.0.0') ?></span></td>
+                            <td><span class="admin-table-note admin-version-chip"><?= e($meta['version'] ?? '0.0.0') ?></span></td>
                             <td>
                                 <?php if (isset($installedFolders[$folder])): ?>
                                     <span class="badge text-bg-success"><?= e(__('infusions.installed_badge')) ?></span>
@@ -102,7 +102,7 @@ include THEMES . 'default/admin_header.php';
         <div class="card">
             <div class="card-header"><?= e(__('infusions.installed')) ?></div>
             <div class="table-responsive">
-                <table class="table align-middle mb-0">
+                <table class="table align-middle mb-0 admin-table-strong">
                     <thead><tr><th>ID</th><th>Pavadinimas</th><th>Folder</th><th>Įdiegta</th><th>Manifest</th><th></th></tr></thead>
                     <tbody>
                     <?php foreach ($installed as $inf):
@@ -115,8 +115,8 @@ include THEMES . 'default/admin_header.php';
                             <td class="admin-strong-cell"><?= (int)$inf['id'] ?></td>
                             <td><span class="fw-semibold admin-strong-cell"><?= e($displayName) ?></span></td>
                             <td><code class="admin-mono-pill admin-folder-label"><?= e($inf['folder']) ?></code></td>
-                            <td><span class="admin-table-note"><?= e($installedVersion) ?></span></td>
-                            <td><span class="admin-table-note"><?= e($manifestVersion) ?></span></td>
+                            <td><span class="admin-table-note admin-version-chip"><?= e($installedVersion) ?></span></td>
+                            <td><span class="admin-table-note admin-version-chip"><?= e($manifestVersion) ?></span></td>
                             <td>
                                 <div class="d-flex flex-wrap gap-2">
                                     <?php if (!empty($manifest['admin']) && !empty($manifest['has_admin_file'])): ?>

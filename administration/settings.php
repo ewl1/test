@@ -56,7 +56,7 @@ include THEMES . 'default/admin_header.php';
 </select>
 </div>
 <div class="col-md-6">
-<label class="form-label">showcopyright tekstas</label>
+<label class="form-label">`showcopyright()` tekstas</label>
 <input class="form-control" name="copyright_text" value="<?= e(setting('copyright_text', '© ' . date('Y') . ' ' . APP_NAME)) ?>">
 </div>
 </div>
@@ -66,7 +66,7 @@ include THEMES . 'default/admin_header.php';
 <div class="card-header">Rodymo nustatymai</div>
 <div class="card-body row g-3">
 <div class="col-md-6">
-<label class="form-label">showMemoryUsage()</label>
+<label class="form-label">`showMemoryUsage()`</label>
 <select class="form-select" name="show_memory_usage">
 <option value="0" <?= setting('show_memory_usage', '0') === '0' ? 'selected' : '' ?>>Išjungta</option>
 <option value="1" <?= setting('show_memory_usage', '0') === '1' ? 'selected' : '' ?>>Įjungta</option>
@@ -80,7 +80,7 @@ include THEMES . 'default/admin_header.php';
 </select>
 </div>
 <div class="col-md-6">
-<label class="form-label">showcounter()</label>
+<label class="form-label">`showcounter()`</label>
 <select class="form-select" name="show_counter">
 <option value="0" <?= setting('show_counter', '0') === '0' ? 'selected' : '' ?>>Išjungta</option>
 <option value="1" <?= setting('show_counter', '0') === '1' ? 'selected' : '' ?>>Įjungta</option>
@@ -94,7 +94,7 @@ include THEMES . 'default/admin_header.php';
 </select>
 </div>
 <div class="col-md-6">
-<label class="form-label">showbanners</label>
+<label class="form-label">`showbanners()`</label>
 <select class="form-select" name="show_banners">
 <option value="0" <?= setting('show_banners', '0') === '0' ? 'selected' : '' ?>>Išjungta</option>
 <option value="1" <?= setting('show_banners', '0') === '1' ? 'selected' : '' ?>>Įjungta</option>
@@ -108,7 +108,7 @@ include THEMES . 'default/admin_header.php';
 </select>
 </div>
 <div class="col-md-6">
-<label class="form-label">showsublinks</label>
+<label class="form-label">`showsublinks()`</label>
 <select class="form-select" name="show_sublinks">
 <option value="0" <?= setting('show_sublinks', '1') === '0' ? 'selected' : '' ?>>Išjungta</option>
 <option value="1" <?= setting('show_sublinks', '1') === '1' ? 'selected' : '' ?>>Įjungta</option>
@@ -116,7 +116,6 @@ include THEMES . 'default/admin_header.php';
 </div>
 </div>
 </div>
-
 </div>
 
 <div class="col-lg-4">

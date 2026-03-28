@@ -90,6 +90,16 @@ small {
     color: var(--admin-text);
 }
 
+.table {
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--admin-text);
+    --bs-table-border-color: var(--admin-border);
+    --bs-table-striped-bg: rgba(255,255,255,0.028);
+    --bs-table-striped-color: #f8fafc;
+    --bs-table-hover-bg: rgba(56, 189, 248, 0.08);
+    --bs-table-hover-color: #ffffff;
+}
+
 .table .fw-semibold,
 .table strong,
 .list-group-item .fw-semibold {
@@ -106,7 +116,7 @@ small {
 }
 
 .list-group-item {
-    background: transparent;
+    background: rgba(15, 23, 42, 0.72);
     border-color: var(--admin-border);
 }
 
@@ -116,20 +126,27 @@ small {
     color: #fff;
 }
 
+.list-group-item.active {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.34), rgba(14, 165, 233, 0.18));
+    border-color: rgba(96, 165, 250, 0.42);
+    color: #ffffff;
+}
+
 .table > :not(caption) > * > * {
     border-bottom-color: var(--admin-border);
     vertical-align: middle;
     color: var(--admin-text);
+    background-color: rgba(15, 23, 42, 0.74);
 }
 
 .table thead th {
     color: var(--admin-muted);
-    background: rgba(255,255,255,0.03);
+    background: rgba(255,255,255,0.045) !important;
     font-size: 0.88rem;
 }
 
 .table-striped > tbody > tr:nth-of-type(odd) > * {
-    background-color: rgba(255,255,255,0.025);
+    background-color: rgba(255,255,255,0.03) !important;
 }
 
 .form-control,
@@ -268,6 +285,11 @@ code {
     color: #dbeafe !important;
 }
 
+.admin-description-strong {
+    color: #f1f5f9 !important;
+    line-height: 1.55;
+}
+
 .admin-table-note {
     color: #e2e8f0;
     font-weight: 600;
@@ -293,6 +315,7 @@ code {
 .admin-folder-label {
     font-size: 0.92rem;
     font-weight: 800;
+    text-transform: capitalize;
 }
 
 .admin-path-code-strong {
@@ -308,10 +331,34 @@ code {
 
 .admin-danger-button {
     font-weight: 800;
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    border-color: #ef4444;
+    color: #fff;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.04) inset;
 }
 
 .admin-table-strong td {
     color: #edf5ff;
+}
+
+.admin-table-strong .badge,
+.admin-table-strong .btn,
+.admin-table-strong .admin-table-note {
+    color: inherit;
+}
+
+.admin-table-strong tbody tr:hover > * {
+    background-color: rgba(56, 189, 248, 0.08) !important;
+}
+
+.admin-version-chip {
+    color: #f8fafc;
+    font-weight: 800;
+}
+
+.admin-message-cell {
+    color: #f8fafc !important;
+    font-weight: 600;
 }
 
 .admin-extension-badge {
@@ -320,13 +367,19 @@ code {
 }
 
 .admin-permission-card {
-    background: rgba(255,255,255,0.03);
+    background: rgba(15, 23, 42, 0.72);
     border: 1px solid var(--admin-border);
     border-radius: 14px;
 }
 
 .admin-permission-card:hover {
     background: rgba(255,255,255,0.05);
+}
+
+.admin-permission-card .text-secondary,
+.admin-permission-card small,
+.admin-permission-card code {
+    color: #e2e8f0 !important;
 }
 
 .admin-role-meta {

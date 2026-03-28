@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $stmt = $GLOBALS['pdo']->prepare("
             INSERT INTO users (username, email, password, role_id, is_active, status, created_at)
-            VALUES (:u,:e,:p,:r,:a,:s,NOW())
+            VALUES (:u, :e, :p, :r, :a, :s, NOW())
         ");
         $stmt->execute([
             ':u' => trim((string)$payload['username']),
@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($action === 'update') {
         require_permission('users.edit');
-        $currentStmt = $GLOBALS['pdo']->prepare("SELECT * FROM users WHERE id = :id LIMIT 1");
+        $currentStmt = $GLOBALS['pdo']->prepare('SELECT * FROM users WHERE id = :id LIMIT 1');
         $currentStmt->execute([':id' => $userId]);
         $existing = $currentStmt->fetch();
         if (!$existing) {
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             redirect('users.php');
         }
 
-        $sql = "UPDATE users SET username=:u, email=:e, role_id=:r, is_active=:a, status=:s";
+        $sql = 'UPDATE users SET username = :u, email = :e, role_id = :r, is_active = :a, status = :s';
         $params = [
             ':u' => trim((string)$payload['username']),
             ':e' => normalize_email($payload['email']),
@@ -77,11 +77,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':s' => $payload['status'],
             ':id' => $userId,
         ];
+
         if (trim((string)$payload['password']) !== '') {
-            $sql .= ", password=:p";
+            $sql .= ', password = :p';
             $params[':p'] = password_hash((string)$payload['password'], PASSWORD_DEFAULT);
         }
-        $sql .= " WHERE id=:id";
+
+        $sql .= ' WHERE id = :id';
         $stmt = $GLOBALS['pdo']->prepare($sql);
         $stmt->execute($params);
 
@@ -97,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             redirect('users.php');
         }
 
-        $roleStmt = $GLOBALS['pdo']->prepare("SELECT role_id FROM users WHERE id = :id");
+        $roleStmt = $GLOBALS['pdo']->prepare('SELECT role_id FROM users WHERE id = :id');
         $roleStmt->execute([':id' => $userId]);
         $targetRoleId = (int)$roleStmt->fetchColumn();
         if (!can_manage_role_id($targetRoleId)) {
@@ -105,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             redirect('users.php');
         }
 
-        $GLOBALS['pdo']->prepare("DELETE FROM users WHERE id = :id")->execute([':id' => $userId]);
+        $GLOBALS['pdo']->prepare('DELETE FROM users WHERE id = :id')->execute([':id' => $userId]);
         audit_log(current_user()['id'], 'user_delete', 'users', $userId);
         flash('success', 'Vartotojas ištrintas.');
         redirect('users.php');
@@ -113,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (in_array($action, ['activate', 'deactivate', 'block'], true)) {
         require_permission('users.status');
-        $roleStmt = $GLOBALS['pdo']->prepare("SELECT role_id FROM users WHERE id = :id");
+        $roleStmt = $GLOBALS['pdo']->prepare('SELECT role_id FROM users WHERE id = :id');
         $roleStmt->execute([':id' => $userId]);
         $targetRoleId = (int)$roleStmt->fetchColumn();
         if (!can_manage_role_id($targetRoleId)) {
@@ -123,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $status = $action === 'activate' ? 'active' : ($action === 'deactivate' ? 'inactive' : 'blocked');
         $active = $action === 'activate' ? 1 : 0;
-        $stmt = $GLOBALS['pdo']->prepare("UPDATE users SET status=:s, is_active=:a WHERE id=:id");
+        $stmt = $GLOBALS['pdo']->prepare('UPDATE users SET status = :s, is_active = :a WHERE id = :id');
         $stmt->execute([':s' => $status, ':a' => $active, ':id' => $userId]);
         audit_log(current_user()['id'], 'user_' . $action, 'users', $userId);
         flash('success', 'Vartotojo būsena pakeista.');
@@ -131,8 +133,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$roles = $GLOBALS['pdo']->query("SELECT * FROM roles ORDER BY level DESC")->fetchAll();
-$users = $GLOBALS['pdo']->query("SELECT u.*, r.name AS role_name FROM users u LEFT JOIN roles r ON r.id = u.role_id ORDER BY u.id DESC")->fetchAll();
+$roles = $GLOBALS['pdo']->query('SELECT * FROM roles ORDER BY level DESC')->fetchAll();
+$users = $GLOBALS['pdo']->query('SELECT u.*, r.name AS role_name FROM users u LEFT JOIN roles r ON r.id = u.role_id ORDER BY u.id DESC')->fetchAll();
 $statusLabels = [
     'active' => 'Aktyvus',
     'inactive' => 'Neaktyvus',
@@ -164,7 +166,7 @@ include THEMES . 'default/admin_header.php';
 
 <div class="card">
   <div class="table-responsive">
-    <table class="table align-middle mb-0">
+    <table class="table align-middle mb-0 admin-table-strong">
       <thead><tr><th>ID</th><th>Vartotojas</th><th>El. paštas</th><th>Rolė</th><th>Statusas</th><th>Aktyvus</th><th></th></tr></thead>
       <tbody>
       <?php foreach ($users as $user): ?>
@@ -216,7 +218,7 @@ include THEMES . 'default/admin_header.php';
               <button class="btn btn-sm btn-outline-warning" name="action" value="deactivate">Deaktyvuoti</button>
               <button class="btn btn-sm btn-outline-dark" name="action" value="block">Blokuoti</button>
               <?php if ((int)$user['id'] !== (int)current_user()['id']): ?>
-              <button class="btn btn-sm btn-outline-danger" name="action" value="delete" data-confirm-message="Tikrai ištrinti vartotoją?">Ištrinti</button>
+              <button class="btn btn-sm btn-outline-danger admin-danger-button" name="action" value="delete" data-confirm-message="Tikrai ištrinti vartotoją?">Ištrinti</button>
               <?php endif; ?>
             </form>
           </td>

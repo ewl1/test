@@ -2,8 +2,8 @@
 require_once __DIR__ . '/_guard.php';
 require_permission('permissions.manage');
 
-$roles = $GLOBALS['pdo']->query("SELECT * FROM roles ORDER BY level DESC, id ASC")->fetchAll();
-$permissions = $GLOBALS['pdo']->query("SELECT * FROM permissions ORDER BY slug ASC")->fetchAll();
+$roles = $GLOBALS['pdo']->query('SELECT * FROM roles ORDER BY level DESC, id ASC')->fetchAll();
+$permissions = $GLOBALS['pdo']->query('SELECT * FROM permissions ORDER BY slug ASC')->fetchAll();
 $currentRoleId = (int)($_GET['role_id'] ?? ($roles[0]['id'] ?? 1));
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -14,9 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         redirect('permissions.php');
     }
 
-    $GLOBALS['pdo']->prepare("DELETE FROM role_permissions WHERE role_id = :id")->execute([':id' => $roleId]);
+    $GLOBALS['pdo']->prepare('DELETE FROM role_permissions WHERE role_id = :id')->execute([':id' => $roleId]);
     foreach ($_POST['permissions'] ?? [] as $permissionId) {
-        $stmt = $GLOBALS['pdo']->prepare("INSERT INTO role_permissions (role_id, permission_id) VALUES (:r,:p)");
+        $stmt = $GLOBALS['pdo']->prepare('INSERT INTO role_permissions (role_id, permission_id) VALUES (:r, :p)');
         $stmt->execute([':r' => $roleId, ':p' => (int)$permissionId]);
     }
     audit_log(current_user()['id'], 'role_permissions_update', 'roles', $roleId);
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     redirect('permissions.php?role_id=' . $roleId);
 }
 
-$stmt = $GLOBALS['pdo']->prepare("SELECT permission_id FROM role_permissions WHERE role_id = :id");
+$stmt = $GLOBALS['pdo']->prepare('SELECT permission_id FROM role_permissions WHERE role_id = :id');
 $stmt->execute([':id' => $currentRoleId]);
 $current = array_map('intval', $stmt->fetchAll(PDO::FETCH_COLUMN));
 $currentMap = array_flip($current);

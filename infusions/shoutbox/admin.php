@@ -89,7 +89,7 @@ $success = flash('success');
                     <tr>
                         <td class="admin-strong-cell"><?= (int)$message['id'] ?></td>
                         <td class="admin-strong-cell"><?= e($message['username'] ?? __('member.guest')) ?></td>
-                        <td class="min-width-320"><?= shoutbox_escape_and_format($message['message']) ?></td>
+                        <td class="min-width-320 admin-message-cell"><?= shoutbox_escape_and_format($message['message']) ?></td>
                         <td class="admin-table-note"><?= e($message['created_at']) ?></td>
                         <td>
                             <form method="post">

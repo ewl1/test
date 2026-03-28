@@ -21,3 +21,4 @@
 - [ ] Pridėti `Clear cache / Clear rate limits / Clear reset tokens` įrankius.
 - [ ] Suvienodinti tuos pačius filtrus ir paiešką visose administracijos lentelėse.
 - [ ] Užbaigti kontrasto auditą visoms mažiau naudojamoms kortelėms ir badge elementams.
+- [ ] Diagnostikoje suskirstyti plėtinius į `būtini`, `rekomenduojami` ir `pasirenkami`, kad būtų aišku, kurie tikrai reikalingi MiniCMS veikimui.
