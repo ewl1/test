@@ -25,4 +25,12 @@
 - [ ] Prideti `AttachmentService`.
 - [ ] Prideti `MentionService`.
 - [ ] Prideti `ReactionService`.
+- [ ] Prideti `SubscriptionService`.
+- [ ] Prideti `BookmarkService`.
+- [ ] Prideti `SolvedService`.
+- [ ] Prideti `TagService`.
+- [ ] Prideti `DraftService`.
+- [ ] Prideti `PermissionService` per-forum teisiu logikai.
+- [ ] Prideti `ModerationLogService`.
+- [ ] Prideti `SeoService` forumo canonical ir structured data logikai.
 - [ ] Vietoje vieno augancio `ForumService` pereiti prie siauresniu paslaugu.

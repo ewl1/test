@@ -25,13 +25,43 @@
 - [x] JS perkeltas i `assets/js/forum.js`.
 - [x] Modulio tekstai perkelti i `locale/lt.php`.
 - [x] `App\\Forum\\ForumService` perkeltas i `classes/`.
+
+### Struktura ir navigacija
 - [ ] Prideti temoms ir atsakymams paieskos filtrus paciame forume.
+- [ ] Prideti temu prefiksus ir tagus.
+- [ ] Prideti `jump to unread`, paskutinio skaitymo zymes ir aiskesni `last read` zymekli.
+- [ ] Prideti forumo ir temu prenumeratas (`watch forum`, `watch topic`).
+- [ ] Prideti forumo bookmark/favorite temas naudotojui.
+- [ ] Prideti drafto / auto-save logika kuriant temas ir atsakymus.
+
+### Moderavimas
 - [ ] Prideti moderavimo istorija ir `redagavo` informacija.
+- [ ] Prideti `move / split / merge` temu veiksmus.
+- [ ] Prideti soft delete ir atstatyma temoms bei atsakymams.
+- [ ] Prideti moderatoriaus vidines pastabas temai ar naudotojui.
+- [ ] Prideti per-forum teises ir galimybe tureti `staff only` forumus.
+- [ ] Prideti report/mygtukus ir jungti su bendra `moderation queue`.
+
+### Bendruomenes funkcijos
 - [ ] Prideti `unread tracking`.
 - [ ] Prideti priedus (`attachments`).
 - [ ] Prideti `mention` sistema.
 - [ ] Prideti `like / reaction` sistema.
-- [ ] Prideti report/mygtukus ir jungti su bendra `moderation queue`.
+- [ ] Prideti `solved / accepted answer` temoms, kur tai prasminga.
+- [ ] Prideti apklausas (`polls`) prie temu.
+- [ ] Prideti naudotojo forumo statistika: sukurtos temos, atsakymai, paskutinis aktyvumas.
+
+### Anti-spam ir patikimumas
 - [ ] Prideti anti-spam ir flood control nustatymus.
-- [ ] Paruosti pranesimu centro ivykius: naujas atsakymas, mention, uzrakinta tema.
+- [ ] Prideti `slow mode` atskiriems forumams ar temoms.
+- [ ] Prideti failu priedu limitus, MIME tikrinima ir kvotas.
+- [ ] Paruosti pranesimu centro ivykius: naujas atsakymas, mention, uzrakinta tema, `solved` busena.
+
+### UX ir SEO
+- [ ] Prideti `multi-quote` ir greito atsakymo forma temos apacioje.
+- [ ] Prideti kanoninius forumo/temos URL ir puslapiavimo canonical logika.
+- [ ] Prideti `breadcrumbs` ir strukturuotus duomenis forumo temoms.
+- [ ] Prideti nauju ir aktyviu temu paneles bei `latest forum activity` blokus.
+
+### Architektura
 - [ ] Toliau isskaidyti daugiau forumo logikos is `bootstrap.php` i atskiras klases.

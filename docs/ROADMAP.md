@@ -81,6 +81,12 @@
 - mention sistema
 - like / reaction sistema
 - anti-spam ir flood control
+- per-forum teises ir `staff only` forumai
+- `move / split / merge`, soft delete ir restore
+- `solved / accepted answer`
+- temu prefiksai, tagai, prenumeratos ir favorites
+- draft / auto-save, quick reply, multi-quote
+- moderatoriu vidines pastabos ir aktyvumo/statistikos sluoksnis
 - Naujienu infusion:
 - kategorijos
 - `draft / published`
@@ -177,6 +183,10 @@
 - SEO audit puslapis admin dalyje
 - redirect manager `301/302`
 - broken links checker
+- forumui:
+- canonical temos ir puslapiavimo URL
+- breadcrumbs schema
+- strukturuoti duomenys diskusijoms
 - GEO / AI-friendly kryptis:
 - aiskus turinio blokai ir antrastes
 - FAQ struktura
