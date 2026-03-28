@@ -290,6 +290,7 @@ function login($email, $password)
     clear_failed_login_attempts($email, $ip);
     session_regenerate_id(true);
     $_SESSION['user'] = $user;
+    unset($_SESSION['admin_authenticated']);
     audit_log((int)$user['id'], 'login_success', 'users', (int)$user['id']);
     return true;
 }
@@ -349,6 +350,7 @@ function login_admin($email, $password)
     clear_failed_login_attempts($email, $ip);
     session_regenerate_id(true);
     $_SESSION['user'] = $user;
+    $_SESSION['admin_authenticated'] = true;
     audit_log((int)$user['id'], 'admin_login_success', 'users', (int)$user['id']);
     return true;
 }
@@ -428,6 +430,7 @@ function sync_session_user($pdoOrUserId = null, $userId = null)
     }
     if ($userId < 1) {
         unset($_SESSION['user']);
+        unset($_SESSION['admin_authenticated']);
         return null;
     }
 
@@ -438,10 +441,14 @@ function sync_session_user($pdoOrUserId = null, $userId = null)
         ($user['status'] ?? 'inactive') !== 'active'
     ) {
         unset($_SESSION['user']);
+        unset($_SESSION['admin_authenticated']);
         return null;
     }
 
     $_SESSION['user'] = $user;
+    if (!has_permission($GLOBALS['pdo'], (int)$user['id'], 'admin.access')) {
+        unset($_SESSION['admin_authenticated']);
+    }
     return $user;
 }
 
@@ -463,6 +470,16 @@ function auth_error()
     return flash('auth_error');
 }
 
+function is_admin_session_verified()
+{
+    $user = current_user();
+    if (!$user || !has_permission($GLOBALS['pdo'], (int)$user['id'], 'admin.access')) {
+        return false;
+    }
+
+    return !empty($_SESSION['admin_authenticated']);
+}
+
 function require_login()
 {
     if (current_user()) {
@@ -476,4 +493,14 @@ function require_login()
 function require_login_page()
 {
     require_login();
+}
+
+function require_admin_session()
+{
+    if (is_admin_session_verified()) {
+        return;
+    }
+
+    flash('auth_error', 'Pirmiausia prisijunkite prie administracijos.');
+    redirect(public_path('administration/login.php'));
 }

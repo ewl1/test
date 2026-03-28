@@ -4,10 +4,12 @@ require_once dirname(__DIR__) . '/includes/bootstrap.php';
 
 $user = current_user();
 if ($user) {
-    if (has_permission($GLOBALS['pdo'], $user['id'], 'admin.access')) {
+    if (has_permission($GLOBALS['pdo'], (int)$user['id'], 'admin.access') && is_admin_session_verified()) {
         redirect(public_path('administration/index.php'));
     }
-    redirect(public_path('index.php'));
+    if (!has_permission($GLOBALS['pdo'], (int)$user['id'], 'admin.access')) {
+        redirect(public_path('index.php'));
+    }
 }
 
 $error = auth_error();
@@ -27,7 +29,7 @@ include THEMES . 'default/admin_header.php';
         <div class="card">
             <div class="card-body">
                 <h1 class="h4 mb-3">Admin prisijungimas</h1>
-                <p class="text-secondary">Jei paskyrai nustatytas atskiras admin slaptažodis, čia naudojamas būtent jis.</p>
+                <p class="text-secondary">Jei paskyrai nustatytas atskiras admin slaptažodis, čia naudojamas būtent jis. Jei nenustatytas, naudojamas pagrindinis paskyros slaptažodis.</p>
                 <?php if ($error): ?><div class="alert alert-danger"><?= e($error) ?></div><?php endif; ?>
                 <form method="post">
                     <?= csrf_field() ?>

@@ -41,7 +41,7 @@ include THEMES . 'default/admin_header.php';
       <?php foreach ($roles as $role): ?>
         <a class="list-group-item list-group-item-action <?= $currentRoleId === (int)$role['id'] ? 'active' : '' ?>" href="permissions.php?role_id=<?= (int)$role['id'] ?>">
           <div class="fw-semibold"><?= e($role['name']) ?></div>
-          <div class="small opacity-75"><?= e($role['slug']) ?> · lygis <?= (int)$role['level'] ?></div>
+          <div class="small admin-role-meta"><?= e($role['slug']) ?> · lygis <?= (int)$role['level'] ?></div>
         </a>
       <?php endforeach; ?>
     </div>
@@ -56,10 +56,10 @@ include THEMES . 'default/admin_header.php';
           <div class="row g-3">
             <?php foreach ($permissions as $permission): ?>
               <div class="col-md-6">
-                <label class="form-check border rounded p-3 d-block h-100">
+                <label class="form-check admin-permission-card p-3 d-block h-100">
                   <input class="form-check-input me-2" type="checkbox" name="permissions[]" value="<?= (int)$permission['id'] ?>" <?= isset($currentMap[(int)$permission['id']]) ? 'checked' : '' ?>>
                   <span class="fw-semibold"><?= e($permission['name']) ?></span><br>
-                  <small class="text-secondary"><code><?= e($permission['slug']) ?></code></small><br>
+                  <small class="text-secondary"><code class="admin-mono-pill"><?= e($permission['slug']) ?></code></small><br>
                   <small class="text-secondary"><?= e($permission['description'] ?? '') ?></small>
                 </label>
               </div>

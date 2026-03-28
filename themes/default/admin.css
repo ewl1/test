@@ -90,6 +90,12 @@ small {
     color: var(--admin-text);
 }
 
+.table .fw-semibold,
+.table strong,
+.list-group-item .fw-semibold {
+    color: #f8fafc;
+}
+
 .text-secondary,
 .form-text {
     color: #cbd5e1 !important;
@@ -165,23 +171,58 @@ small {
     border: none;
 }
 
+.btn-outline-primary,
 .btn-outline-secondary,
 .btn-outline-dark,
 .btn-outline-warning,
 .btn-outline-success,
 .btn-outline-danger {
-    border-color: rgba(255,255,255,0.14);
-    color: var(--admin-text);
+    color: #f8fafc;
+    background: rgba(255,255,255,0.04);
+}
+
+.btn-outline-primary {
+    border-color: rgba(56, 189, 248, 0.35);
+    color: #bae6fd;
+    background: rgba(56, 189, 248, 0.12);
 }
 
 .btn-outline-secondary:hover,
+.btn-outline-primary:hover,
 .btn-outline-dark:hover,
 .btn-outline-warning:hover,
 .btn-outline-success:hover,
 .btn-outline-danger:hover {
-    background: rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.12);
     color: #fff;
-    border-color: rgba(255,255,255,0.18);
+}
+
+.btn-outline-secondary {
+    border-color: rgba(226, 232, 240, 0.28);
+}
+
+.btn-outline-dark {
+    border-color: rgba(125, 211, 252, 0.24);
+    color: #e0f2fe;
+    background: rgba(56, 189, 248, 0.08);
+}
+
+.btn-outline-warning {
+    border-color: rgba(245, 158, 11, 0.35);
+    color: #fde68a;
+    background: rgba(245, 158, 11, 0.12);
+}
+
+.btn-outline-success {
+    border-color: rgba(34, 197, 94, 0.35);
+    color: #bbf7d0;
+    background: rgba(34, 197, 94, 0.12);
+}
+
+.btn-outline-danger {
+    border-color: rgba(239, 68, 68, 0.35);
+    color: #fecaca;
+    background: rgba(239, 68, 68, 0.12);
 }
 
 .alert-success {
@@ -209,10 +250,53 @@ small {
 }
 
 code {
-    color: #f9a8d4;
-    background: rgba(244, 114, 182, 0.12);
-    padding: 0.15rem 0.4rem;
+    color: #fde68a;
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.18);
+    padding: 0.18rem 0.45rem;
     border-radius: 0.45rem;
+    font-weight: 700;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+.admin-page-subtitle {
+    color: #dbeafe;
+}
+
+.admin-table-description {
+    color: #dbeafe !important;
+}
+
+.admin-table-note {
+    color: #e2e8f0;
+    font-weight: 600;
+}
+
+.admin-path-code {
+    display: inline-block;
+    width: 100%;
+    color: #e0f2fe;
+    background: rgba(56, 189, 248, 0.12);
+    border-color: rgba(56, 189, 248, 0.22);
+}
+
+.admin-mono-pill {
+    color: #fde68a;
+}
+
+.admin-permission-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--admin-border);
+    border-radius: 14px;
+}
+
+.admin-permission-card:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+.admin-role-meta {
+    color: #dbeafe !important;
 }
 
 footer {

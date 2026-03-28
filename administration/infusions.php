@@ -68,16 +68,16 @@ include THEMES . 'default/admin_header.php';
             <div class="card-header">Failų sistemoje rastos infusions</div>
             <div class="table-responsive">
                 <table class="table align-middle mb-0">
-                    <thead><tr><th>Folder</th><th>Name</th><th>Versija</th><th></th></tr></thead>
+                    <thead><tr><th>Folder</th><th>Pavadinimas</th><th>Versija</th><th></th></tr></thead>
                     <tbody>
                     <?php foreach ($scanned as $folder => $meta): ?>
                         <tr>
-                            <td><code><?= e($folder) ?></code></td>
+                            <td><code class="admin-mono-pill"><?= e($folder) ?></code></td>
                             <td>
                                 <div class="fw-semibold"><?= e($meta['name']) ?></div>
-                                <div class="small text-secondary"><?= e($meta['description'] ?? '') ?></div>
+                                <div class="small admin-table-description"><?= e($meta['description'] ?? '') ?></div>
                             </td>
-                            <td><?= e($meta['version'] ?? '0.0.0') ?></td>
+                            <td><span class="admin-table-note"><?= e($meta['version'] ?? '0.0.0') ?></span></td>
                             <td>
                                 <?php if (isset($installedFolders[$folder])): ?>
                                     <span class="badge text-bg-success">Installed</span>
@@ -103,7 +103,7 @@ include THEMES . 'default/admin_header.php';
             <div class="card-header">Įdiegtos infusions</div>
             <div class="table-responsive">
                 <table class="table align-middle mb-0">
-                    <thead><tr><th>ID</th><th>Name</th><th>Folder</th><th>Installed</th><th>Manifest</th><th></th></tr></thead>
+                    <thead><tr><th>ID</th><th>Pavadinimas</th><th>Folder</th><th>Įdiegta</th><th>Manifest</th><th></th></tr></thead>
                     <tbody>
                     <?php foreach ($installed as $inf):
                         $manifest = $scanned[$inf['folder']] ?? null;
@@ -112,14 +112,14 @@ include THEMES . 'default/admin_header.php';
                     ?>
                         <tr>
                             <td><?= (int)$inf['id'] ?></td>
-                            <td><?= e($inf['name']) ?></td>
-                            <td><code><?= e($inf['folder']) ?></code></td>
-                            <td><?= e($installedVersion) ?></td>
-                            <td><?= e($manifestVersion) ?></td>
+                            <td><span class="fw-semibold"><?= e($inf['name']) ?></span></td>
+                            <td><code class="admin-mono-pill"><?= e($inf['folder']) ?></code></td>
+                            <td><span class="admin-table-note"><?= e($installedVersion) ?></span></td>
+                            <td><span class="admin-table-note"><?= e($manifestVersion) ?></span></td>
                             <td>
                                 <div class="d-flex flex-wrap gap-2">
                                     <?php if (!empty($manifest['admin']) && !empty($manifest['has_admin_file'])): ?>
-                                        <a class="btn btn-sm btn-outline-dark" href="infusion-admin.php?folder=<?= urlencode($inf['folder']) ?>">Admin</a>
+                                        <a class="btn btn-sm btn-outline-primary" href="infusion-admin.php?folder=<?= urlencode($inf['folder']) ?>">Admin</a>
                                     <?php endif; ?>
                                     <form method="post" class="d-inline">
                                         <?= csrf_field() ?>
@@ -131,11 +131,11 @@ include THEMES . 'default/admin_header.php';
                                         <?php endif; ?>
                                     </form>
                                     <?php if (version_compare($manifestVersion, $installedVersion, '>')): ?>
-                                    <form method="post" class="d-inline">
-                                        <?= csrf_field() ?>
-                                        <input type="hidden" name="id" value="<?= (int)$inf['id'] ?>">
-                                        <button class="btn btn-sm btn-primary" name="action" value="upgrade">Upgrade</button>
-                                    </form>
+                                        <form method="post" class="d-inline">
+                                            <?= csrf_field() ?>
+                                            <input type="hidden" name="id" value="<?= (int)$inf['id'] ?>">
+                                            <button class="btn btn-sm btn-outline-primary" name="action" value="upgrade">Upgrade</button>
+                                        </form>
                                     <?php endif; ?>
                                     <form method="post" class="d-inline">
                                         <?= csrf_field() ?>

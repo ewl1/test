@@ -219,6 +219,28 @@ function count_user_shoutbox_messages($userId)
     return (int)$stmt->fetchColumn();
 }
 
+function count_user_forum_messages($userId)
+{
+    $userId = (int)$userId;
+    if ($userId < 1) {
+        return 0;
+    }
+
+    if (!profile_table_exists('infusion_forum_topics') || !profile_table_exists('infusion_forum_posts')) {
+        return 0;
+    }
+
+    $topicStmt = $GLOBALS['pdo']->prepare('SELECT COUNT(*) FROM infusion_forum_topics WHERE user_id = :user_id');
+    $topicStmt->execute([':user_id' => $userId]);
+    $topics = (int)$topicStmt->fetchColumn();
+
+    $replyStmt = $GLOBALS['pdo']->prepare('SELECT COUNT(*) FROM infusion_forum_posts WHERE user_id = :user_id');
+    $replyStmt->execute([':user_id' => $userId]);
+    $replies = (int)$replyStmt->fetchColumn();
+
+    return $topics + $replies;
+}
+
 function profile_rating_options()
 {
     return [1, 2, 3, 4, 5];
@@ -331,9 +353,6 @@ function save_profile_rating($profileUserId, $authorUserId, $rating)
     }
     if (!in_array($rating, profile_rating_options(), true)) {
         return [false, 'Pasirinktas neteisingas ivertinimas.'];
-    }
-    if ($profileUserId === $authorUserId) {
-        return [false, 'Savo profilio ivertinti negalima.'];
     }
     if (!fetch_public_user_profile($profileUserId)) {
         return [false, 'Profilis nerastas.'];
@@ -461,9 +480,6 @@ function create_profile_comment($profileUserId, $authorUserId, $content)
 
     if ($profileUserId < 1 || $authorUserId < 1) {
         return [false, 'Prisijungimas reikalingas.', null];
-    }
-    if ($profileUserId === $authorUserId) {
-        return [false, 'Savo profilio komentuoti negalima.', null];
     }
     if (!fetch_public_user_profile($profileUserId)) {
         return [false, 'Profilis nerastas.', null];

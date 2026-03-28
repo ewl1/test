@@ -14,7 +14,7 @@ include THEMES . 'default/admin_header.php';
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
         <h1 class="h3 mb-0">Serverio diagnostika</h1>
-        <div class="text-secondary small">Branduolio ir serverio būsena vienoje vietoje</div>
+        <div class="admin-page-subtitle small">Branduolio ir serverio būsena vienoje vietoje</div>
     </div>
     <span class="badge text-bg-dark">v<?= e(app_version()) ?></span>
 </div>
@@ -32,7 +32,7 @@ include THEMES . 'default/admin_header.php';
                     <dt class="col-sm-4">SITE_URL</dt>
                     <dd class="col-sm-8"><code><?= e($diagnostics['application']['site_url']) ?></code></dd>
                     <dt class="col-sm-4">Katalogas</dt>
-                    <dd class="col-sm-8"><code><?= e($diagnostics['application']['basedir']) ?></code></dd>
+                    <dd class="col-sm-8"><code class="admin-path-code"><?= e($diagnostics['application']['basedir']) ?></code></dd>
                     <dt class="col-sm-4">Maintenance</dt>
                     <dd class="col-sm-8"><span class="badge <?= $diagnostics['application']['maintenance'] ? 'text-bg-warning' : 'text-bg-success' ?>"><?= $diagnostics['application']['maintenance'] ? 'On' : 'Off' ?></span></dd>
                 </dl>
@@ -54,7 +54,7 @@ include THEMES . 'default/admin_header.php';
                     <dt class="col-sm-4">HTTPS</dt>
                     <dd class="col-sm-8"><span class="badge <?= $diagnostics['server']['https'] ? 'text-bg-success' : 'text-bg-secondary' ?>"><?= $diagnostics['server']['https'] ? 'On' : 'Off' ?></span></dd>
                     <dt class="col-sm-4">php.ini</dt>
-                    <dd class="col-sm-8"><code><?= e($diagnostics['php']['loaded_ini']) ?></code></dd>
+                    <dd class="col-sm-8"><code class="admin-path-code"><?= e($diagnostics['php']['loaded_ini']) ?></code></dd>
                     <dt class="col-sm-4">Laiko juosta</dt>
                     <dd class="col-sm-8"><?= e($diagnostics['php']['timezone']) ?></dd>
                 </dl>
@@ -132,7 +132,7 @@ include THEMES . 'default/admin_header.php';
                         <tbody>
                         <?php foreach ($diagnostics['paths'] as $pathInfo): ?>
                             <tr>
-                                <td><code><?= e($pathInfo['path']) ?></code></td>
+                                <td><code class="admin-path-code"><?= e($pathInfo['path']) ?></code></td>
                                 <td><span class="badge <?= $badgeClass($pathInfo['exists']) ?>"><?= $pathInfo['exists'] ? 'Taip' : 'Ne' ?></span></td>
                                 <td><span class="badge <?= $badgeClass($pathInfo['writable']) ?>"><?= $pathInfo['writable'] ? 'Taip' : 'Ne' ?></span></td>
                             </tr>

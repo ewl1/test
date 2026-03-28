@@ -9,7 +9,6 @@ if (!$profile) {
 
 $viewer = current_user();
 $viewerIsAdmin = $viewer && has_permission($GLOBALS['pdo'], (int)$viewer['id'], 'admin.access');
-$isOwnProfile = $viewer && (int)$viewer['id'] === (int)$profile['id'];
 $ratingError = null;
 $commentError = null;
 $commentDraft = '';
@@ -49,6 +48,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 $latestIp = $viewerIsAdmin ? fetch_user_latest_ip((int)$profile['id']) : null;
 $banStatus = $viewerIsAdmin && $latestIp ? fetch_ip_ban_status($latestIp) : null;
 $shoutCount = count_user_shoutbox_messages((int)$profile['id']);
+$forumMessageCount = count_user_forum_messages((int)$profile['id']);
 $ratingSummary = fetch_profile_rating_summary((int)$profile['id']);
 $viewerRating = $viewer ? fetch_profile_rating_for_viewer((int)$profile['id'], (int)$viewer['id']) : 0;
 $profileCommentCount = count_profile_comments((int)$profile['id']);
@@ -108,8 +108,6 @@ include __DIR__ . '/themes/default/header.php';
 
                 <?php if (!$viewer): ?>
                     <div class="alert alert-info mt-3 mb-0">Profili ivertinti gali tik prisijunge nariai.</div>
-                <?php elseif ($isOwnProfile): ?>
-                    <div class="alert alert-secondary mt-3 mb-0">Savo profilio ivertinti negalima.</div>
                 <?php else: ?>
                     <form method="post" class="mt-3">
                         <?= csrf_field() ?>
@@ -142,8 +140,6 @@ include __DIR__ . '/themes/default/header.php';
 
                 <?php if (!$viewer): ?>
                     <div class="alert alert-info">Komentuoti gali tik prisijunge nariai.</div>
-                <?php elseif ($isOwnProfile): ?>
-                    <div class="alert alert-secondary">Savo profilio komentuoti negalima.</div>
                 <?php else: ?>
                     <form method="post" class="mb-4">
                         <?= csrf_field() ?>
@@ -206,6 +202,12 @@ include __DIR__ . '/themes/default/header.php';
                 <div class="user-stat-card">
                     <div class="small text-secondary mb-1">Shoutbox zinutes</div>
                     <div class="h3 mb-0"><?= (int)$shoutCount ?></div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-12">
+                <div class="user-stat-card">
+                    <div class="small text-secondary mb-1">Forumo zinutes</div>
+                    <div class="h3 mb-0"><?= (int)$forumMessageCount ?></div>
                 </div>
             </div>
             <div class="col-sm-6 col-xl-12">

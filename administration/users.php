@@ -164,12 +164,12 @@ include THEMES . 'default/admin_header.php';
       <?php foreach ($users as $user): ?>
         <tr>
           <td><?= (int)$user['id'] ?></td>
-          <td><?= e($user['username']) ?></td>
-          <td><?= e($user['email']) ?></td>
-          <td><?= e($user['role_name'] ?? '-') ?></td>
+          <td><span class="fw-semibold"><?= e($user['username']) ?></span></td>
+          <td><span class="admin-table-note"><?= e($user['email']) ?></span></td>
+          <td><span class="fw-semibold"><?= e($user['role_name'] ?? '-') ?></span></td>
           <td><span class="badge text-bg-secondary"><?= e($user['status']) ?></span></td>
-          <td><?= (int)$user['is_active'] ? 'Taip' : 'Ne' ?></td>
-          <td><button class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#user-<?= (int)$user['id'] ?>">Valdyti</button></td>
+          <td><span class="admin-table-note"><?= (int)$user['is_active'] ? 'Taip' : 'Ne' ?></span></td>
+          <td><button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#user-<?= (int)$user['id'] ?>">Valdyti</button></td>
         </tr>
         <tr class="collapse" id="user-<?= (int)$user['id'] ?>">
           <td colspan="7">
