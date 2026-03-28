@@ -16,7 +16,7 @@
 
 ## Architekturos ribos
 - Moduliu klases neturi gyventi `includes/classes/`.
-- `App\\Forum\\*` klasės turi likti `infusions/forum/classes/`.
+- `App\\Forum\\*` klases turi likti `infusions/forum/classes/`.
 - Naujienu, shoutbox ir kitu moduliu klasems galioja ta pati taisykle.
 
 ## Planuojamos branduolio klases
@@ -61,6 +61,11 @@
 - [ ] `App\\Content\\DraftPreviewService`
 - [ ] `App\\Content\\TrashService`
 - [ ] `App\\Content\\CommentService`
+- [ ] `App\\Content\\CommentThreadService`
+- [ ] `App\\Content\\CommentModerationService`
+- [ ] `App\\Content\\CommentNotificationService`
+- [ ] `App\\Content\\CommentRenderer`
+- [ ] `App\\Content\\CommentPolicyService`
 - [ ] `App\\Content\\ReactionService`
 - [ ] `App\\Content\\BookmarkService`
 - [ ] `App\\Content\\ReportService`
@@ -85,4 +90,5 @@
 - [x] `App\\Forum\\ForumService` iskeltas is branduolio i forumo moduli.
 - [ ] Pradeti nuo `App\\Auth\\AuthService`, `App\\Mail\\Mailer` ir `App\\Cache\\CacheStore`.
 - [ ] Po to pereiti prie `NotificationCenter` ir `ProfileService`.
+- [ ] Po pagrindiniu paslaugu pradeti bendro `comments engine` klasiu rinkini, kad naujienos ir profiliai nebesilaikytu ant atskiros logikos.
 - [ ] Tik po to skaidyti tolimesnes pagalbines sritis i siauresnes paslaugas.

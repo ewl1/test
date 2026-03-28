@@ -119,6 +119,13 @@
 - redagavimo istorija, preview ir approval workflow
 - Bendri bendruomenes varikliai:
 - comments engine
+- vieningas komentaru taikinio modelis skirtingiems moduliams
+- `flat` ir `threaded` scenarijai pagal poreiki
+- moderavimo busenos ir `soft delete / restore`
+- `quote`, `mention`, `reaction`, `report`
+- komentaru puslapiavimas, rusiavimas ir limitai
+- prenumeratos ir pranesimu centro ivykiu sluoksnis
+- komentaru `policy` sluoksnis: ar modulis leidzia komentarus, kokias teises ir koki renderi naudoja
 - reactions
 - bookmarks / favorites
 - reporting system
@@ -176,6 +183,7 @@
 - `App\\Auth\\AuthService`
 - `App\\Mail\\Mailer`
 - `App\\Cache\\CacheStore`
+- bendras `comments engine` klasiu rinkinys branduolyje
 - modulio klasems likti savo `infusions/<modulis>/classes/`
 
 ### Baigtumo kriterijai

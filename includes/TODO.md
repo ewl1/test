@@ -45,7 +45,7 @@
 - [ ] Paruosti `hook debugger` ir `dependency graph` duomenu sluoksni.
 
 ### Saugumas
-- [ ] Toliau mazinti hardcoded tekstus helperiuose ir baigti locale perkėlima.
+- [ ] Toliau mazinti hardcoded tekstus helperiuose ir baigti locale perkelima.
 - [ ] Prideti daugiau smoke test helperiu svarbiausiems srautams.
 - [ ] Ivesti vieninga cache sluoksni su `APCu` arba failu fallback.
 - [ ] Ivesti `security headers manager`.
@@ -57,6 +57,20 @@
 
 ### Funkcionalumas
 - [ ] Isgryninti bendra `comments engine`, kad ji naudotu profiliai, naujienos ir kiti moduliai.
+- [ ] Apibrezti vieninga komentaru taikinio modeli: naujienos, profiliai, puslapiai, paneles ar kiti moduliai.
+- [ ] Nuspresti, kur reikia `flat` komentaru, o kur `threaded replies`.
+- [ ] Prideti komentaru statusus: `pending`, `approved`, `hidden`, `spam`, `deleted`.
+- [ ] Prideti komentaru moderavimo veiksmus: approve, hide, soft delete, restore, mark as spam.
+- [ ] Prideti komentaru redagavimo langa, `edited at` ir `edited reason`.
+- [ ] Prideti komentaru `quote / mention / reaction / report` galimybes.
+- [ ] Prideti komentaru rusiavima: naujausi, seniausi, populiariausi.
+- [ ] Prideti komentaru puslapiavima ir nustatyma, kiek komentaru rodyti.
+- [ ] Prideti komentaru `flood control`, rate limits ir anti-spam tikrinimus.
+- [ ] Prideti komentaru prenumeratas ir pranesimu centro ivykius.
+- [ ] Prideti komentaru autoriaus role/badge/status rodyma prie komentaro korteles.
+- [ ] Prideti komentaru paieskos ir administracinio filtravimo sluoksni.
+- [ ] Paruosti bendra komentaru rendereri su BBCode / WYSIWYG / escaping taisyklemis.
+- [ ] Paruosti galimybe modulio lygiu ijungti/isjungti komentarus ir pasirinkti komentaru taisykles.
 - [ ] Prideti bendra `reactions` varikli.
 - [ ] Prideti `bookmarks / favorites`.
 - [ ] Prideti `reporting system`.
