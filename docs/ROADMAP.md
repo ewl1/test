@@ -48,6 +48,8 @@
 - naujas atsakymas forume
 - naujas komentaro atsakymas ar naujas komentras
 - sistemos pranesimai
+- bendras `notifications` variklis su tipais, nuostatomis ir pristatymo kanalais
+- bendras `activity feed` variklis su actor/action/target modeliu
 - `profile.php` perrasymas:
 - profilis, avataras, kontaktai, parasas
 - privatumo nustatymai
@@ -78,6 +80,8 @@
 - paieska
 - unread tracking
 - attachments
+- paveiksliuku ikelimas ir rodymas
+- YouTube nuorodu ikelimas ir embed rodymas
 - mention sistema
 - like / reaction sistema
 - anti-spam ir flood control
@@ -108,6 +112,7 @@
 - related news
 - featured image
 - paveiksliuku ikelimas ir rodymas
+- YouTube nuorodu ikelimas ir embed rodymas
 - galerija / media / priedai
 - saltiniai, autoriaus nuorodos ir `reading time`
 - SEO laukai kiekvienai naujienai
@@ -118,6 +123,11 @@
 - kiek naujienu rodyti, puslapiavimas ir paneliu limitai
 - redagavimo istorija, preview ir approval workflow
 - Bendri bendruomenes varikliai:
+- notifications / activity feed:
+- bendri ivykiu tipai moduliams
+- `in-app` ir `email` pristatymas
+- activity feed filtrai ir matomumo taisykles
+- moduliu ivykiu publikavimas i notification centra ir feed'a
 - paieskos variklis:
 - vieningi paieskos saltiniai visiems moduliams
 - rezultatu skaidymas pagal tipa ir sekcija
@@ -193,6 +203,8 @@
 - `App\\Mail\\Mailer`
 - `App\\Cache\\CacheStore`
 - bendras `comments engine` klasiu rinkinys branduolyje
+- bendras `notifications / activity feed` klasiu rinkinys branduolyje
+- bendras `media/embed` klasiu rinkinys branduolyje
 - modulio klasems likti savo `infusions/<modulis>/classes/`
 
 ### Baigtumo kriterijai

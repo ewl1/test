@@ -35,6 +35,11 @@
 - [ ] `App\\Messaging\\MessageService`
 - [ ] `App\\Messaging\\BlockListService`
 - [ ] `App\\Notifications\\NotificationCenter`
+- [ ] `App\\Notifications\\NotificationPreferenceService`
+- [ ] `App\\Notifications\\NotificationDeliveryService`
+- [ ] `App\\Notifications\\NotificationTemplateResolver`
+- [ ] `App\\Notifications\\ActivityEventService`
+- [ ] `App\\Notifications\\ActivityFeedQueryService`
 
 ### Profilis ir naudotojo paskyra
 - [ ] `App\\Profile\\ProfileService`
@@ -74,6 +79,10 @@
 - [ ] `App\\Content\\CommentNotificationService`
 - [ ] `App\\Content\\CommentRenderer`
 - [ ] `App\\Content\\CommentPolicyService`
+- [ ] `App\\Content\\EmbedService`
+- [ ] `App\\Content\\YoutubeEmbedService`
+- [ ] `App\\Content\\MediaUploadPolicyService`
+- [ ] `App\\Content\\ImageAttachmentService`
 - [ ] `App\\Content\\ReactionService`
 - [ ] `App\\Content\\BookmarkService`
 - [ ] `App\\Content\\ReportService`
@@ -97,7 +106,8 @@
 - [x] Paruosta `composer.json` autoload sekcija (`psr-4`) su `App\\`.
 - [x] `App\\Forum\\ForumService` iskeltas is branduolio i forumo moduli.
 - [ ] Pradeti nuo `App\\Auth\\AuthService`, `App\\Mail\\Mailer` ir `App\\Cache\\CacheStore`.
-- [ ] Po to pereiti prie `NotificationCenter` ir `ProfileService`.
+- [ ] Po to pereiti prie `NotificationCenter`, activity feed sluoksnio ir `ProfileService`.
 - [ ] Po pagrindiniu paslaugu pradeti bendro `comments engine` klasiu rinkini, kad naujienos ir profiliai nebesilaikytu ant atskiros logikos.
 - [ ] Tuo paciu sluoksniu pradeti ir bendra paieskos klasiu rinkini, kad `search.php` netaptu vieninteliu paieskos centru.
+- [ ] Kartu su bendru turinio sluoksniu pradeti media/embed klases, kad forumas ir naujienos nenaudotu skirtingu taisykliu.
 - [ ] Tik po to skaidyti tolimesnes pagalbines sritis i siauresnes paslaugas.

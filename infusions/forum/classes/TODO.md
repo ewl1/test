@@ -23,6 +23,8 @@
 - [ ] Prideti `SearchService`.
 - [ ] Prideti `ReadTrackingService`.
 - [ ] Prideti `AttachmentService`.
+- [ ] Prideti `ImageAttachmentService`.
+- [ ] Prideti `VideoEmbedService`.
 - [ ] Prideti `MentionService`.
 - [ ] Prideti `ReactionService`.
 - [ ] Prideti `ThanksService`.

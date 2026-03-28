@@ -47,6 +47,8 @@
 - [ ] Prideti `featured image`.
 - [ ] Prideti paveiksliuku ikelima naujienai per admin forma.
 - [ ] Prideti paveiksliuku rodymo taisykles sarasuose, pilname naujienos puslapyje ir panelese.
+- [ ] Prideti YouTube nuorodu ikelima naujienai per admin forma.
+- [ ] Prideti saugu YouTube embed rodyma naujienos perziuroje.
 - [ ] Prideti galerija arba papildomus media failus.
 - [ ] Prideti failu/priedu prisegima ten, kur tai prasminga.
 - [ ] Prideti saltinio ir autoriaus nuorodas.
@@ -84,4 +86,4 @@
 
 ### Architektura
 - [ ] Jei reikes daugiau logikos, prideti `assets/` ir `classes/` struktura kaip kituose moduliuose.
-- [ ] Apsvarstyti `NewsService`, `CategoryService`, `PublicationService`, `FeedService`, `SeoPresenter` klases.
+- [ ] Apsvarstyti `NewsService`, `CategoryService`, `PublicationService`, `FeedService`, `SeoPresenter`, `MediaEmbedService` klases.

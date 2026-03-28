@@ -27,6 +27,15 @@
 - [ ] Paruosti asmeniniu zinuciu duomenu modeli: pokalbiai, zinutes, archyvas, soft delete.
 - [ ] Prideti unread skaiciavimo logika privacioms zinutems ir pranesimu centrui.
 - [ ] Prideti naudotoju blokavimo logika zinutems ir kontaktams.
+- [ ] Isgryninti bendra `notifications` varikli visam MiniCMS.
+- [ ] Apibrezti pranesimu tipus: nauja zinute, forumo atsakymas, komentaras, paminejimas, moderavimo ivykis, sistemos pranesimas.
+- [ ] Prideti pranesimu statusus: unread, read, archived, dismissed.
+- [ ] Prideti pranesimu nuostatas pagal tipa ir kanala.
+- [ ] Apibrezti `in-app`, `email` ir ateities `digest` pristatymo kanalus.
+- [ ] Isgryninti bendra `activity feed` varikli visam MiniCMS.
+- [ ] Apibrezti activity feed ivykio modeli: actor, action, target, context, visibility.
+- [ ] Nuspresti, kurie ivykiai eina tik i activity feed, o kurie ir i notification centra.
+- [ ] Prideti activity feed filtrus: mano veikla, mano turinys, sekami objektai, sistemos veikla.
 - [ ] Perasyti profilio logika: kontaktai, parasas, privatumo nustatymai, activity feed, statistics.
 - [ ] Paruosti `security` skirtuko logika: slaptazodis, sesijos, 2FA.
 
@@ -70,6 +79,11 @@
 - [ ] Prideti perindeksavimo (`reindex`) ir paieskos cache valymo logika.
 - [ ] Prideti paieskos puslapiavimo, limito ir rusiavimo nustatymus.
 - [ ] Prideti admin paieskos diagnostika: kas indeksuojama, kada paskutini karta atnaujinta, kiek irasu.
+- [ ] Isgryninti bendra media/embed varikli visam MiniCMS.
+- [ ] Apibrezti saugiu media saltiniu politika: vietiniai paveiksliukai, YouTube ir kiti leistini saltiniai.
+- [ ] Prideti YouTube URL validacija, normalizavima ir embed generavima.
+- [ ] Prideti paveiksliuku upload taisykles: limitai, MIME, matmenys, kvotos.
+- [ ] Prideti bendra `embed renderer` sluoksni forumui, naujienoms ir kitiems moduliams.
 - [ ] Isgryninti bendra `comments engine`, kad ji naudotu profiliai, naujienos ir kiti moduliai.
 - [ ] Apibrezti vieninga komentaru taikinio modeli: naujienos, profiliai, puslapiai, paneles ar kiti moduliai.
 - [ ] Nuspresti, kur reikia `flat` komentaru, o kur `threaded replies`.

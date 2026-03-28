@@ -49,6 +49,9 @@
 ### Bendruomenes funkcijos
 - [ ] Prideti `unread tracking`.
 - [ ] Prideti priedus (`attachments`).
+- [ ] Prideti paveiksliuku ikelima i temos ir atsakymo forma.
+- [ ] Prideti saugu paveiksliuku rodyma temuose ir atsakymuose.
+- [ ] Prideti YouTube nuorodu ikelima ir automatini embed rodyma.
 - [ ] Prideti `mention` sistema.
 - [ ] Prideti `like / reaction` sistema.
 - [ ] Prideti forumo rango / statuso rodyma prie nario vardo ir avataro.
@@ -62,6 +65,7 @@
 - [ ] Prideti anti-spam ir flood control nustatymus.
 - [ ] Prideti `slow mode` atskiriems forumams ar temoms.
 - [ ] Prideti failu priedu limitus, MIME tikrinima ir kvotas.
+- [ ] Prideti atskiras taisykles paveiksliukams ir YouTube nuorodoms: limitai, validacija, leidziami domenai.
 - [ ] Paruosti pranesimu centro ivykius: naujas atsakymas, mention, uzrakinta tema, `solved` busena.
 
 ### UX ir SEO

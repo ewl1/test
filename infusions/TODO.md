@@ -43,6 +43,16 @@
 - paieskos saltinius
 - pranesimu ivykius
 - hook'us i branduoli
+- [ ] Vienodai apibrezti, kaip modulis skelbia `notifications` ir `activity feed` ivykius:
+- ivykio tipas
+- ivykio pavadinimas ir santrauka
+- target/actor duomenys
+- matomumo taisykles
+- ar ivyki reikia siusti i notification centra, activity feed ar abu
+- [ ] Vienodai apibrezti, kaip modulis pateikia media/embed taisykles:
+- ar leidziami vietiniai paveiksliukai
+- ar leidziami YouTube embed'ai
+- kokie limitai ir validacijos taikomi
 - [ ] Vienodai apibrezti, kaip modulis pateikia paieskos metaduomenis:
 - indeksuojami laukai
 - rezultato URL
