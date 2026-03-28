@@ -1,1 +1,0 @@
-# Palikta dėl suderinamumo / typo
