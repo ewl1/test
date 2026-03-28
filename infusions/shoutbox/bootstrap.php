@@ -7,14 +7,7 @@ function shoutbox_register_assets()
 
 function shoutbox_smileys()
 {
-    return [
-        ':)' => '&#128578;',
-        ';)' => '&#128521;',
-        ':D' => '&#128516;',
-        ':(' => '&#128577;',
-        ':P' => '&#128539;',
-        '<3' => '&#10084;&#65039;',
-    ];
+    return site_smileys(true);
 }
 
 function shoutbox_table_name()
@@ -79,35 +72,12 @@ function shoutbox_flash_key($context, $type)
 
 function shoutbox_escape_and_format($message)
 {
-    $message = sanitize_bbcode_input($message, shoutbox_allowed_tags(), 500);
-    $message = escape_html($message);
+    $message = bbcode_to_html((string)$message, [
+        'allowed_tags' => shoutbox_allowed_tags(),
+        'max_length' => 500,
+    ]);
 
-    $patterns = [
-        '/\[b\](.*?)\[\/b\]/is' => '<strong>$1</strong>',
-        '/\[i\](.*?)\[\/i\]/is' => '<em>$1</em>',
-        '/\[u\](.*?)\[\/u\]/is' => '<u>$1</u>',
-        '/\[quote\](.*?)\[\/quote\]/is' => '<blockquote class="border-start ps-3 text-secondary">$1</blockquote>',
-        '/\[code\](.*?)\[\/code\]/is' => '<code>$1</code>',
-    ];
-    foreach ($patterns as $pattern => $replacement) {
-        $message = preg_replace($pattern, $replacement, $message);
-    }
-
-    $message = preg_replace_callback('/\[url=(https?:\/\/[^\]\s]+)\](.*?)\[\/url\]/is', function ($matches) {
-        $url = trim((string)$matches[1]);
-        $label = $matches[2];
-        if (validate_url_value($url, true, __('shoutbox.link_label'), ['http', 'https'], false) !== null) {
-            return $label;
-        }
-
-        return '<a href="' . escape_url($url) . '" target="_blank" rel="nofollow ugc noopener noreferrer">' . $label . '</a>';
-    }, $message);
-
-    foreach (shoutbox_smileys() as $code => $emoji) {
-        $message = str_replace(escape_html($code), '<span class="shoutbox-smiley">' . $emoji . '</span>', $message);
-    }
-
-    return nl2br($message);
+    return apply_site_smileys($message, 'shoutbox-smiley');
 }
 
 function shoutbox_plain_excerpt($message, $length = 120)
@@ -239,8 +209,13 @@ function shoutbox_render_editor($context = 'page', $textareaId = 'shoutbox-messa
             <?php endforeach; ?>
         </div>
         <div class="mb-2 d-flex flex-wrap gap-2 shoutbox-smiley-toolbar">
-            <?php foreach (shoutbox_smileys() as $code => $emoji): ?>
-                <button type="button" class="btn btn-sm btn-outline-warning" data-shoutbox-editor-target="<?= e($textareaId) ?>" data-shoutbox-smiley-code="<?= e($code) ?>"><?= $emoji ?></button>
+            <?php foreach (shoutbox_smileys() as $smiley):
+                $code = (string)($smiley['code'] ?? '');
+                if ($code === '') {
+                    continue;
+                }
+            ?>
+                <button type="button" class="btn btn-sm btn-outline-warning" data-shoutbox-editor-target="<?= e($textareaId) ?>" data-shoutbox-smiley-code="<?= e($code) ?>" title="<?= e($smiley['title'] ?? $code) ?>"><?= site_smiley_button_html($smiley, 'shoutbox-smiley') ?></button>
             <?php endforeach; ?>
         </div>
 

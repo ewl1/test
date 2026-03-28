@@ -19,6 +19,7 @@ include THEMES . 'default/admin_header.php';
                 <a class="list-group-item list-group-item-action" href="themes.php"><?= e(__('nav.admin.themes')) ?></a>
                 <a class="list-group-item list-group-item-action" href="navigation.php"><?= e(__('nav.admin.navigation')) ?></a>
                 <a class="list-group-item list-group-item-action" href="diagnostics.php"><?= e(__('nav.admin.diagnostics')) ?></a>
+                <a class="list-group-item list-group-item-action" href="smileys.php">Šypsenėlės</a>
             </div>
         </div>
     </div>

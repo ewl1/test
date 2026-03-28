@@ -27,19 +27,12 @@ function forum_table_posts()
 
 function forum_allowed_tags()
 {
-    return ['b', 'i', 'u', 'quote', 'code', 'url'];
+    return ['b', 'i', 'u', 'quote', 'code', 'url', 'img', 'youtube'];
 }
 
 function forum_smileys()
 {
-    return [
-        ':)' => '&#128578;',
-        ';)' => '&#128521;',
-        ':D' => '&#128516;',
-        ':(' => '&#128577;',
-        ':P' => '&#128539;',
-        '<3' => '&#10084;&#65039;',
-    ];
+    return site_smileys(true);
 }
 
 function forum_bbcode_buttons()
@@ -51,6 +44,8 @@ function forum_bbcode_buttons()
         ['label' => 'Code', 'insert' => '[code][/code]'],
         ['label' => 'Quote', 'insert' => '[quote][/quote]'],
         ['label' => 'Link', 'insert' => '[url=https://][/url]'],
+        ['label' => 'Img', 'insert' => '[img]https://[/img]'],
+        ['label' => 'YouTube', 'insert' => '[youtube]https://youtu.be/dQw4w9WgXcQ[/youtube]'],
     ];
 }
 
@@ -156,11 +151,7 @@ function forum_format_body($body)
         'max_length' => 15000,
     ]);
 
-    foreach (forum_smileys() as $code => $emoji) {
-        $body = str_replace(escape_html($code), '<span class="forum-smiley">' . $emoji . '</span>', $body);
-    }
-
-    return $body;
+    return apply_site_smileys($body, 'forum-smiley');
 }
 
 function forum_excerpt($body, $length = 180)
@@ -1060,8 +1051,13 @@ function forum_render_editor_toolbar($textareaId)
 
 function forum_render_smileys($textareaId)
 {
-    foreach (forum_smileys() as $code => $emoji) {
-        echo '<button type="button" class="btn btn-sm btn-outline-warning" data-forum-editor-target="' . e($textareaId) . '" data-forum-smiley-code="' . e($code) . '">' . $emoji . '</button>';
+    foreach (forum_smileys() as $smiley) {
+        $code = (string)($smiley['code'] ?? '');
+        if ($code === '') {
+            continue;
+        }
+
+        echo '<button type="button" class="btn btn-sm btn-outline-warning" data-forum-editor-target="' . e($textareaId) . '" data-forum-smiley-code="' . e($code) . '" title="' . e($smiley['title'] ?? $code) . '">' . site_smiley_button_html($smiley, 'forum-smiley') . '</button>';
     }
 }
 

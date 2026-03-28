@@ -97,6 +97,14 @@ $canDiagnostics = $can('settings.manage') || $can('logs.view');
 </li>
 <?php endif; ?>
 
+<?php if ($can('settings.manage')): ?>
+<li class="nav-item">
+<a class="nav-link" href="<?= public_path('administration/smileys.php') ?>">
+<i class="fa-solid fa-face-smile"></i> Šypsenėlės
+</a>
+</li>
+<?php endif; ?>
+
 <?php if ($can('panels.manage')): ?>
 <li class="nav-item">
 <a class="nav-link" href="<?= public_path('administration/panels.php') ?>">

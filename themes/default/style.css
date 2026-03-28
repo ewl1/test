@@ -212,6 +212,57 @@ body {
     line-height: 1;
 }
 
+.site-smiley {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+}
+
+.site-smiley-emoji {
+    font-size: 1.15em;
+    line-height: 1;
+}
+
+.site-smiley-image {
+    width: 1.5rem;
+    height: 1.5rem;
+    object-fit: contain;
+}
+
+.site-smiley-button-icon.site-smiley-image {
+    width: 1.4rem;
+    height: 1.4rem;
+}
+
+.bbcode-image {
+    display: block;
+    max-width: min(100%, 720px);
+    height: auto;
+    border-radius: 16px;
+    margin: 0.85rem 0;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+}
+
+.bbcode-video-embed {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+    margin: 1rem 0;
+    overflow: hidden;
+    border-radius: 18px;
+    background: #0f172a;
+    box-shadow: 0 14px 32px rgba(15, 23, 42, 0.16);
+}
+
+.bbcode-video-embed iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
 .card {
     background: var(--site-surface);
     border: 1px solid var(--site-border);

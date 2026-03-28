@@ -253,14 +253,7 @@ function profile_comment_allowed_tags()
 
 function profile_comment_smileys()
 {
-    return [
-        ':)' => '&#128578;',
-        ';)' => '&#128521;',
-        ':D' => '&#128516;',
-        ':(' => '&#128577;',
-        ':P' => '&#128539;',
-        '<3' => '&#10084;&#65039;',
-    ];
+    return site_smileys(true);
 }
 
 function profile_comment_bbcode_buttons()
@@ -287,11 +280,7 @@ function profile_render_comment_body($content)
         'max_length' => 2000,
     ]);
 
-    foreach (profile_comment_smileys() as $code => $emoji) {
-        $html = str_replace(escape_html($code), '<span class="profile-comment-smiley">' . $emoji . '</span>', $html);
-    }
-
-    return $html;
+    return apply_site_smileys($html, 'profile-comment-smiley');
 }
 
 function profile_comment_excerpt($content, $length = 120)

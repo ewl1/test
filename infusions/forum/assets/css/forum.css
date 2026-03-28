@@ -182,6 +182,20 @@
     line-height: 1;
 }
 
+.forum-smiley-toolbar .btn {
+    min-width: 44px;
+}
+
+.forum-smiley.site-smiley-image {
+    width: 1.55rem;
+    height: 1.55rem;
+}
+
+.forum-post-body .bbcode-image {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
 .forum-panel-item + .forum-panel-item {
     padding-top: 0.6rem;
     border-top: 1px solid var(--site-border);

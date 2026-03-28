@@ -31,6 +31,16 @@
     line-height: 1;
 }
 
+.shoutbox-smiley.site-smiley-image {
+    width: 1.35rem;
+    height: 1.35rem;
+}
+
+.shoutbox-smiley-toolbar .site-smiley-button-icon {
+    min-width: 1.35rem;
+    min-height: 1.35rem;
+}
+
 .shoutbox-panel-item + .shoutbox-panel-item {
     padding-top: 0.6rem;
     border-top: 1px solid var(--site-border);

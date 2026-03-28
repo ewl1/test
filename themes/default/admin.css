@@ -487,6 +487,36 @@ footer {
     font-size: .88rem;
 }
 
+.admin-smiley-form-card .form-text strong,
+.admin-smiley-table .badge,
+.admin-smiley-table .admin-strong-cell {
+    color: inherit;
+}
+
+.admin-smiley-preview {
+    min-width: 2rem;
+    min-height: 2rem;
+    font-size: 1.35rem;
+}
+
+.admin-smiley-preview.site-smiley-image {
+    width: 2rem;
+    height: 2rem;
+    object-fit: contain;
+}
+
+.admin-smiley-preview-cell {
+    min-width: 72px;
+}
+
+.admin-smiley-value {
+    min-width: 170px;
+}
+
+.admin-smiley-current .admin-path-code {
+    width: auto;
+}
+
 @media (max-width: 991.98px) {
     .card {
         border-radius: 14px;

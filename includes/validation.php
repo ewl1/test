@@ -158,6 +158,10 @@ function sanitize_bbcode_input($text, array $allowedTags = ['b', 'i', 'u', 'quot
             return '[url=' . $argument . ']';
         }
 
+        if (in_array($tag, ['img', 'youtube'], true)) {
+            return '[' . $tag . ']';
+        }
+
         return '[' . $tag . ']';
     }, $text);
 

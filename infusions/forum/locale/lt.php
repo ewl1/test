@@ -19,7 +19,7 @@ return [
     'forum.topic.title' => 'Temos pavadinimas',
     'forum.message' => 'Žinutė',
     'forum.content' => 'Turinys',
-    'forum.allowed_bbcode' => 'Leidžiamas BBCode: [b], [i], [u], [quote], [code], [url=...][/url]',
+    'forum.allowed_bbcode' => 'Leidžiamas BBCode: [b], [i], [u], [quote], [code], [url=...][/url], [img][/img], [youtube][/youtube] ir šypsenėlės',
     'forum.create' => 'Sukurti temą',
     'forum.login_to_post' => 'Temas gali kurti tik prisijungę nariai. Prisijunkite.',
     'forum.back' => 'Atgal į forumą',

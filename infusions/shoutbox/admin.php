@@ -51,6 +51,9 @@ $success = flash('success');
         <div class="card-header"><?= e(__('shoutbox.admin.settings.title')) ?></div>
         <div class="card-body">
             <div class="alert alert-info"><?= e(__('shoutbox.admin.settings.description')) ?></div>
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <a class="btn btn-sm btn-outline-secondary admin-action-button" href="smileys.php">Šypsenėlių valdymas</a>
+            </div>
             <form method="post" class="row g-3">
                 <?= csrf_field() ?>
                 <input type="hidden" name="action" value="save_settings">
