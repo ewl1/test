@@ -9,6 +9,7 @@
 - `App\MiniCMS\Infusions\InfusionContext`
 - `App\MiniCMS\Infusions\InfusionModuleInterface`
 - `App\MiniCMS\Infusions\AbstractInfusionModule`
+- `App\MiniCMS\Infusions\SimplePanelModule`
 - `App\MiniCMS\Infusions\HookRegistry`
 - `App\MiniCMS\Infusions\InfusionSdk`
 - `App\MiniCMS\Infusions\ModuleScaffolder`
@@ -72,6 +73,32 @@ final class NewsModule extends AbstractInfusionModule
 
 Tai reiskia, kad galima pereiti prie SDK ir nekeisti viso modulio is karto.
 
+## SimplePanelModule
+Jei norite paneles logika laikyti klaseje, galite naudoti:
+
+```php
+<?php
+
+namespace App\News;
+
+use App\MiniCMS\Infusions\SimplePanelModule;
+
+final class NewsModule extends SimplePanelModule
+{
+    protected function panelTitle(array $panelData = []): string
+    {
+        return 'Naujienos';
+    }
+
+    protected function panelBody(array $panelData = []): string
+    {
+        return '<div class="small text-secondary">Klases pagrindu renderinama panele.</div>';
+    }
+}
+```
+
+Tokiu atveju `panel.php` failas nebera butinas.
+
 ## Hook API
 Galimi bendri helperiai:
 - `infusion_add_hook($name, $listener, $priority = 10)`
@@ -85,9 +112,33 @@ infusion_add_hook('forum.topic.created', function ($payload) {
 });
 ```
 
+Branduolys jau naudoja hook'us paneliu renderinimui:
+- `infusion.panel.output`
+- `infusion.panel.output.<folder>`
+- `infusion.panel.title`
+- `infusion.panel.title.<folder>`
+
+## Legacy panel API
+Sena paneliu sintakse irgi palaikoma:
+
+```php
+<?php
+openside('Panel Name');
+echo 'Lorem ipsum dolor sit amet.';
+closeside();
+```
+
+Pagalbiniai helperiai:
+- `openside()` / `closeside()`
+- `opentable()` / `closetable()`
+- `render_side_panel($title, $body, array $options = [])`
+- `panel_render_current_panel()`
+- `panel_render_current_title($default = 'Panele')`
+
 ## Paneles ir admin renderinimas
 - Jei modulis turi SDK klase, branduolys pirmiausia bando naudoti ja.
 - Jei SDK klases nera, branduolys toliau naudoja sena `panel.php` ar `admin.php` faila.
+- Jei `panel.php` naudoja `openside()` / `closeside()`, branduolys atpazista, kad modulis jau pats sugeneravo savo wrapperi, ir daugiau jo nebeapgaubia.
 
 ## Scaffold generatorius
 Nauja moduli galima sugeneruoti:
@@ -99,7 +150,7 @@ C:\xampp\php\php.exe tools\make-infusion-sdk.php gallery "Galerija" "Galerijos m
 Generatorius sukuria:
 - `manifest.json`
 - `classes/<Studly>Module.php`
-- `panel.php`
+- `panel.php` su `openside()` / `closeside()` pavyzdziu
 - `admin.php`
 - `schema.php`
 - `migrations/.gitkeep`

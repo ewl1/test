@@ -83,19 +83,31 @@ function fetch_panels_by_position($position)
 
 function render_panel_item(array $panel)
 {
-    $html = '<div class="card mb-3"><div class="card-header">' . e($panel['panel_name']) . '</div><div class="card-body">';
+    $title = trim((string)infusion_apply_filters('infusion.panel.title', (string)$panel['panel_name'], ['panel' => $panel]));
+    if (!empty($panel['folder'])) {
+        $title = trim((string)infusion_apply_filters('infusion.panel.title.' . $panel['folder'], $title, ['panel' => $panel]));
+    }
+
+    $html = '<div class="card mb-3"><div class="card-header">' . e($title) . '</div><div class="card-body">';
     $rendered = false;
 
     if (!empty($panel['folder'])) {
         $renderedPanel = render_infusion_panel($panel['folder'], $panel);
-        if ($renderedPanel !== '') {
-            $html .= $renderedPanel;
+        $renderedHtml = (string)($renderedPanel['html'] ?? '');
+        $customShell = !empty($renderedPanel['custom_shell']);
+
+        if ($renderedHtml !== '') {
+            if ($customShell) {
+                return $renderedHtml;
+            }
+
+            $html .= $renderedHtml;
             $rendered = true;
         }
     }
 
     if (!$rendered) {
-        $html .= '<div class="text-secondary small">Panelės vieta: ' . e($panel['panel_name']) . '</div>';
+        $html .= '<div class="text-secondary small">Panelės vieta: ' . e($title) . '</div>';
     }
 
     $html .= '</div></div>';

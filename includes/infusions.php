@@ -556,19 +556,44 @@ function render_infusion_panel($folder, array $panelData = [])
         $manifest = [];
     }
 
-    $module = infusion_sdk_module($folder, $infusionId, $manifest ?: null);
-    if ($module) {
-        return $module->renderPanel($panelData);
-    }
+    panel_render_begin($panelData);
 
-    $panelFile = INFUSIONS . $folder . '/panel.php';
-    if (!file_exists($panelFile)) {
-        return '';
-    }
+    try {
+        $module = infusion_sdk_module($folder, $infusionId, $manifest ?: null);
+        $html = '';
 
-    ob_start();
-    include $panelFile;
-    return (string)ob_get_clean();
+        if ($module) {
+            ob_start();
+            $result = $module->renderPanel($panelData);
+            $html = (string)ob_get_clean() . (string)$result;
+        } else {
+            $panelFile = INFUSIONS . $folder . '/panel.php';
+            if (!file_exists($panelFile)) {
+                return ['html' => '', 'custom_shell' => false];
+            }
+
+            ob_start();
+            include $panelFile;
+            $html = (string)ob_get_clean();
+        }
+
+        $context = [
+            'folder' => $folder,
+            'panel' => $panelData,
+            'infusion_id' => $infusionId,
+            'manifest' => $manifest,
+        ];
+
+        $html = (string)infusion_apply_filters('infusion.panel.output', $html, $context);
+        $html = (string)infusion_apply_filters('infusion.panel.output.' . $folder, $html, $context);
+
+        return [
+            'html' => $html,
+            'custom_shell' => panel_render_uses_custom_shell(),
+        ];
+    } finally {
+        panel_render_end();
+    }
 }
 
 function render_infusion_admin($folder)

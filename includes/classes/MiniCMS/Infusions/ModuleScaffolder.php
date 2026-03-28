@@ -114,10 +114,12 @@ PHP;
     {
         return <<<PHP
 <?php
-echo '<div class="sdk-module-panel">';
+openside('{$name}');
+echo '<div class="sdk-module-panel" data-sdk-module="' . e(panel_render_current_panel()['folder'] ?? '') . '">';
 echo '<div class="fw-semibold mb-2">' . e('{$name}') . '</div>';
 echo '<div class="small text-secondary">SDK paneles turinys. Cia galite rodyti modulio santrauka.</div>';
 echo '</div>';
+closeside();
 PHP;
     }
 
@@ -199,7 +201,7 @@ Sis modulis sugeneruotas per MiniCMS Module SDK scaffold.
 ## Failai
 - `manifest.json`: modulio metaduomenys ir registracija
 - `classes/`: modulio SDK klase
-- `panel.php`: paneles turinys
+- `panel.php`: paneles turinys ir legacy `openside()/closeside()` apvalkalas
 - `admin.php`: admin vaizdas
 - `schema.php`: diegimo DB schema
 - `migrations/`: versijiniai atnaujinimu ir rollback zingsniai
