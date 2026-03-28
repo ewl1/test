@@ -173,9 +173,23 @@ function shoutbox_create_message($message)
 
 function shoutbox_delete_message($id)
 {
+    $messageStmt = $GLOBALS['pdo']->prepare('SELECT id, message, user_id FROM ' . shoutbox_table_name() . ' WHERE id = :id LIMIT 1');
+    $messageStmt->execute([':id' => (int)$id]);
+    $message = $messageStmt->fetch();
+
     $stmt = $GLOBALS['pdo']->prepare('DELETE FROM ' . shoutbox_table_name() . ' WHERE id = :id');
     $stmt->execute([':id' => (int)$id]);
     audit_log(current_user()['id'] ?? null, 'shoutbox_delete', 'infusion_shoutbox_messages', (int)$id);
+    if ($message) {
+        moderation_log(current_user()['id'] ?? null, 'shoutbox_message_deleted', 'shoutbox_message', (int)$id, [
+            'target_label' => moderation_log_excerpt((string)$message['message']),
+            'context_type' => 'shoutbox',
+            'context_id' => (int)$id,
+            'details' => [
+                'message_user_id' => isset($message['user_id']) ? (int)$message['user_id'] : null,
+            ],
+        ]);
+    }
 }
 
 function shoutbox_render_editor($context = 'page', $textareaId = 'shoutbox-message', $redirectPath = 'shoutbox.php', $compact = false)

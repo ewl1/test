@@ -64,7 +64,17 @@ function save_post(PDO $pdo, array $data, $id = null)
 
 function delete_post(PDO $pdo, $id)
 {
+    $post = get_post($pdo, $id);
     $stmt = $pdo->prepare('DELETE FROM posts WHERE id = :id');
     $stmt->execute([':id' => (int)$id]);
     audit_log(current_user()['id'] ?? null, 'post_delete', 'posts', (int)$id);
+    if ($post) {
+        moderation_log(current_user()['id'] ?? null, 'post_deleted', 'post', (int)$id, [
+            'target_label' => (string)($post['title'] ?? ('Post #' . (int)$id)),
+            'details' => [
+                'status' => (string)($post['status'] ?? ''),
+                'user_id' => isset($post['user_id']) ? (int)$post['user_id'] : null,
+            ],
+        ]);
+    }
 }

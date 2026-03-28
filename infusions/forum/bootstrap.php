@@ -909,6 +909,15 @@ function forum_update_topic($topicId, $title, $content)
     audit_log(current_user()['id'] ?? null, 'forum_topic_update', 'infusion_forum_topics', (int)$topic['id'], [
         'title' => $title,
     ]);
+    moderation_log(current_user()['id'] ?? null, 'forum_topic_updated', 'forum_topic', (int)$topic['id'], [
+        'target_label' => $title,
+        'context_type' => 'forum',
+        'context_id' => (int)$topic['forum_id'],
+        'details' => [
+            'forum_id' => (int)$topic['forum_id'],
+            'title' => $title,
+        ],
+    ]);
 
     return [true, __('forum.message.topic_updated'), (int)$topic['id']];
 }
@@ -938,6 +947,18 @@ function forum_set_topic_flag($topicId, $flag, $value)
 
     audit_log(current_user()['id'] ?? null, $flag === 'is_pinned' ? 'forum_topic_pin_toggle' : 'forum_topic_lock_toggle', 'infusion_forum_topics', (int)$topic['id'], [
         'value' => $value ? 1 : 0,
+    ]);
+    moderation_log(current_user()['id'] ?? null, $flag === 'is_pinned'
+        ? ($value ? 'forum_topic_pinned' : 'forum_topic_unpinned')
+        : ($value ? 'forum_topic_locked' : 'forum_topic_unlocked'), 'forum_topic', (int)$topic['id'], [
+        'target_label' => (string)$topic['title'],
+        'context_type' => 'forum',
+        'context_id' => (int)$topic['forum_id'],
+        'details' => [
+            'flag' => $flag,
+            'value' => $value ? 1 : 0,
+            'forum_id' => (int)$topic['forum_id'],
+        ],
     ]);
 
     return [true, $flag === 'is_pinned'
@@ -977,6 +998,15 @@ function forum_delete_topic($topicId)
     audit_log(current_user()['id'] ?? null, 'forum_topic_delete', 'infusion_forum_topics', (int)$topic['id'], [
         'title' => $topic['title'],
     ]);
+    moderation_log(current_user()['id'] ?? null, 'forum_topic_deleted', 'forum_topic', (int)$topic['id'], [
+        'target_label' => (string)$topic['title'],
+        'context_type' => 'forum',
+        'context_id' => (int)$topic['forum_id'],
+        'details' => [
+            'forum_id' => (int)$topic['forum_id'],
+            'title' => (string)$topic['title'],
+        ],
+    ]);
 
     return [true, __('forum.message.topic_deleted'), (int)$topic['forum_id']];
 }
@@ -1015,6 +1045,15 @@ function forum_update_reply($replyId, $content)
     audit_log(current_user()['id'] ?? null, 'forum_reply_update', 'infusion_forum_posts', (int)$reply['id'], [
         'topic_id' => (int)$reply['topic_id'],
     ]);
+    moderation_log(current_user()['id'] ?? null, 'forum_reply_updated', 'forum_reply', (int)$reply['id'], [
+        'target_label' => moderation_log_excerpt($content),
+        'context_type' => 'forum_topic',
+        'context_id' => (int)$reply['topic_id'],
+        'details' => [
+            'topic_id' => (int)$reply['topic_id'],
+            'forum_id' => (int)$reply['forum_id'],
+        ],
+    ]);
 
     return [true, __('forum.message.reply_updated'), (int)$reply['topic_id']];
 }
@@ -1037,6 +1076,15 @@ function forum_delete_reply($replyId)
 
     audit_log(current_user()['id'] ?? null, 'forum_reply_delete', 'infusion_forum_posts', (int)$reply['id'], [
         'topic_id' => (int)$reply['topic_id'],
+    ]);
+    moderation_log(current_user()['id'] ?? null, 'forum_reply_deleted', 'forum_reply', (int)$reply['id'], [
+        'target_label' => moderation_log_excerpt((string)$reply['content']),
+        'context_type' => 'forum_topic',
+        'context_id' => (int)$reply['topic_id'],
+        'details' => [
+            'topic_id' => (int)$reply['topic_id'],
+            'forum_id' => (int)$reply['forum_id'],
+        ],
     ]);
 
     return [true, __('forum.message.reply_deleted'), (int)$reply['topic_id']];

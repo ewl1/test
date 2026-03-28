@@ -25,6 +25,10 @@ function audit_log($user_id, $action = null, $entity_type = null, $entity_id = n
             ':url' => substr($_SERVER['REQUEST_URI'] ?? '', 0, 255),
             ':d' => $details ? json_encode($details, JSON_UNESCAPED_UNICODE) : null
         ]);
+
+        if (function_exists('moderation_sync_from_audit')) {
+            moderation_sync_from_audit($user_id, $action, $entity_type, $entity_id, $details);
+        }
     } catch (Throwable $e) {
     }
 }

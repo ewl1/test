@@ -156,6 +156,11 @@ function change_user_status(PDO $pdo, $id, $status)
         return;
     }
 
+    $user = get_user($pdo, $id);
+    if (!$user) {
+        return;
+    }
+
     $isActive = $status === 'active' ? 1 : 0;
     $stmt = $pdo->prepare('UPDATE users SET status = :status, is_active = :is_active WHERE id = :id');
     $stmt->execute([
@@ -164,11 +169,33 @@ function change_user_status(PDO $pdo, $id, $status)
         ':id' => (int)$id,
     ]);
     audit_log(current_user()['id'] ?? null, 'user_status_change', 'users', (int)$id, ['status' => $status]);
+    moderation_log(current_user()['id'] ?? null, match ($status) {
+        'active' => 'user_activated',
+        'inactive' => 'user_deactivated',
+        'blocked' => 'user_blocked',
+        default => 'user_deactivated',
+    }, 'user', (int)$id, [
+        'target_label' => (string)($user['username'] ?? ('User #' . (int)$id)),
+        'details' => [
+            'status' => $status,
+            'email' => (string)($user['email'] ?? ''),
+        ],
+    ]);
 }
 
 function delete_user(PDO $pdo, $id)
 {
+    $user = get_user($pdo, $id);
     $stmt = $pdo->prepare('DELETE FROM users WHERE id = :id');
     $stmt->execute([':id' => (int)$id]);
     audit_log(current_user()['id'] ?? null, 'user_delete', 'users', (int)$id);
+    if ($user) {
+        moderation_log(current_user()['id'] ?? null, 'user_deleted', 'user', (int)$id, [
+            'target_label' => (string)($user['username'] ?? ('User #' . (int)$id)),
+            'details' => [
+                'email' => (string)($user['email'] ?? ''),
+                'role_id' => isset($user['role_id']) ? (int)$user['role_id'] : null,
+            ],
+        ]);
+    }
 }

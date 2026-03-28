@@ -523,6 +523,17 @@ function delete_profile_comment($commentId, $actor = null)
     audit_log($actorId, 'profile_comment_delete', profile_comment_table(), (int)$comment['id'], [
         'profile_user_id' => (int)$comment['profile_user_id'],
     ]);
+    if ($actorId && ((int)$actorId !== (int)$comment['author_user_id'] || has_permission($GLOBALS['pdo'], (int)$actorId, 'admin.access'))) {
+        moderation_log($actorId, 'profile_comment_deleted', 'profile_comment', (int)$comment['id'], [
+            'target_label' => moderation_log_excerpt((string)$comment['content']),
+            'context_type' => 'profile',
+            'context_id' => (int)$comment['profile_user_id'],
+            'details' => [
+                'profile_user_id' => (int)$comment['profile_user_id'],
+                'author_user_id' => (int)$comment['author_user_id'],
+            ],
+        ]);
+    }
 
     return [true, __('profile.comment.deleted'), (int)$comment['profile_user_id']];
 }

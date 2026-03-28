@@ -79,6 +79,11 @@ $canDiagnostics = $can('settings.manage') || $can('logs.view');
 <i class="fa-solid fa-clipboard-list"></i> <?= e(__('admin.audit')) ?>
 </a>
 </li>
+<li class="nav-item">
+<a class="nav-link" href="<?= public_path('administration/moderation-logs.php') ?>">
+<i class="fa-solid fa-shield-halved"></i> Moderavimo &#382;urnalas
+</a>
+</li>
 <?php endif; ?>
 
 <?php if ($can('logs.view')): ?>
@@ -100,7 +105,7 @@ $canDiagnostics = $can('settings.manage') || $can('logs.view');
 <?php if ($can('settings.manage')): ?>
 <li class="nav-item">
 <a class="nav-link" href="<?= public_path('administration/smileys.php') ?>">
-<i class="fa-solid fa-face-smile"></i> Šypsenėlės
+<i class="fa-solid fa-face-smile"></i> &#352;ypsen&#279;l&#279;s
 </a>
 </li>
 <?php endif; ?>

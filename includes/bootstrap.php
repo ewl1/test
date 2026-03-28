@@ -152,6 +152,7 @@ require_once INCLUDES . 'security.php';
 require_once INCLUDES . 'settings.php';
 require_once INCLUDES . 'locale.php';
 require_once INCLUDES . 'audit.php';
+require_once INCLUDES . 'moderation.php';
 require_once INCLUDES . 'ratelimit.php';
 require_once INCLUDES . 'auth.php';
 require_once INCLUDES . 'validation.php';

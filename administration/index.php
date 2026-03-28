@@ -5,7 +5,7 @@ include THEMES . 'default/admin_header.php';
 <div class="admin-dashboard-hero d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
     <div>
         <h1 class="admin-dashboard-title mb-1"><?= e(__('admin.dashboard')) ?></h1>
-        <div class="admin-dashboard-subtitle">Mini CMS v<?= e(app_version()) ?> · PHP <?= e(PHP_VERSION) ?></div>
+        <div class="admin-dashboard-subtitle">Mini CMS v<?= e(app_version()) ?> &middot; PHP <?= e(PHP_VERSION) ?></div>
     </div>
     <a class="btn btn-outline-secondary" href="<?= public_path('index.php') ?>"><?= e(__('admin.site')) ?></a>
 </div>
@@ -19,7 +19,7 @@ include THEMES . 'default/admin_header.php';
                 <a class="list-group-item list-group-item-action" href="themes.php"><?= e(__('nav.admin.themes')) ?></a>
                 <a class="list-group-item list-group-item-action" href="navigation.php"><?= e(__('nav.admin.navigation')) ?></a>
                 <a class="list-group-item list-group-item-action" href="diagnostics.php"><?= e(__('nav.admin.diagnostics')) ?></a>
-                <a class="list-group-item list-group-item-action" href="smileys.php">Šypsenėlės</a>
+                <a class="list-group-item list-group-item-action" href="smileys.php">&#352;ypsen&#279;l&#279;s</a>
             </div>
         </div>
     </div>
@@ -29,7 +29,7 @@ include THEMES . 'default/admin_header.php';
             <div class="card-header">Moduliai</div>
             <div class="list-group list-group-flush">
                 <a class="list-group-item list-group-item-action" href="infusions.php"><?= e(__('nav.admin.infusions')) ?></a>
-                <a class="list-group-item list-group-item-action" href="panels.php">Panelių išdėstymas</a>
+                <a class="list-group-item list-group-item-action" href="panels.php">Paneli&#371; i&#353;d&#279;stymas</a>
             </div>
         </div>
     </div>
@@ -42,6 +42,7 @@ include THEMES . 'default/admin_header.php';
                 <a class="list-group-item list-group-item-action" href="permissions.php"><?= e(__('nav.admin.permissions')) ?></a>
                 <a class="list-group-item list-group-item-action" href="users.php"><?= e(__('nav.admin.members')) ?></a>
                 <a class="list-group-item list-group-item-action" href="audit-logs.php"><?= e(__('admin.audit')) ?></a>
+                <a class="list-group-item list-group-item-action" href="moderation-logs.php">Moderavimo &#382;urnalas</a>
                 <a class="list-group-item list-group-item-action" href="error-logs.php"><?= e(__('admin.error_log')) ?></a>
             </div>
         </div>
