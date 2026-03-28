@@ -34,7 +34,7 @@ function save_post(PDO $pdo, array $data, $id = null)
     $status = in_array(($data['status'] ?? 'draft'), ['draft', 'published'], true) ? $data['status'] : 'draft';
 
     if ($title === '' || $content === '') {
-        return [false, 'Užpildykite pavadinimą ir turinį.'];
+        return [false, __('post.validation.required')];
     }
 
     if ($id) {
@@ -46,7 +46,7 @@ function save_post(PDO $pdo, array $data, $id = null)
             ':id' => (int)$id,
         ]);
         audit_log(current_user()['id'] ?? null, 'post_update', 'posts', (int)$id);
-        return [true, 'Įrašas atnaujintas.'];
+        return [true, __('post.updated')];
     }
 
     $stmt = $pdo->prepare('INSERT INTO posts (user_id, title, content, status, created_at, updated_at) VALUES (:user_id, :title, :content, :status, NOW(), NOW())');
@@ -59,7 +59,7 @@ function save_post(PDO $pdo, array $data, $id = null)
 
     $newId = (int)$pdo->lastInsertId();
     audit_log(current_user()['id'] ?? null, 'post_create', 'posts', $newId);
-    return [true, 'Įrašas sukurtas.'];
+    return [true, __('post.created')];
 }
 
 function delete_post(PDO $pdo, $id)

@@ -3,7 +3,7 @@ require_once __DIR__ . '/includes/bootstrap.php';
 
 if (!function_exists('forum_get_index_data')) {
     include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
-    echo '<div class="alert alert-warning">Forumo infusion dar neįdiegta arba išjungta.</div>';
+    echo '<div class="alert alert-warning">' . e(__('forum.unavailable')) . '</div>';
     include THEMES . setting('current_theme', CURRENT_THEME) . '/footer.php';
     return;
 }
@@ -18,7 +18,7 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                 <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
                     <div>
                         <h1 class="h3 mb-2"><?= e(__('forum.title')) ?></h1>
-                        <p class="text-secondary mb-0">Diskusijos, klausimai, temos ir atsakymai vienoje vietoje. Temos palaiko BBCode ir smailus.</p>
+                        <p class="text-secondary mb-0"><?= e(__('forum.description')) ?></p>
                     </div>
                     <div class="forum-hero-actions">
                         <a class="btn btn-outline-primary" href="<?= forum_index_url() ?>"><?= e(__('forum.refresh')) ?></a>
@@ -40,7 +40,7 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                             <div class="small text-secondary"><?= e($category['description']) ?></div>
                         <?php endif; ?>
                     </div>
-                    <span class="badge text-bg-secondary"><?= count($category['forums']) ?> forumai</span>
+                    <span class="badge text-bg-secondary"><?= count($category['forums']) ?> <?= e(__('forum.forum_count')) ?></span>
                 </div>
                 <div class="card-body p-0">
                     <?php if (!$category['forums']): ?>

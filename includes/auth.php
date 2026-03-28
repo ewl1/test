@@ -252,7 +252,7 @@ function login($email, $password)
             'ip' => $ip,
             'retry_after_seconds' => $rateLimit['retry_after'],
         ]);
-        flash('auth_error', 'Per daug nesėkmingų prisijungimų. Bandykite po ' . format_wait_time($rateLimit['retry_after']));
+        flash('auth_error', __('auth.login.blocked', ['wait' => format_wait_time($rateLimit['retry_after'])]));
         return false;
     }
 
@@ -269,21 +269,21 @@ function login($email, $password)
     if (!$user) {
         record_failed_login_attempts($email, $ip);
         audit_log(null, 'login_failed', 'users', null, ['email' => $email, 'reason' => 'user_not_found']);
-        flash('auth_error', 'Neteisingi prisijungimo duomenys.');
+        flash('auth_error', __('auth.login.failed'));
         return false;
     }
 
     if (!password_verify((string)$password, $user['password'])) {
         record_failed_login_attempts($email, $ip);
         audit_log((int)$user['id'], 'login_failed', 'users', (int)$user['id'], ['email' => $email, 'reason' => 'invalid_password']);
-        flash('auth_error', 'Neteisingi prisijungimo duomenys.');
+        flash('auth_error', __('auth.login.failed'));
         return false;
     }
 
     if ((int)$user['is_active'] !== 1 || ($user['status'] ?? 'inactive') !== 'active') {
         record_failed_login_attempts($email, $ip);
         audit_log((int)$user['id'], 'login_failed', 'users', (int)$user['id'], ['email' => $email, 'reason' => 'inactive_account']);
-        flash('auth_error', 'Paskyra dar neaktyvi arba yra užblokuota.');
+        flash('auth_error', __('auth.login.inactive'));
         return false;
     }
 
@@ -307,7 +307,7 @@ function login_admin($email, $password)
             'ip' => $ip,
             'retry_after_seconds' => $rateLimit['retry_after'],
         ]);
-        flash('auth_error', 'Per daug nesėkmingų prisijungimų. Bandykite po ' . format_wait_time($rateLimit['retry_after']));
+        flash('auth_error', __('auth.login.blocked', ['wait' => format_wait_time($rateLimit['retry_after'])]));
         return false;
     }
 
@@ -324,7 +324,7 @@ function login_admin($email, $password)
     if (!$user || !has_permission($GLOBALS['pdo'], (int)$user['id'], 'admin.access')) {
         record_failed_login_attempts($email, $ip);
         audit_log($user['id'] ?? null, 'admin_login_failed', 'users', $user['id'] ?? null, ['email' => $email, 'reason' => 'missing_admin_access']);
-        flash('auth_error', 'Neteisingi prisijungimo duomenys.');
+        flash('auth_error', __('auth.login.failed'));
         return false;
     }
 
@@ -336,14 +336,14 @@ function login_admin($email, $password)
     if (!$passwordValid) {
         record_failed_login_attempts($email, $ip);
         audit_log((int)$user['id'], 'admin_login_failed', 'users', (int)$user['id'], ['email' => $email, 'reason' => 'invalid_password']);
-        flash('auth_error', 'Neteisingi prisijungimo duomenys.');
+        flash('auth_error', __('auth.login.failed'));
         return false;
     }
 
     if ((int)$user['is_active'] !== 1 || ($user['status'] ?? 'inactive') !== 'active') {
         record_failed_login_attempts($email, $ip);
         audit_log((int)$user['id'], 'admin_login_failed', 'users', (int)$user['id'], ['email' => $email, 'reason' => 'inactive_account']);
-        flash('auth_error', 'Paskyra dar neaktyvi arba yra užblokuota.');
+        flash('auth_error', __('auth.login.inactive'));
         return false;
     }
 
@@ -390,7 +390,7 @@ function register_user($username, $email, $password)
             'ip' => $ip,
             'retry_after_seconds' => $rateLimit['retry_after'],
         ]);
-        return ['Per daug registracijos bandymų. Bandykite po ' . format_wait_time($rateLimit['retry_after']) . '.'];
+        return [__('auth.register.rate_limit', ['wait' => format_wait_time($rateLimit['retry_after'])])];
     }
 
     rate_limit_hit($rateLimitTargets);
@@ -501,6 +501,6 @@ function require_admin_session()
         return;
     }
 
-    flash('auth_error', 'Pirmiausia prisijunkite prie administracijos.');
+    flash('auth_error', __('auth.admin_login.required'));
     redirect(public_path('administration/login.php'));
 }

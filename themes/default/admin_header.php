@@ -5,8 +5,9 @@ if (!defined('IN_ADMIN')) {
 
 $siteTitle = setting('site_name', __('site.title'));
 $me = current_user();
-$can = function ($permission) use ($me) {
-    return $me && has_permission($GLOBALS['pdo'], $me['id'], $permission);
+$adminNavVisible = $me && is_admin_session_verified();
+$can = function ($permission) use ($me, $adminNavVisible) {
+    return $adminNavVisible && $me && has_permission($GLOBALS['pdo'], $me['id'], $permission);
 };
 $canUsers = $can('users.view') || $can('users.manage');
 $canDiagnostics = $can('settings.manage') || $can('logs.view');
@@ -30,10 +31,11 @@ $canDiagnostics = $can('settings.manage') || $can('logs.view');
 <nav class="navbar navbar-expand-lg navbar-dark">
 <div class="container-fluid">
 
-<a class="navbar-brand" href="<?= public_path('administration/index.php') ?>">
+<a class="navbar-brand" href="<?= public_path($adminNavVisible ? 'administration/index.php' : 'administration/login.php') ?>">
 <i class="fa-solid fa-screwdriver-wrench"></i> <?= e(__('admin.title')) ?>
 </a>
 
+<?php if ($adminNavVisible): ?>
 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav" aria-label="<?= e(__('admin.title')) ?>">
 <span class="navbar-toggler-icon"></span>
 </button>
@@ -136,6 +138,13 @@ $canDiagnostics = $can('settings.manage') || $can('logs.view');
 </ul>
 
 </div>
+<?php else: ?>
+<div class="ms-auto">
+<a class="nav-link text-white" href="<?= public_path('index.php') ?>">
+<i class="fa-solid fa-globe"></i> <?= e(__('admin.site')) ?>
+</a>
+</div>
+<?php endif; ?>
 </div>
 </nav>
 

@@ -3,7 +3,7 @@ require_once __DIR__ . '/includes/bootstrap.php';
 
 if (!function_exists('forum_get_forum')) {
     include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
-    echo '<div class="alert alert-warning">Forumo infusion dar neįdiegta arba išjungta.</div>';
+    echo '<div class="alert alert-warning">' . e(__('forum.unavailable')) . '</div>';
     include THEMES . setting('current_theme', CURRENT_THEME) . '/footer.php';
     return;
 }
@@ -11,7 +11,7 @@ if (!function_exists('forum_get_forum')) {
 $forumId = (int)($_GET['id'] ?? 0);
 $forum = forum_get_forum($forumId);
 if (!$forum) {
-    abort_http(404, 'Forumas nerastas.');
+    abort_http(404, __('forum.message.forum_not_found'));
 }
 
 $formError = null;
@@ -83,11 +83,11 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center gap-3">
                 <span><?= e(__('forum.topics')) ?></span>
-                <span class="badge text-bg-secondary"><?= (int)$total ?> viso</span>
+                <span class="badge text-bg-secondary"><?= (int)$total ?> <?= e(__('forum.total')) ?></span>
             </div>
             <div class="card-body p-0">
                 <?php if (!$topics): ?>
-                    <div class="p-4 text-secondary">Šiame forume temų dar nėra.</div>
+                    <div class="p-4 text-secondary"><?= e(__('forum.no_topics')) ?></div>
                 <?php else: ?>
                     <?php foreach ($topics as $topic): ?>
                         <article class="forum-topic-list-item">

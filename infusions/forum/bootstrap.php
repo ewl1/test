@@ -265,7 +265,7 @@ function forum_seed_defaults()
         $defaultUserId = null;
     }
 
-    $categoryTitle = 'Bendros diskusijos';
+    $categoryTitle = __('forum.seed.category_title');
     $categorySlug = 'bendros-diskusijos';
     try {
         $stmt = $GLOBALS['pdo']->prepare('
@@ -275,7 +275,7 @@ function forum_seed_defaults()
         $stmt->execute([
             ':title' => $categoryTitle,
             ':slug' => $categorySlug,
-            ':description' => 'Bendruomenei skirtos diskusijos, klausimai ir naujienos.',
+            ':description' => __('forum.seed.category_description'),
             ':sort_order' => 1,
         ]);
     } catch (Throwable $e) {
@@ -289,7 +289,7 @@ function forum_seed_defaults()
         return;
     }
 
-    $forumTitle = 'Pristatymai';
+    $forumTitle = __('forum.seed.forum_title');
     $forumSlug = 'pristatymai';
     $stmt = $GLOBALS['pdo']->prepare('
         INSERT IGNORE INTO ' . forum_table_forums() . ' (category_id, parent_id, title, slug, description, sort_order, is_active, created_at)
@@ -299,7 +299,7 @@ function forum_seed_defaults()
         ':category_id' => $categoryId,
         ':title' => $forumTitle,
         ':slug' => $forumSlug,
-            ':description' => 'Prisistatykite bendruomenei ir pradėkite pokalbį.',
+            ':description' => __('forum.seed.forum_description'),
         ':sort_order' => 1,
     ]);
     $forumIdStmt = $GLOBALS['pdo']->prepare('SELECT id FROM ' . forum_table_forums() . ' WHERE slug = :slug LIMIT 1');
@@ -309,7 +309,7 @@ function forum_seed_defaults()
         return;
     }
 
-    $subforumTitle = 'Naujokų zona';
+    $subforumTitle = __('forum.seed.subforum_title');
     $subforumSlug = 'naujoku-zona';
     $stmt = $GLOBALS['pdo']->prepare('
         INSERT IGNORE INTO ' . forum_table_forums() . ' (category_id, parent_id, title, slug, description, sort_order, is_active, created_at)
@@ -320,7 +320,7 @@ function forum_seed_defaults()
         ':parent_id' => $forumId,
         ':title' => $subforumTitle,
         ':slug' => $subforumSlug,
-        ':description' => 'Vieta pirmai temai, klausimams ir pagalbai naujiems nariams.',
+        ':description' => __('forum.seed.subforum_description'),
         ':sort_order' => 1,
     ]);
     $subforumIdStmt = $GLOBALS['pdo']->prepare('SELECT id FROM ' . forum_table_forums() . ' WHERE slug = :slug LIMIT 1');
@@ -330,7 +330,7 @@ function forum_seed_defaults()
         return;
     }
 
-    $topicTitle = 'Sveiki atvykę į forumą';
+    $topicTitle = __('forum.seed.topic_title');
     $topicSlug = 'sveiki-atvyke-i-foruma';
     $stmt = $GLOBALS['pdo']->prepare('
         INSERT IGNORE INTO ' . forum_table_topics() . ' (forum_id, user_id, title, slug, content, views, is_locked, is_pinned, created_at, updated_at, last_post_at, last_post_user_id)
@@ -341,7 +341,7 @@ function forum_seed_defaults()
         ':user_id' => $defaultUserId,
         ':title' => $topicTitle,
         ':slug' => $topicSlug,
-        ':content' => "Sveiki atvykę į naują forumą.\n\nNaudokite [b]BBCode[/b], smailus :) ir drąsiai kurkite savo temas.",
+        ':content' => __('forum.seed.topic_content'),
         ':last_post_user_id' => $defaultUserId,
     ]);
 }
@@ -676,7 +676,7 @@ function forum_create_category($title, $description, $sortOrder = 0)
     $sortOrder = (int)$sortOrder;
 
     if (mb_strlen($title) < 2 || mb_strlen($title) > 190) {
-        return [false, 'Kategorijos pavadinimas turi būti nuo 2 iki 190 simbolių.'];
+        return [false, __('forum.validation.category_title')];
     }
 
     $slug = forum_unique_slug(forum_table_categories(), $title, 'kategorija');
@@ -695,7 +695,7 @@ function forum_create_category($title, $description, $sortOrder = 0)
         'title' => $title,
     ]);
 
-    return [true, 'Kategorija sukurta.'];
+    return [true, __('forum.message.category_created')];
 }
 
 function forum_create_forum($categoryId, $parentId, $title, $description, $sortOrder = 0)
@@ -709,7 +709,7 @@ function forum_create_forum($categoryId, $parentId, $title, $description, $sortO
     $sortOrder = (int)$sortOrder;
 
     if (mb_strlen($title) < 2 || mb_strlen($title) > 190) {
-        return [false, 'Forumo pavadinimas turi būti nuo 2 iki 190 simbolių.'];
+        return [false, __('forum.validation.forum_title')];
     }
 
     $categoryStmt = $GLOBALS['pdo']->prepare('SELECT id FROM ' . forum_table_categories() . ' WHERE id = :id AND is_active = 1 LIMIT 1');
@@ -732,7 +732,7 @@ function forum_create_forum($categoryId, $parentId, $title, $description, $sortO
         }
 
         if ((int)$parent['parent_id'] > 0) {
-            return [false, 'Leidžiamas tik vienas subforumų lygis.'];
+            return [false, __('forum.validation.single_sublevel')];
         }
 
         $categoryId = (int)$parent['category_id'];
@@ -757,7 +757,7 @@ function forum_create_forum($categoryId, $parentId, $title, $description, $sortO
         'parent_id' => $parentId > 0 ? $parentId : null,
     ]);
 
-    return [true, $parentId > 0 ? 'Subforumas sukurtas.' : 'Forumas sukurtas.'];
+    return [true, $parentId > 0 ? __('forum.message.subforum_created') : __('forum.message.forum_created')];
 }
 
 function forum_create_topic($forumId, $title, $content)
@@ -778,10 +778,10 @@ function forum_create_topic($forumId, $title, $content)
     $content = forum_prepare_body($content, 15000);
 
     if (mb_strlen($title) < 3 || mb_strlen($title) > 190) {
-        return [false, 'Temos pavadinimas turi būti nuo 3 iki 190 simbolių.', null];
+        return [false, __('forum.validation.topic_title'), null];
     }
     if ($content === '') {
-        return [false, 'Temos turinys negali būti tuščias.', null];
+        return [false, __('forum.validation.topic_content'), null];
     }
 
     $slug = forum_unique_slug(forum_table_topics(), $title, 'tema', 0, 'forum_id = :forum_id', [
@@ -807,7 +807,7 @@ function forum_create_topic($forumId, $title, $content)
         'title' => $title,
     ]);
 
-    return [true, 'Tema sukurta.', $topicId];
+    return [true, __('forum.message.topic_created'), $topicId];
 }
 
 function forum_create_reply($topicId, $content)
@@ -816,20 +816,20 @@ function forum_create_reply($topicId, $content)
 
     $user = current_user();
     if (!$user) {
-        return [false, 'Atsakyti gali tik prisijungę nariai.', null];
+        return [false, __('forum.message.reply_login_required'), null];
     }
 
     $topic = forum_get_topic($topicId);
     if (!$topic) {
-        return [false, 'Tema nerasta.', null];
+        return [false, __('forum.topic.not_found'), null];
     }
     if ((int)$topic['is_locked'] === 1) {
-        return [false, 'Tema užrakinta.', null];
+        return [false, __('forum.message.locked'), null];
     }
 
     $content = forum_prepare_body($content, 15000);
     if ($content === '') {
-        return [false, 'Atsakymas negali būti tuščias.', null];
+        return [false, __('forum.validation.reply_content'), null];
     }
 
     $stmt = $GLOBALS['pdo']->prepare('
@@ -861,7 +861,7 @@ function forum_create_reply($topicId, $content)
         'forum_id' => (int)$topic['forum_id'],
     ]);
 
-    return [true, 'Atsakymas paskelbtas.', $postId];
+    return [true, __('forum.message.reply_created'), $postId];
 }
 
 function forum_can_moderate_topic(array $topic)
@@ -880,20 +880,20 @@ function forum_update_topic($topicId, $title, $content)
 
     $topic = forum_get_topic($topicId);
     if (!$topic) {
-        return [false, 'Tema nerasta.', null];
+        return [false, __('forum.topic.not_found'), null];
     }
     if (!forum_can_moderate_topic($topic)) {
-        return [false, 'Nepakanka teisių redaguoti temą.', null];
+        return [false, __('forum.message.edit_topic_denied'), null];
     }
 
     $title = trim((string)$title);
     $content = forum_prepare_body($content, 15000);
 
     if (mb_strlen($title) < 3 || mb_strlen($title) > 190) {
-        return [false, 'Temos pavadinimas turi būti nuo 3 iki 190 simbolių.', null];
+        return [false, __('forum.validation.topic_title'), null];
     }
     if ($content === '') {
-        return [false, 'Temos turinys negali būti tuščias.', null];
+        return [false, __('forum.validation.topic_content'), null];
     }
 
     $slug = forum_unique_slug(forum_table_topics(), $title, 'tema', (int)$topic['id'], 'forum_id = :forum_id', [
@@ -919,7 +919,7 @@ function forum_update_topic($topicId, $title, $content)
         'title' => $title,
     ]);
 
-    return [true, 'Tema atnaujinta.', (int)$topic['id']];
+    return [true, __('forum.message.topic_updated'), (int)$topic['id']];
 }
 
 function forum_set_topic_flag($topicId, $flag, $value)
@@ -928,15 +928,15 @@ function forum_set_topic_flag($topicId, $flag, $value)
 
     $allowed = ['is_pinned', 'is_locked'];
     if (!in_array($flag, $allowed, true)) {
-        return [false, 'Nežinomas moderavimo veiksmas.', null];
+        return [false, __('forum.message.unknown_action'), null];
     }
 
     $topic = forum_get_topic($topicId);
     if (!$topic) {
-        return [false, 'Tema nerasta.', null];
+        return [false, __('forum.topic.not_found'), null];
     }
     if (!forum_can_moderate_topic($topic)) {
-        return [false, 'Nepakanka teisių moderuoti temą.', null];
+        return [false, __('forum.message.moderate_denied'), null];
     }
 
     $stmt = $GLOBALS['pdo']->prepare('UPDATE ' . forum_table_topics() . ' SET ' . $flag . ' = :value WHERE id = :id');
@@ -950,8 +950,8 @@ function forum_set_topic_flag($topicId, $flag, $value)
     ]);
 
     return [true, $flag === 'is_pinned'
-        ? ($value ? 'Tema prisegta.' : 'Temos prisegimas nuimtas.')
-        : ($value ? 'Tema užrakinta.' : 'Tema atrakinta.'),
+        ? ($value ? __('forum.message.topic_pinned') : __('forum.message.topic_unpinned'))
+        : ($value ? __('forum.message.topic_locked') : __('forum.message.topic_unlocked')),
         (int)$topic['forum_id']];
 }
 
@@ -961,10 +961,10 @@ function forum_delete_topic($topicId)
 
     $topic = forum_get_topic($topicId);
     if (!$topic) {
-        return [false, 'Tema nerasta.', null];
+        return [false, __('forum.topic.not_found'), null];
     }
     if (!forum_can_moderate_topic($topic)) {
-        return [false, 'Nepakanka teisių ištrinti temos.', null];
+        return [false, __('forum.message.delete_topic_denied'), null];
     }
 
     $GLOBALS['pdo']->beginTransaction();
@@ -980,14 +980,14 @@ function forum_delete_topic($topicId)
         if ($GLOBALS['pdo']->inTransaction()) {
             $GLOBALS['pdo']->rollBack();
         }
-        return [false, 'Nepavyko ištrinti temos.', null];
+        return [false, __('forum.message.topic_delete_failed'), null];
     }
 
     audit_log(current_user()['id'] ?? null, 'forum_topic_delete', 'infusion_forum_topics', (int)$topic['id'], [
         'title' => $topic['title'],
     ]);
 
-    return [true, 'Tema ištrinta.', (int)$topic['forum_id']];
+    return [true, __('forum.message.topic_deleted'), (int)$topic['forum_id']];
 }
 
 function forum_update_reply($replyId, $content)
@@ -996,15 +996,15 @@ function forum_update_reply($replyId, $content)
 
     $reply = forum_get_reply($replyId);
     if (!$reply) {
-        return [false, 'Atsakymas nerastas.', null];
+        return [false, __('forum.reply.not_found'), null];
     }
     if (!forum_can_moderate_reply($reply)) {
-        return [false, 'Nepakanka teisių redaguoti atsakymą.', null];
+        return [false, __('forum.message.reply_edit_denied'), null];
     }
 
     $content = forum_prepare_body($content, 15000);
     if ($content === '') {
-        return [false, 'Atsakymas negali būti tuščias.', null];
+        return [false, __('forum.validation.reply_content'), null];
     }
 
     $stmt = $GLOBALS['pdo']->prepare('
@@ -1025,7 +1025,7 @@ function forum_update_reply($replyId, $content)
         'topic_id' => (int)$reply['topic_id'],
     ]);
 
-    return [true, 'Atsakymas atnaujintas.', (int)$reply['topic_id']];
+    return [true, __('forum.message.reply_updated'), (int)$reply['topic_id']];
 }
 
 function forum_delete_reply($replyId)
@@ -1034,10 +1034,10 @@ function forum_delete_reply($replyId)
 
     $reply = forum_get_reply($replyId);
     if (!$reply) {
-        return [false, 'Atsakymas nerastas.', null];
+        return [false, __('forum.reply.not_found'), null];
     }
     if (!forum_can_moderate_reply($reply)) {
-        return [false, 'Nepakanka teisių ištrinti atsakymą.', null];
+        return [false, __('forum.message.reply_delete_denied'), null];
     }
 
     $stmt = $GLOBALS['pdo']->prepare('DELETE FROM ' . forum_table_posts() . ' WHERE id = :id');
@@ -1048,7 +1048,7 @@ function forum_delete_reply($replyId)
         'topic_id' => (int)$reply['topic_id'],
     ]);
 
-    return [true, 'Atsakymas ištrintas.', (int)$reply['topic_id']];
+    return [true, __('forum.message.reply_deleted'), (int)$reply['topic_id']];
 }
 
 function forum_render_editor_toolbar($textareaId)

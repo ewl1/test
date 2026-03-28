@@ -21,7 +21,7 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
     <div class="col-lg-6">
         <div class="card">
             <div class="card-body">
-                <h1 class="h4 mb-3">Naujas slaptažodis</h1>
+                <h1 class="h4 mb-3"><?= e(__('password_reset.reset.title')) ?></h1>
                 <?php if ($msg = flash('error')): ?>
                     <div class="alert alert-danger"><?= e($msg) ?></div>
                 <?php endif; ?>
@@ -30,18 +30,22 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                     <div class="alert alert-warning mb-0">
                         <?= e($tokenState['message']) ?>
                         <div class="mt-3">
-                            <a class="btn btn-outline-primary" href="<?= public_path('forgot-password.php') ?>">Prašyti naujos nuorodos</a>
+                            <a class="btn btn-outline-primary" href="<?= public_path('forgot-password.php') ?>"><?= e(__('password_reset.reset.request_new')) ?></a>
                         </div>
                     </div>
                 <?php else: ?>
-                    <p class="text-secondary">Sukurkite naują slaptažodį. Jis turi būti bent 8 simbolių, su didžiąja ir mažąja raide bei skaičiumi.</p>
+                    <p class="text-secondary"><?= e(__('password_reset.reset.help')) ?></p>
                     <form method="post">
                         <?= csrf_input() ?>
                         <div class="mb-3">
-                            <label class="form-label">Naujas slaptažodis</label>
-                            <input class="form-control" type="password" name="password" autocomplete="new-password" required>
+                            <label class="form-label"><?= e(__('profile.password.new')) ?></label>
+                            <input class="form-control js-toggle-password" type="password" name="password" autocomplete="new-password" required>
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" id="reset-show-password" type="checkbox" data-password-toggle data-password-target=".js-toggle-password">
+                                <label class="form-check-label" for="reset-show-password"><?= e(__('auth.password.show')) ?></label>
+                            </div>
                         </div>
-                        <button class="btn btn-primary">Išsaugoti</button>
+                        <button class="btn btn-primary"><?= e(__('password_reset.reset.submit')) ?></button>
                     </form>
                 <?php endif; ?>
             </div>

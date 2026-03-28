@@ -100,7 +100,7 @@ function password_reset_token_state(PDO $pdo, $token)
     if ($token === '' || !preg_match('/^[a-f0-9]{32,128}$/i', $token)) {
         return [
             'valid' => false,
-            'message' => 'Slaptažodžio atstatymo nuoroda negalioja arba jau pasibaigė.',
+            'message' => __('password_reset.reset.invalid'),
             'record' => null,
         ];
     }
@@ -124,7 +124,7 @@ function password_reset_token_state(PDO $pdo, $token)
     if (!$record) {
         return [
             'valid' => false,
-            'message' => 'Slaptažodžio atstatymo nuoroda negalioja arba jau pasibaigė.',
+            'message' => __('password_reset.reset.invalid'),
             'record' => null,
         ];
     }
@@ -135,7 +135,7 @@ function password_reset_token_state(PDO $pdo, $token)
     if ($usedAt !== '' || $expiresAt <= time()) {
         return [
             'valid' => false,
-            'message' => 'Slaptažodžio atstatymo nuoroda negalioja arba jau pasibaigė.',
+            'message' => __('password_reset.reset.invalid'),
             'record' => null,
         ];
     }
@@ -143,7 +143,7 @@ function password_reset_token_state(PDO $pdo, $token)
     if ((int)($record['is_active'] ?? 0) !== 1 || ($record['status'] ?? 'inactive') !== 'active') {
         return [
             'valid' => false,
-            'message' => 'Šiai paskyrai slaptažodžio atstatymas šiuo metu negalimas.',
+            'message' => __('password_reset.reset.account_unavailable'),
             'record' => null,
         ];
     }
@@ -173,7 +173,7 @@ function create_password_reset(PDO $pdo, $email)
             'ip' => rate_limit_client_ip(),
             'retry_after_seconds' => $rateLimit['retry_after'],
         ]);
-        return [false, 'Per daug slaptažodžio atstatymo bandymų. Bandykite po ' . format_wait_time($rateLimit['retry_after']) . '.'];
+        return [false, __('password_reset.request.rate_limit', ['wait' => format_wait_time($rateLimit['retry_after'])])];
     }
 
     rate_limit_hit($rateLimitTargets);
@@ -187,7 +187,7 @@ function create_password_reset(PDO $pdo, $email)
     $stmt->execute([':email' => $email]);
     $user = $stmt->fetch();
 
-    $genericMessage = 'Jei toks el. pašto adresas yra sistemoje, išsiuntėme slaptažodžio atstatymo nuorodą.';
+    $genericMessage = __('password_reset.request.sent_generic');
     if (
         !$user ||
         (int)($user['is_active'] ?? 0) !== 1 ||
@@ -222,17 +222,20 @@ function create_password_reset(PDO $pdo, $email)
             ':expires_at' => $expiresAt,
         ]);
     } catch (Throwable $e) {
-        return [false, 'Nepavyko paruošti slaptažodžio atstatymo užklausos.'];
+        return [false, __('password_reset.request.prepare_failed')];
     }
 
     $resetUrl = public_path('reset-password.php?token=' . rawurlencode($token));
-    $subject = 'Slaptažodžio atstatymas';
-    $html = '<p>Gavome slaptažodžio atstatymo užklausą.</p>'
-        . '<p><a href="' . escape_url($resetUrl) . '">Nustatyti naują slaptažodį</a></p>'
-        . '<p>Nuoroda galioja 1 valandą.</p>';
-    $text = "Gavome slaptažodžio atstatymo užklausą.\n\n"
-        . "Nustatyti naują slaptažodį: {$resetUrl}\n\n"
-        . "Nuoroda galioja 1 valandą.";
+    $subject = __('password_reset.request.subject');
+    $emailIntro = __('password_reset.request.email_intro');
+    $emailAction = __('password_reset.request.email_action');
+    $emailExpiry = __('password_reset.request.email_expiry');
+    $html = '<p>' . e($emailIntro) . '</p>'
+        . '<p><a href="' . escape_url($resetUrl) . '">' . e($emailAction) . '</a></p>'
+        . '<p>' . e($emailExpiry) . '</p>';
+    $text = $emailIntro . "\n\n"
+        . $emailAction . ': ' . $resetUrl . "\n\n"
+        . $emailExpiry;
 
     $mailSent = send_mail_message($user['email'], $user['username'] ?? $user['email'], $subject, $html, $text);
     if (!$mailSent) {
@@ -273,7 +276,7 @@ function reset_password_by_token(PDO $pdo, $token, $password)
             'ip' => rate_limit_client_ip(),
             'retry_after_seconds' => $rateLimit['retry_after'],
         ]);
-        return [false, 'Per daug slaptažodžio keitimo bandymų. Bandykite po ' . format_wait_time($rateLimit['retry_after']) . '.'];
+        return [false, __('password_reset.reset.rate_limit', ['wait' => format_wait_time($rateLimit['retry_after'])])];
     }
 
     rate_limit_hit($rateLimitTargets);
@@ -320,7 +323,7 @@ function reset_password_by_token(PDO $pdo, $token, $password)
             $pdo->rollBack();
         }
 
-        return [false, 'Nepavyko išsaugoti naujo slaptažodžio.'];
+        return [false, __('password_reset.reset.save_failed')];
     }
 
     clear_failed_login_attempts($record['email'], rate_limit_client_ip());
@@ -328,5 +331,5 @@ function reset_password_by_token(PDO $pdo, $token, $password)
         'email' => $record['email'],
     ]);
 
-    return [true, 'Slaptažodis sėkmingai pakeistas. Dabar galite prisijungti.'];
+    return [true, __('password_reset.reset.completed')];
 }

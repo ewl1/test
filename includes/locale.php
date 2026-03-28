@@ -20,6 +20,27 @@ function site_locale()
     return $locale;
 }
 
+function locale_file_paths()
+{
+    $paths = [];
+    $locale = site_locale();
+
+    $corePath = BASEDIR . 'locale/' . $locale . '.php';
+    if (is_file($corePath)) {
+        $paths[] = $corePath;
+    }
+
+    $modulePaths = glob(BASEDIR . 'infusions/*/locale/' . $locale . '.php') ?: [];
+    sort($modulePaths);
+    foreach ($modulePaths as $path) {
+        if (is_file($path)) {
+            $paths[] = $path;
+        }
+    }
+
+    return $paths;
+}
+
 function locale_messages()
 {
     static $messages = null;
@@ -28,11 +49,10 @@ function locale_messages()
     }
 
     $messages = [];
-    $localePath = BASEDIR . 'locale/' . site_locale() . '.php';
-    if (is_file($localePath)) {
+    foreach (locale_file_paths() as $localePath) {
         $loaded = require $localePath;
         if (is_array($loaded)) {
-            $messages = $loaded;
+            $messages = array_replace($messages, $loaded);
         }
     }
 

@@ -16,37 +16,37 @@ function create_shout(PDO $pdo, $message)
 {
     $message = trim((string)$message);
     if ($message === '') {
-        return [false, 'Tuščia žinutė.'];
+        return [false, __('legacy_shout.empty')];
     }
 
     $user = current_user();
     if (!$user) {
-        return [false, 'Rašyti gali tik prisijungę nariai.'];
+        return [false, __('legacy_shout.login_required')];
     }
 
     $message = mb_substr($message, 0, 500);
     $stmt = $pdo->prepare("INSERT INTO shouts (user_id, message, created_at, updated_at) VALUES (:user_id, :message, NOW(), NOW())");
     $stmt->execute([
         ':user_id' => (int)$user['id'],
-        ':message' => $message
+        ':message' => $message,
     ]);
 
     $id = (int)$pdo->lastInsertId();
     audit_log((int)$user['id'], 'shout_create', 'shouts', $id);
-    return [true, 'Žinutė paskelbta.'];
+    return [true, __('legacy_shout.created')];
 }
 
 function update_shout(PDO $pdo, $id, $message)
 {
     $message = trim((string)$message);
     if ($message === '') {
-        return [false, 'Tuščia žinutė.'];
+        return [false, __('legacy_shout.empty')];
     }
 
     $stmt = $pdo->prepare("UPDATE shouts SET message = :message, updated_at = NOW() WHERE id = :id");
     $stmt->execute([':message' => mb_substr($message, 0, 500), ':id' => (int)$id]);
     audit_log(current_user()['id'] ?? null, 'shout_update', 'shouts', (int)$id);
-    return [true, 'Žinutė atnaujinta.'];
+    return [true, __('legacy_shout.updated')];
 }
 
 function delete_shout(PDO $pdo, $id)

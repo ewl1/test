@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $ok = false;
                 $message = $avatarMessage;
             } elseif (!empty($avatarMessage)) {
-                $message = 'Profilis ir avataras atnaujinti.';
+                $message = __('profile.updated_with_avatar');
             }
         }
 
@@ -119,11 +119,15 @@ include __DIR__ . '/themes/default/header.php';
                     <input type="hidden" name="profile_action" value="password">
                     <div class="col-md-6">
                         <label class="form-label"><?= e(__('profile.password.current')) ?></label>
-                        <input class="form-control" type="password" name="current_password" required>
+                        <input class="form-control js-toggle-password" type="password" name="current_password" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label"><?= e(__('profile.password.new')) ?></label>
-                        <input class="form-control" type="password" name="new_password" required>
+                        <input class="form-control js-toggle-password" type="password" name="new_password" required>
+                        <div class="form-check mt-2">
+                            <input class="form-check-input" id="profile-show-password" type="checkbox" data-password-toggle data-password-target=".js-toggle-password">
+                            <label class="form-check-label" for="profile-show-password"><?= e(__('auth.password.show')) ?></label>
+                        </div>
                     </div>
                     <div class="col-12">
                         <button class="btn btn-primary"><?= e(__('profile.password.save')) ?></button>
@@ -141,18 +145,22 @@ include __DIR__ . '/themes/default/header.php';
                         <input type="hidden" name="profile_action" value="admin_password">
                         <div class="col-md-4">
                             <label class="form-label"><?= e(__('profile.admin_password.account')) ?></label>
-                            <input class="form-control" type="password" name="account_password" required>
+                            <input class="form-control js-toggle-password" type="password" name="account_password" required>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label"><?= e(__('profile.admin_password.new')) ?></label>
-                            <input class="form-control" type="password" name="new_admin_password" required>
+                            <input class="form-control js-toggle-password" type="password" name="new_admin_password" required>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label"><?= e(__('profile.admin_password.repeat')) ?></label>
-                            <input class="form-control" type="password" name="confirm_admin_password" required>
+                            <input class="form-control js-toggle-password" type="password" name="confirm_admin_password" required>
                         </div>
                         <div class="col-12">
                             <div class="form-text"><?= e(__('profile.admin_password.help')) ?></div>
+                            <div class="form-check mt-2 mb-3">
+                                <input class="form-check-input" id="profile-show-admin-password" type="checkbox" data-password-toggle data-password-target=".js-toggle-password">
+                                <label class="form-check-label" for="profile-show-admin-password"><?= e(__('auth.password.show')) ?></label>
+                            </div>
                             <button class="btn btn-primary"><?= e(__('profile.admin_password.save')) ?></button>
                         </div>
                     </form>

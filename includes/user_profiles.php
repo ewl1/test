@@ -349,13 +349,13 @@ function save_profile_rating($profileUserId, $authorUserId, $rating)
     $rating = (int)$rating;
 
     if ($profileUserId < 1 || $authorUserId < 1) {
-        return [false, 'Prisijungimas reikalingas.'];
+        return [false, __('profile.auth.required')];
     }
     if (!in_array($rating, profile_rating_options(), true)) {
-        return [false, 'Pasirinktas neteisingas įvertinimas.'];
+        return [false, __('profile.rating.invalid')];
     }
     if (!fetch_public_user_profile($profileUserId)) {
-        return [false, 'Profilis nerastas.'];
+        return [false, __('profile.not_found')];
     }
 
     $stmt = $GLOBALS['pdo']->prepare('
@@ -373,7 +373,7 @@ function save_profile_rating($profileUserId, $authorUserId, $rating)
         'rating' => $rating,
     ]);
 
-    return [true, 'Įvertinimas išsaugotas.'];
+    return [true, __('profile.rating.saved')];
 }
 
 function count_profile_comments($profileUserId)
@@ -479,13 +479,13 @@ function create_profile_comment($profileUserId, $authorUserId, $content)
     $content = profile_prepare_comment_body($content, 2000);
 
     if ($profileUserId < 1 || $authorUserId < 1) {
-        return [false, 'Prisijungimas reikalingas.', null];
+        return [false, __('profile.auth.required'), null];
     }
     if (!fetch_public_user_profile($profileUserId)) {
-        return [false, 'Profilis nerastas.', null];
+        return [false, __('profile.not_found'), null];
     }
     if ($content === '') {
-        return [false, 'Komentaras negali būti tuščias.', null];
+        return [false, __('profile.comment.empty'), null];
     }
 
     $stmt = $GLOBALS['pdo']->prepare('
@@ -503,7 +503,7 @@ function create_profile_comment($profileUserId, $authorUserId, $content)
         'profile_user_id' => $profileUserId,
     ]);
 
-    return [true, 'Komentaras paskelbtas.', $commentId];
+    return [true, __('profile.comment.saved'), $commentId];
 }
 
 function delete_profile_comment($commentId, $actor = null)
@@ -512,10 +512,10 @@ function delete_profile_comment($commentId, $actor = null)
 
     $comment = fetch_profile_comment($commentId);
     if (!$comment) {
-        return [false, 'Komentaras nerastas.', null];
+        return [false, __('profile.comment.not_found'), null];
     }
     if (!can_manage_profile_comment($comment, $actor)) {
-        return [false, 'Nepakanka teisių ištrinti komentaro.', null];
+        return [false, __('profile.comment.delete_denied'), null];
     }
 
     $stmt = $GLOBALS['pdo']->prepare('DELETE FROM ' . profile_comment_table() . ' WHERE id = :id');
@@ -526,7 +526,7 @@ function delete_profile_comment($commentId, $actor = null)
         'profile_user_id' => (int)$comment['profile_user_id'],
     ]);
 
-    return [true, 'Komentaras ištrintas.', (int)$comment['profile_user_id']];
+    return [true, __('profile.comment.deleted'), (int)$comment['profile_user_id']];
 }
 
 function render_profile_rating_stars($averageRating, $ratingCount)
@@ -535,7 +535,7 @@ function render_profile_rating_stars($averageRating, $ratingCount)
     $filled = (int)round($averageRating);
     $label = $ratingCount > 0
         ? number_format($averageRating, 1) . ' / 5'
-        : 'Kol kas neįvertinta';
+        : __('profile.rating.none');
 
     $html = '<span class="rating-stars" aria-label="' . e($label) . '">';
     foreach (profile_rating_options() as $option) {

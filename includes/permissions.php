@@ -63,7 +63,7 @@ function require_permission($permissionOrPdo, $legacyPermission = null)
     }
 
     if (!has_permission($GLOBALS['pdo'], $user['id'], $permission)) {
-        abort_http(403, 'Nepakanka teisių: ' . $permission);
+        abort_http(403, __('permissions.denied_specific', ['permission' => $permission]));
     }
 }
 
@@ -81,14 +81,16 @@ function require_any_permission(array $permissions)
         }
     }
 
-    abort_http(403, 'Nepakanka teisių.');
+    abort_http(403, __('permissions.denied'));
 }
 
 function can_manage_role_id($roleId)
 {
     $user = current_user();
-    if (!$user) return false;
-    if (has_permission($GLOBALS['pdo'], $user['id'], 'admin.access') && (($user['role_slug'] ?? '') === 'super_admin' || (int)($user['role_level'] ?? 0) >= 100)) {
+    if (!$user) {
+        return false;
+    }
+    if (has_permission($GLOBALS['pdo'], (int)$user['id'], 'admin.access') && (($user['role_slug'] ?? '') === 'super_admin' || (int)($user['role_level'] ?? 0) >= 100)) {
         return true;
     }
 

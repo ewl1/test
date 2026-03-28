@@ -24,14 +24,14 @@ function verify_csrf()
     $requestToken = (string)($_POST['csrf_token'] ?? ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? ''));
 
     if ($sessionToken === '' || $requestToken === '' || !hash_equals($sessionToken, $requestToken)) {
-        abort_http(400, 'Neteisingas arba pasibaigęs formos saugos raktas.');
+        abort_http(400, __('security.csrf'));
     }
 }
 
 function require_post_request()
 {
     if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
-        abort_http(400, 'Šiam veiksmui reikalinga POST užklausa.');
+        abort_http(400, __('security.post_only'));
     }
 }
 

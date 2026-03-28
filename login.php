@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         redirect(public_path('index.php'));
     }
 
-    $message = auth_error() ?? 'Neteisingi duomenys.';
+    $message = auth_error() ?? __('auth.login.failed');
     $messageType = 'danger';
 }
 
@@ -27,18 +27,28 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
         <div class="card">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h1 class="h4 mb-0">Prisijungimas</h1>
-                    <a class="btn btn-sm btn-outline-secondary" href="<?= public_path('administration/login.php') ?>">Admin</a>
+                    <h1 class="h4 mb-0"><?= e(__('auth.login.title')) ?></h1>
+                    <a class="btn btn-sm btn-outline-secondary" href="<?= public_path('administration/login.php') ?>"><?= e(__('nav.admin_login')) ?></a>
                 </div>
                 <?php if ($message): ?><div class="alert alert-<?= e($messageType) ?>"><?= e($message) ?></div><?php endif; ?>
                 <form method="post">
                     <?= csrf_field() ?>
-                    <div class="mb-3"><label class="form-label">El. paštas</label><input class="form-control" type="email" name="email" autocomplete="email"></div>
-                    <div class="mb-3"><label class="form-label">Slaptažodis</label><input class="form-control" type="password" name="password" autocomplete="current-password"></div>
-                    <button class="btn btn-primary">Prisijungti</button>
+                    <div class="mb-3">
+                        <label class="form-label"><?= e(__('auth.login.email')) ?></label>
+                        <input class="form-control" type="email" name="email" autocomplete="email">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><?= e(__('auth.password')) ?></label>
+                        <input class="form-control js-toggle-password" type="password" name="password" autocomplete="current-password">
+                        <div class="form-check mt-2">
+                            <input class="form-check-input" id="login-show-password" type="checkbox" data-password-toggle data-password-target=".js-toggle-password">
+                            <label class="form-check-label" for="login-show-password"><?= e(__('auth.password.show')) ?></label>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary"><?= e(__('auth.login.submit')) ?></button>
                 </form>
                 <div class="mt-3 text-end">
-                    <a class="small" href="<?= public_path('forgot-password.php') ?>">Pamiršote slaptažodį?</a>
+                    <a class="small" href="<?= public_path('forgot-password.php') ?>"><?= e(__('auth.login.forgot')) ?></a>
                 </div>
             </div>
         </div>

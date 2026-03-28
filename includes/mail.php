@@ -1,7 +1,21 @@
 <?php
+function ensure_phpmailer_loaded()
+{
+    if (class_exists('PHPMailer\\PHPMailer\\PHPMailer')) {
+        return true;
+    }
+
+    $autoloadPath = BASEDIR . 'vendor/autoload.php';
+    if (is_file($autoloadPath)) {
+        require_once $autoloadPath;
+    }
+
+    return class_exists('PHPMailer\\PHPMailer\\PHPMailer');
+}
+
 function send_mail_message($toEmail, $toName, $subject, $html, $text = '')
 {
-    if (!class_exists('PHPMailer\\PHPMailer\\PHPMailer')) {
+    if (!ensure_phpmailer_loaded()) {
         return false;
     }
 

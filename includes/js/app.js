@@ -30,6 +30,20 @@ document.addEventListener('DOMContentLoaded', function () {
     if (window.bootstrap) new bootstrap.Tooltip(el);
   });
 
+  document.querySelectorAll('[data-password-toggle]').forEach(function (toggle) {
+    var selector = toggle.getAttribute('data-password-target') || 'input[type="password"]';
+
+    function syncTargets() {
+      var scope = toggle.closest('form') || document;
+      scope.querySelectorAll(selector).forEach(function (input) {
+        input.setAttribute('type', toggle.checked ? 'text' : 'password');
+      });
+    }
+
+    toggle.addEventListener('change', syncTargets);
+    syncTargets();
+  });
+
   document.querySelectorAll('.sortable-panel-list').forEach(function (list) {
     if (window.Sortable) {
       new Sortable(list, {

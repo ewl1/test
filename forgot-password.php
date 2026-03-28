@@ -14,18 +14,18 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
     <div class="col-lg-6">
         <div class="card">
             <div class="card-body">
-                <h1 class="h4 mb-3">Slaptažodžio atstatymas</h1>
-                <p class="text-secondary">Įveskite savo paskyros el. paštą. Jei paskyra egzistuoja ir yra aktyvi, atsiųsime atstatymo nuorodą.</p>
+                <h1 class="h4 mb-3"><?= e(__('password_reset.request.title')) ?></h1>
+                <p class="text-secondary"><?= e(__('password_reset.request.help')) ?></p>
                 <?php if ($msg = flash('error')): ?>
                     <div class="alert alert-danger"><?= e($msg) ?></div>
                 <?php endif; ?>
                 <form method="post">
                     <?= csrf_input() ?>
                     <div class="mb-3">
-                        <label class="form-label">El. paštas</label>
+                        <label class="form-label"><?= e(__('auth.login.email')) ?></label>
                         <input class="form-control" type="email" name="email" autocomplete="email" required>
                     </div>
-                    <button class="btn btn-primary">Siųsti nuorodą</button>
+                    <button class="btn btn-primary"><?= e(__('password_reset.request.submit')) ?></button>
                 </form>
             </div>
         </div>

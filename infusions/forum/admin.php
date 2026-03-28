@@ -35,10 +35,10 @@ $postCount = (int)$GLOBALS['pdo']->query('SELECT COUNT(*) FROM ' . forum_table_p
 ?>
 <div class="d-flex justify-content-between align-items-center mb-3 gap-3 flex-wrap">
     <div>
-        <h2 class="h4 mb-1">Forumo valdymas</h2>
-        <p class="text-secondary mb-0">Kurti kategorijas, forumus ir subforumus, kurie iškart matomi viešame puslapyje.</p>
+        <h2 class="h4 mb-1"><?= e(__('forum.admin.title')) ?></h2>
+        <p class="text-secondary mb-0"><?= e(__('forum.admin.description')) ?></p>
     </div>
-    <a class="btn btn-outline-primary" href="<?= forum_index_url() ?>" target="_blank" rel="noopener">Atidaryti forumą</a>
+    <a class="btn btn-outline-primary" href="<?= forum_index_url() ?>" target="_blank" rel="noopener"><?= e(__('forum.admin.open')) ?></a>
 </div>
 
 <?php if ($message): ?>
@@ -49,7 +49,7 @@ $postCount = (int)$GLOBALS['pdo']->query('SELECT COUNT(*) FROM ' . forum_table_p
     <div class="col-md-4">
         <div class="card h-100">
             <div class="card-body">
-                <div class="small text-secondary mb-2">Kategorijos</div>
+                <div class="small text-secondary mb-2"><?= e(__('forum.category.count')) ?></div>
                 <div class="display-6 mb-0"><?= count($categories) ?></div>
             </div>
         </div>
@@ -57,7 +57,7 @@ $postCount = (int)$GLOBALS['pdo']->query('SELECT COUNT(*) FROM ' . forum_table_p
     <div class="col-md-4">
         <div class="card h-100">
             <div class="card-body">
-                <div class="small text-secondary mb-2">Temos</div>
+                <div class="small text-secondary mb-2"><?= e(__('forum.topic.count')) ?></div>
                 <div class="display-6 mb-0"><?= (int)$topicCount ?></div>
             </div>
         </div>
@@ -65,7 +65,7 @@ $postCount = (int)$GLOBALS['pdo']->query('SELECT COUNT(*) FROM ' . forum_table_p
     <div class="col-md-4">
         <div class="card h-100">
             <div class="card-body">
-                <div class="small text-secondary mb-2">Atsakymai</div>
+                <div class="small text-secondary mb-2"><?= e(__('forum.reply.count')) ?></div>
                 <div class="display-6 mb-0"><?= (int)$postCount ?></div>
             </div>
         </div>
@@ -106,7 +106,7 @@ $postCount = (int)$GLOBALS['pdo']->query('SELECT COUNT(*) FROM ' . forum_table_p
                     <?= csrf_field() ?>
                     <input type="hidden" name="forum_admin_action" value="create_forum">
                     <div class="col-md-6">
-                        <label class="form-label">Kategorija</label>
+                        <label class="form-label"><?= e(__('forum.admin.category')) ?></label>
                         <select class="form-select" name="category_id" required>
                             <option value="">Pasirinkite</option>
                             <?php foreach ($categories as $category): ?>
@@ -150,7 +150,7 @@ $postCount = (int)$GLOBALS['pdo']->query('SELECT COUNT(*) FROM ' . forum_table_p
             <div class="card-header">Esama struktūra</div>
             <div class="card-body">
                 <?php if (!$forumsByCategory): ?>
-                    <div class="text-secondary">Forumo struktūra dar nesukurta.</div>
+                    <div class="text-secondary"><?= e(__('forum.admin.structure.empty')) ?></div>
                 <?php else: ?>
                     <div class="vstack gap-4">
                         <?php foreach ($forumsByCategory as $category): ?>
@@ -162,11 +162,11 @@ $postCount = (int)$GLOBALS['pdo']->query('SELECT COUNT(*) FROM ' . forum_table_p
                                             <div class="small text-secondary"><?= e($category['description']) ?></div>
                                         <?php endif; ?>
                                     </div>
-                                    <span class="badge text-bg-secondary"><?= count($category['forums']) ?> forumai</span>
+                                    <span class="badge text-bg-secondary"><?= count($category['forums']) ?> <?= e(__('forum.forum_count')) ?></span>
                                 </div>
 
                                 <?php if (!$category['forums']): ?>
-                                    <div class="small text-secondary">Kategorijoje forumų dar nėra.</div>
+                                    <div class="small text-secondary"><?= e(__('forum.admin.category.empty')) ?></div>
                                 <?php else: ?>
                                     <div class="list-group">
                                         <?php foreach ($category['forums'] as $forum): ?>

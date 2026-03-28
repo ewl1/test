@@ -96,7 +96,7 @@ function shoutbox_escape_and_format($message)
     $message = preg_replace_callback('/\[url=(https?:\/\/[^\]\s]+)\](.*?)\[\/url\]/is', function ($matches) {
         $url = trim((string)$matches[1]);
         $label = $matches[2];
-        if (validate_url_value($url, true, 'Nuoroda', ['http', 'https'], false) !== null) {
+        if (validate_url_value($url, true, __('shoutbox.link_label'), ['http', 'https'], false) !== null) {
             return $label;
         }
 
@@ -180,12 +180,12 @@ function shoutbox_create_message($message)
 {
     $user = current_user();
     if (!$user) {
-        return [false, 'Rašyti gali tik prisijungę nariai.'];
+        return [false, __('shoutbox.post.login')];
     }
 
     $message = sanitize_bbcode_input($message, shoutbox_allowed_tags(), 500);
     if ($message === '') {
-        return [false, 'Žinutė negali būti tuščia.'];
+        return [false, __('shoutbox.message.empty')];
     }
 
     $stmt = $GLOBALS['pdo']->prepare("
@@ -198,7 +198,7 @@ function shoutbox_create_message($message)
     ]);
 
     audit_log((int)$user['id'], 'shoutbox_post', 'infusion_shoutbox_messages', (int)$GLOBALS['pdo']->lastInsertId());
-    return [true, 'Žinutė paskelbta.'];
+    return [true, __('shoutbox.message.created')];
 }
 
 function shoutbox_delete_message($id)
@@ -247,7 +247,7 @@ function shoutbox_render_editor($context = 'page', $textareaId = 'shoutbox-messa
         <div class="mb-3 shoutbox-editor-field">
             <label class="form-label"><?= e($compact ? __('shoutbox.comment') : __('shoutbox.message')) ?></label>
             <textarea class="form-control shoutbox-editor-textarea" id="<?= e($textareaId) ?>" name="message" rows="<?= $compact ? 3 : 4 ?>" maxlength="500" placeholder="<?= e($compact ? __('shoutbox.comment.placeholder') : __('shoutbox.message.placeholder')) ?>"></textarea>
-            <div class="form-text"><?= e(__('forum.allowed_bbcode')) ?></div>
+            <div class="form-text"><?= e(__('shoutbox.allowed_bbcode')) ?></div>
         </div>
         <button class="btn btn-primary"><?= e($compact ? __('shoutbox.comment.send') : __('shoutbox.send')) ?></button>
     </form>

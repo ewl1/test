@@ -43,7 +43,7 @@ function update_user_profile(PDO $pdo, $id, array $data)
         return [false, $message];
     }
     if (user_email_exists($email, $id)) {
-        return [false, 'Toks el. paštas jau naudojamas.'];
+        return [false, __('validation.email.taken')];
     }
 
     $stmt = $pdo->prepare('UPDATE users SET username = :username, email = :email, signature = :signature WHERE id = :id');
@@ -55,7 +55,7 @@ function update_user_profile(PDO $pdo, $id, array $data)
     ]);
 
     audit_log(current_user()['id'] ?? $id, 'user_edit', 'users', $id);
-    return [true, 'Profilis atnaujintas.'];
+    return [true, __('user.profile.updated')];
 }
 
 function update_user_avatar(PDO $pdo, $id, array $file)
@@ -86,18 +86,18 @@ function update_user_avatar(PDO $pdo, $id, array $file)
     }
 
     audit_log(current_user()['id'] ?? $id, 'user_avatar_update', 'users', (int)$id);
-    return [true, 'Avataras atnaujintas.'];
+    return [true, __('user.avatar.updated')];
 }
 
 function change_password(PDO $pdo, $id, $currentPassword, $newPassword)
 {
     $user = get_user($pdo, $id);
     if (!$user) {
-        return [false, 'Vartotojas nerastas.'];
+        return [false, __('user.not_found')];
     }
 
     if (!password_verify((string)$currentPassword, (string)$user['password'])) {
-        return [false, 'Neteisingas dabartinis slaptažodis.'];
+        return [false, __('user.current_password_invalid')];
     }
 
     if ($message = validate_password_strength($newPassword, true)) {
@@ -111,7 +111,7 @@ function change_password(PDO $pdo, $id, $currentPassword, $newPassword)
     ]);
 
     audit_log(current_user()['id'] ?? $id, 'user_password_change', 'users', (int)$id);
-    return [true, 'Slaptažodis pakeistas.'];
+    return [true, __('user.password.changed')];
 }
 
 function update_admin_password(PDO $pdo, $id, $currentPassword, $newPassword, $confirmPassword)
@@ -120,19 +120,19 @@ function update_admin_password(PDO $pdo, $id, $currentPassword, $newPassword, $c
 
     $user = get_user($pdo, $id);
     if (!$user) {
-        return [false, 'Vartotojas nerastas.'];
+        return [false, __('user.not_found')];
     }
 
     if (!has_permission($GLOBALS['pdo'], (int)$id, 'admin.access')) {
-        return [false, 'Ši paskyra neturi administratoriaus teisių.'];
+        return [false, __('user.admin_access_missing')];
     }
 
     if (!password_verify((string)$currentPassword, (string)$user['password'])) {
-        return [false, 'Neteisingas paskyros slaptažodis.'];
+        return [false, __('user.account_password_invalid')];
     }
 
     if ((string)$newPassword !== (string)$confirmPassword) {
-        return [false, 'Admin slaptažodžiai nesutampa.'];
+        return [false, __('user.admin_password_mismatch')];
     }
 
     if ($message = validate_password_strength($newPassword, true)) {
@@ -146,7 +146,7 @@ function update_admin_password(PDO $pdo, $id, $currentPassword, $newPassword, $c
     ]);
 
     audit_log(current_user()['id'] ?? $id, 'admin_password_update', 'users', (int)$id);
-    return [true, 'Admin slaptažodis atnaujintas.'];
+    return [true, __('user.admin_password.updated')];
 }
 
 function change_user_status(PDO $pdo, $id, $status)

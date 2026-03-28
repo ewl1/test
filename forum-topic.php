@@ -3,7 +3,7 @@ require_once __DIR__ . '/includes/bootstrap.php';
 
 if (!function_exists('forum_get_topic')) {
     include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
-    echo '<div class="alert alert-warning">Forumo infusion dar neįdiegta arba išjungta.</div>';
+    echo '<div class="alert alert-warning">' . e(__('forum.unavailable')) . '</div>';
     include THEMES . setting('current_theme', CURRENT_THEME) . '/footer.php';
     return;
 }
@@ -11,7 +11,7 @@ if (!function_exists('forum_get_topic')) {
 $topicId = (int)($_GET['id'] ?? 0);
 $topic = forum_get_topic($topicId);
 if (!$topic) {
-    abort_http(404, 'Tema nerasta.');
+    abort_http(404, __('forum.topic.not_found'));
 }
 
 $currentPage = max(1, (int)($_GET['page'] ?? 1));
@@ -83,7 +83,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         $replyPage = max(1, (int)($_POST['reply_page'] ?? $currentPage));
         $replyEdit = forum_get_reply($replyId);
         if (!$replyEdit || (int)$replyEdit['topic_id'] !== (int)$topic['id']) {
-            $moderationError = 'Atsakymas nerastas.';
+            $moderationError = __('forum.reply.not_found');
         } else {
             $replyEditMode = forum_can_moderate_reply($replyEdit);
             $replyEditContent = (string)($_POST['content'] ?? '');
@@ -99,7 +99,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         $replyPage = max(1, (int)($_POST['reply_page'] ?? $currentPage));
         $reply = forum_get_reply($replyId);
         if (!$reply || (int)$reply['topic_id'] !== (int)$topic['id']) {
-            $moderationError = 'Atsakymas nerastas.';
+            $moderationError = __('forum.reply.not_found');
         } else {
             [$ok, $message] = forum_delete_reply($replyId);
             if ($ok) {
@@ -240,7 +240,7 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label" for="forum-edit-topic-content">Turinys</label>
+                            <label class="form-label" for="forum-edit-topic-content"><?= e(__('forum.content')) ?></label>
                             <textarea class="form-control" id="forum-edit-topic-content" name="content" rows="8" maxlength="15000" required><?= e($topicEditContent) ?></textarea>
                             <div class="form-text"><?= e(__('forum.allowed_bbcode')) ?></div>
                         </div>
@@ -291,7 +291,7 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                             </div>
                             <div class="small text-secondary"><?= e(format_dt($reply['created_at'])) ?></div>
                             <?php if (!empty($reply['updated_at']) && $reply['updated_at'] !== $reply['created_at']): ?>
-                                <div class="small text-secondary">Redaguota: <?= e(format_dt($reply['updated_at'])) ?></div>
+                                <div class="small text-secondary"><?= e(__('forum.edited')) ?>: <?= e(format_dt($reply['updated_at'])) ?></div>
                             <?php endif; ?>
                         </div>
                     </aside>
@@ -314,7 +314,7 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                             <?php endif; ?>
                         </div>
 
-                        <?php if ($replyEditMode && (int)$reply['id'] === (int)$replyEdit['id']): ?>
+                        <?php if ($replyEditMode && $replyEdit && (int)$reply['id'] === (int)$replyEdit['id']): ?>
                             <div class="forum-reply-edit-box">
                                 <?php if ($replyEditError): ?>
                                     <div class="alert alert-danger"><?= e($replyEditError) ?></div>
