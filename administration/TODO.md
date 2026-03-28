@@ -28,6 +28,9 @@
 - [ ] Uzbaigti visu administracijos formu ir antriniu puslapiu tekstu perkelima i locale raktus.
 - [ ] Uzbaigti kontrasto audita visoms maziau naudojamoms kortelems, badge ir lenteliu busenoms.
 - [ ] Suvienodinti filtrus, paieska, rusiavima ir `bulk actions` administracijos lentelese.
+- [ ] Suvienodinti admin `design system`: korteles, lenteles, badge, mygtukai, formu laukai ir pagalbiniai tekstai.
+- [ ] Prideti aiskesnes tuscias busenas, klaidu busenas ir sekmes pranesimu pateikima administracijoje.
+- [ ] Apsvarstyti tankesni (`dense`) lenteliu rezima ir patogesni filtravimo juostos isdestyma.
 
 ### Panels valdymas
 - [ ] `panels.php` prideti paneliu matomuma pagal role ir puslapi.
@@ -36,6 +39,8 @@
 - [ ] Prideti `duplicate / delete / reset defaults` veiksmus paneliu valdyme.
 - [ ] Prideti layout `import / export` ir `restore default layout`.
 - [ ] Prideti paneliu cache valdyma ir badge, ar panele cache'inama.
+- [ ] Pagerinti drag-drop UX: aiskesni placeholder, `drop zone`, aktyvia zonos busena ir issaugojimo patvirtinima.
+- [ ] Prideti paneles mini perziuros kortele su piktograma, trumpu aprasu ir matomumo badge.
 
 ### Diagnostika ir versijos
 - [ ] Diagnostikoje galutinai suskirstyti pletinius i `butini`, `rekomenduojami`, `pasirenkami`.
@@ -50,6 +55,9 @@
 - [ ] Rodyti, ka modulis prideda: route'us, teises, paneles, paieskos saltinius, hook'us.
 - [ ] Prideti aiskesni `upgrade preview`: changelog, migracijos zingsniai, rollback pastabos.
 - [ ] Prideti modulio sveikatos patikra: ar yra manifest, locale, assets, admin failas, schema.
+- [ ] Padaryti aiskesni moduliu saraso vizualini atskyrima: pavadinimas, folder, versija, sveikatos badge ir pagrindinis veiksmas.
+- [ ] Prideti `grid / table` rodymo rezimus, jei moduliu kiekis isaugs.
+- [ ] Isryskinti moduliu `folder`, `slug`, busena ir veiksmus vienodomis admin badge taisyklemis.
 
 ### Admin irankiai ir saugumas
 - [ ] Prideti `Clear cache / Clear rate limits / Clear reset tokens` irankius.

@@ -30,3 +30,6 @@
 - [ ] Prideti blokavimo / mute integracija su naudotoju bendru nustatymu sluoksniu.
 - [ ] Prideti pranesimu ivykius, jei atsiras mention ar atsakymo logika.
 - [ ] Apsvarstyti lengva auto-refresh arba dalini realtime atnaujinima.
+- [ ] Paruosti shoutbox kompaktini ir pilna rodymo varianta su aiskesnemis zinuciu grupemis.
+- [ ] Sutvarkyti mini avataru, laiko, autoriaus ir moderavimo veiksmu vizualine hierarchija.
+- [ ] Paruosti nuoseklu BBCode, smailu ir media fragmentu pateikima shoutbox kontekste.

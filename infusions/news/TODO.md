@@ -83,6 +83,10 @@
 - [ ] Prideti naujienu paneles variantus: naujausios, populiariausios, `featured`, pagal kategorija.
 - [ ] Prideti nustatyma, kiek naujienu rodyti kiekvienoje naujienu paneleje.
 - [ ] Prideti locale tekstus modulio admin ir viesiems vaizdams.
+- [ ] Paruosti naujienu korteliu dizaino variantus: sarasas, `featured`, hero ir kompaktine panele.
+- [ ] Sutvarkyti autoriaus, datos, kategoriju, tagu ir `reading time` meta juostos stiliu.
+- [ ] Paruosti aisku `excerpt` ir pilnos naujienos tipografija ilgam skaitymui.
+- [ ] Sutvarkyti `featured image`, galerijos ir YouTube embed pateikimo stiliu.
 
 ### Architektura
 - [ ] Jei reikes daugiau logikos, prideti `assets/` ir `classes/` struktura kaip kituose moduliuose.

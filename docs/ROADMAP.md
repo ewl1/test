@@ -12,6 +12,28 @@
 - `v1.4` skirtas branduolio paslaugoms, versijoms ir atnaujinimu platformai.
 - `v1.5` skirtas SEO, GEO/AI-friendly turiniui ir optimizacijai.
 
+## Horizontali dizaino ir UX kryptis
+
+### Tikslas
+- Padaryti MiniCMS vizualiai nuoseklu, lengvai skaitoma ir patogu naudoti tiek viesajame, tiek administracijos sluoksnyje.
+
+### Prioritetai
+- Sukurti bendra `design system` pagrinda: spalvu, tipografijos, tarpu, radius, shadow ir badge mygtuku taisykles.
+- Suvienodinti korteliu, lenteliu, formu, tusciu busenu, klaidu, sekmes ir info pranesimu isvaizda.
+- Sutvarkyti turinio tipografija ilgam skaitymui: forumui, naujienoms, komentarams, BBCode ir WYSIWYG turiniui.
+- Pagerinti responsive elgsena: mobili navigacija, lankstesnes paneles, admin lenteles ir filtrai mazesniuose ekranuose.
+- Sustiprinti prieinamuma: kontrastas, `focus` busenos, klaviaturos navigacija, didesni klikabilus plotai.
+- Sukurti aiskesne vieso puslapio vizualine hierarchija: hero blokai, paneliu presetai, CTA zonos, nariu meniu ir paieska.
+- Forumo, naujienu ir shoutbox moduliams parengti savita, bet su bendra tema suderinama UI krypti.
+- Sutvarkyti media pateikima: `featured image`, galeriju santykiai, avataru fallback'ai, YouTube ir paveiksliuku embed stiliai.
+- Atnaujinti admin UX: dashboard korteles, `panels` drag-drop griztamasis rysis, `infusions` sveikatos badge ir aiskesni veiksmai.
+- Ilgainiui prideti temos personalizavimo krypti: `compact / wide` isdestymas, akcento spalvos, o veliau ir alternatyvios temos.
+
+### Baigtumo kriterijai
+- Viesi ir admin dalis naudoja ta pacia komponentu ir spalvu kalba.
+- Kiekvienas pagrindinis modulis turi tvarkinga, lengvai skaitoma ir mobiliuose ekranuose nesubyrejancia isvaizda.
+- Dizaino sprendimai atsispindi ne tik CSS faile, bet ir `TODO` planuose pagal tema, admin ir modulius.
+
 ## v1.1 Stabilumas, admin ir saugumo pagrindai
 
 ### Tikslas
@@ -61,6 +83,10 @@
 - matomumas pagal role ir puslapi
 - lankstesni `member panel` scenarijai
 - atskiros paneles pranesimams, aktyvumui ir statistikoms
+- Dizaino kryptis naudotojo pusei:
+- aiskus nario meniu ir paskyros centro isdestymas
+- patogesnis `header` su paieska, pranesimais ir greitais veiksmais
+- nuoseklus profilio, komentaru ir aktyvumo korteliu dizainas
 
 ### Baigtumo kriterijai
 - Naudotojas turi pilna paskyros centra.
@@ -155,6 +181,10 @@
 - paneliu presetai puslapiams
 - paneliu `duplicate`, `preview`, `restore defaults`
 - paneliu cache ir rodymo taisykles
+- Moduliu UI polish:
+- forumo temu saraso hierarchija, autoriaus blokas, badge ir embed vizualai
+- naujienu korteles, hero blokai, autoriaus juosta ir media pateikimas
+- shoutbox kompaktinis ir detalus rodymo rezimai, aiskesnes zinuciu grupes ir busenos
 
 ### Baigtumo kriterijai
 - Forumas ir naujienos turi ne tik bazini CRUD, bet ir bendruomenes funkcijas.
@@ -206,6 +236,9 @@
 - bendras `notifications / activity feed` klasiu rinkinys branduolyje
 - bendras `media/embed` klasiu rinkinys branduolyje
 - modulio klasems likti savo `infusions/<modulis>/classes/`
+- Temu ir UI architektura:
+- isskirti bendrus UI helperius, view komponentu dalis ir `design token` saltinius
+- palaipsniui mazinti atsitiktinius vienkartinius stilius puslapiuose
 
 ### Baigtumo kriterijai
 - Versijos ir atnaujinimai turi aisku admin centra.
@@ -258,6 +291,10 @@
 - image optimization
 - lazy loading
 - cache warmup
+- Dizaino kokybe ir prieinamumas:
+- galutinis kontrasto ir prieinamumo auditas
+- media lazy loading ir `responsive image` strategija
+- vieningas ikonografijos ir iliustraciju stilius
 
 ### Baigtumo kriterijai
 - Projektas turi bazini SEO rinkini ir admin audita.

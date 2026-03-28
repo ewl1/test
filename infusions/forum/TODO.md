@@ -73,6 +73,10 @@
 - [ ] Prideti kanoninius forumo/temos URL ir puslapiavimo canonical logika.
 - [ ] Prideti `breadcrumbs` ir strukturuotus duomenis forumo temoms.
 - [ ] Prideti nauju ir aktyviu temu paneles bei `latest forum activity` blokus.
+- [ ] Sutvarkyti temu saraso vizualine hierarchija: `pinned`, `locked`, `solved`, `new` badge ir neperskaitytu temu zymekliai.
+- [ ] Paruosti autoriaus bloka prie posto: avataras, role, rangas, badge'ai, statistika ir `thanks`.
+- [ ] Paruosti aisku media rodymo stiliu paveiksliukams, priedams ir YouTube embed'ams.
+- [ ] Apsvarstyti kompaktini ir detalesni temu saraso rodymo rezima.
 
 ### Architektura
 - [ ] Toliau isskaidyti daugiau forumo logikos is `bootstrap.php` i atskiras klases.

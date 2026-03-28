@@ -22,6 +22,11 @@
 ## Likusieji darbai
 - [ ] Ta pacia `assets/locale/classes` struktura pritaikyti visiems aktyviems moduliams.
 - [ ] Sukurti vieninga manifest lokalizavimo strategija.
+- [ ] Apibrezti bendra moduliu UI sutarti:
+- korteles, lenteles, tuscios busenos, info/klaidu pranesimai
+- admin veiksmu mygtukai ir sveikatos badge
+- viesu vaizdu antrastes, meta juostos ir turinio tipografija
+- [ ] Susitarti, kaip moduliai naudos bendrus temos `design token` ir kada jiems leidziami nuosavi CSS variantai.
 - [ ] Vienodai rodyti `installed version`, `manifest version` ir `available upgrade`.
 - [ ] Apibrezti bendras `install / upgrade / rollback` taisykles visiems moduliams.
 - [ ] Isplesti manifest standarta papildomais laukais:
@@ -53,6 +58,9 @@
 - ar leidziami vietiniai paveiksliukai
 - ar leidziami YouTube embed'ai
 - kokie limitai ir validacijos taikomi
+- [ ] Vienodai apibrezti, kaip modulis pateikia vizualines busenas:
+- `featured`, `new`, `locked`, `disabled`, `warning`, `needs update`
+- kokie badge ir meta laukeliai naudojami viesame ir admin rodinyje
 - [ ] Vienodai apibrezti, kaip modulis pateikia paieskos metaduomenis:
 - indeksuojami laukai
 - rezultato URL
