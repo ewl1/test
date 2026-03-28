@@ -60,7 +60,7 @@ function render_latest_comments_panel()
         $html .= '<a class="text-decoration-none" href="' . e(profile_comment_url((int)$comment['profile_user_id'], (int)$comment['id'])) . '">' . e($comment['profile_username'] ?? 'profilį') . '</a>';
         $html .= '</div>';
         $html .= '<div class="small text-secondary mb-1">' . e(format_dt($comment['created_at'])) . '</div>';
-        $html .= '<a class="latest-comment-excerpt text-decoration-none" href="' . e(profile_comment_url((int)$comment['profile_user_id'], (int)$comment['id'])) . '">' . e(profile_comment_excerpt($comment['content'], 100)) . '</a>';
+        $html .= '<a class="latest-comment-excerpt text-decoration-none" href="' . e(profile_comment_url((int)$comment['profile_user_id'], (int)$comment['id'])) . '">' . profile_render_comment_body($comment['content']) . '</a>';
         $html .= '</div></div></article>';
     }
 
