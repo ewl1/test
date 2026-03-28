@@ -31,6 +31,8 @@
 - [ ] Suvienodinti admin `design system`: korteles, lenteles, badge, mygtukai, formu laukai ir pagalbiniai tekstai.
 - [ ] Prideti aiskesnes tuscias busenas, klaidu busenas ir sekmes pranesimu pateikima administracijoje.
 - [ ] Apsvarstyti tankesni (`dense`) lenteliu rezima ir patogesni filtravimo juostos isdestyma.
+- [ ] Nuspresti, kaip administracijoje bus naudojamos ikonos: navigacija, lenteliu veiksmai, statusai, diagnostika.
+- [ ] Ikonoms administracijoje taikyti taisykle: tekstas + ikona svarbiems veiksmams, vien ikona tik antriniams veiksmams.
 
 ### Panels valdymas
 - [ ] `panels.php` prideti paneliu matomuma pagal role ir puslapi.
@@ -41,6 +43,7 @@
 - [ ] Prideti paneliu cache valdyma ir badge, ar panele cache'inama.
 - [ ] Pagerinti drag-drop UX: aiskesni placeholder, `drop zone`, aktyvia zonos busena ir issaugojimo patvirtinima.
 - [ ] Prideti paneles mini perziuros kortele su piktograma, trumpu aprasu ir matomumo badge.
+- [ ] Apsvarstyti responsive `panels` valdyma telefonu ir planseteje: ne tik drag-drop, bet ir alternatyvu perkrovimo/isdestymo rezima.
 
 ### Diagnostika ir versijos
 - [ ] Diagnostikoje galutinai suskirstyti pletinius i `butini`, `rekomenduojami`, `pasirenkami`.
@@ -58,6 +61,7 @@
 - [ ] Padaryti aiskesni moduliu saraso vizualini atskyrima: pavadinimas, folder, versija, sveikatos badge ir pagrindinis veiksmas.
 - [ ] Prideti `grid / table` rodymo rezimus, jei moduliu kiekis isaugs.
 - [ ] Isryskinti moduliu `folder`, `slug`, busena ir veiksmus vienodomis admin badge taisyklemis.
+- [ ] Prideti ikonas modulio tipui, sveikatos busenai, atnaujinimui ir pagrindiniams veiksmams.
 
 ### Admin irankiai ir saugumas
 - [ ] Prideti `Clear cache / Clear rate limits / Clear reset tokens` irankius.
@@ -76,3 +80,4 @@
 - [ ] Prideti `redirect manager` (`301/302`) administravima.
 - [ ] Prideti `broken links checker` rezultatu perziura.
 - [ ] Jei bus reikalinga, prideti `hook debugger` ir `dependency graph` diagnostikos vaizda.
+- [ ] Atlikti admin responsive audita bent telefonu, planseteje ir 1366px pločio ekrane.

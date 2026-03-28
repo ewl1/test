@@ -26,7 +26,9 @@
 - korteles, lenteles, tuscios busenos, info/klaidu pranesimai
 - admin veiksmu mygtukai ir sveikatos badge
 - viesu vaizdu antrastes, meta juostos ir turinio tipografija
+- ikonografijos taisykles moduliams: navigacija, statusai, veiksmai ir media tipai
 - [ ] Susitarti, kaip moduliai naudos bendrus temos `design token` ir kada jiems leidziami nuosavi CSS variantai.
+- [ ] Susitarti, kaip moduliai naudos bendra ikon biblioteka ir kada galima papildoma rinkini naudoti lokaliai.
 - [ ] Vienodai rodyti `installed version`, `manifest version` ir `available upgrade`.
 - [ ] Apibrezti bendras `install / upgrade / rollback` taisykles visiems moduliams.
 - [ ] Isplesti manifest standarta papildomais laukais:
@@ -61,6 +63,7 @@
 - [ ] Vienodai apibrezti, kaip modulis pateikia vizualines busenas:
 - `featured`, `new`, `locked`, `disabled`, `warning`, `needs update`
 - kokie badge ir meta laukeliai naudojami viesame ir admin rodinyje
+- kokios ikonos siejamos su tomis busenomis
 - [ ] Vienodai apibrezti, kaip modulis pateikia paieskos metaduomenis:
 - indeksuojami laukai
 - rezultato URL

@@ -22,16 +22,24 @@
 - Suvienodinti korteliu, lenteliu, formu, tusciu busenu, klaidu, sekmes ir info pranesimu isvaizda.
 - Sutvarkyti turinio tipografija ilgam skaitymui: forumui, naujienoms, komentarams, BBCode ir WYSIWYG turiniui.
 - Pagerinti responsive elgsena: mobili navigacija, lankstesnes paneles, admin lenteles ir filtrai mazesniuose ekranuose.
+- Pereiti prie `mobile-first` logikos: aiskus breakpoint'ai, `stacking` taisykles, lenteliu transformacija i korteles ir `off-canvas` filtrai mazuose ekranuose.
+- Aiskiau suprojektuoti greitus veiksmus mobiliuose ekranuose: `sticky` veiksmu juostos, kompaktiski dropdown'ai, aiskesni CTA.
 - Sustiprinti prieinamuma: kontrastas, `focus` busenos, klaviaturos navigacija, didesni klikabilus plotai.
 - Sukurti aiskesne vieso puslapio vizualine hierarchija: hero blokai, paneliu presetai, CTA zonos, nariu meniu ir paieska.
 - Forumo, naujienu ir shoutbox moduliams parengti savita, bet su bendra tema suderinama UI krypti.
 - Sutvarkyti media pateikima: `featured image`, galeriju santykiai, avataru fallback'ai, YouTube ir paveiksliuku embed stiliai.
+- Apibrezti ikonografijos strategija:
+- pasirinkti viena pagrindine biblioteka (`Bootstrap Icons` arba `Font Awesome`)
+- antrine biblioteka naudoti tik jei truksta konkreciu ikon
+- `Entypo` naudoti tik jei tam atsiras labai aiski prieziastis
+- tureti bendra ikon naudijimo zemelapi navigacijai, statusams ir veiksmams
 - Atnaujinti admin UX: dashboard korteles, `panels` drag-drop griztamasis rysis, `infusions` sveikatos badge ir aiskesni veiksmai.
 - Ilgainiui prideti temos personalizavimo krypti: `compact / wide` isdestymas, akcento spalvos, o veliau ir alternatyvios temos.
 
 ### Baigtumo kriterijai
 - Viesi ir admin dalis naudoja ta pacia komponentu ir spalvu kalba.
 - Kiekvienas pagrindinis modulis turi tvarkinga, lengvai skaitoma ir mobiliuose ekranuose nesubyrejancia isvaizda.
+- Ikonos naudojamos nuosekliai, nepriklausomai nuo puslapio ar modulio.
 - Dizaino sprendimai atsispindi ne tik CSS faile, bet ir `TODO` planuose pagal tema, admin ir modulius.
 
 ## v1.1 Stabilumas, admin ir saugumo pagrindai
@@ -87,6 +95,7 @@
 - aiskus nario meniu ir paskyros centro isdestymas
 - patogesnis `header` su paieska, pranesimais ir greitais veiksmais
 - nuoseklus profilio, komentaru ir aktyvumo korteliu dizainas
+- responsive paskyros vaizdas su patogiu mobiliu meniu ir `sticky` greitais veiksmais
 
 ### Baigtumo kriterijai
 - Naudotojas turi pilna paskyros centra.
@@ -185,6 +194,7 @@
 - forumo temu saraso hierarchija, autoriaus blokas, badge ir embed vizualai
 - naujienu korteles, hero blokai, autoriaus juosta ir media pateikimas
 - shoutbox kompaktinis ir detalus rodymo rezimai, aiskesnes zinuciu grupes ir busenos
+- daugiau semantiniu ikonu navigacijai, veiksmams, badge ir tuscioms busenoms
 
 ### Baigtumo kriterijai
 - Forumas ir naujienos turi ne tik bazini CRUD, bet ir bendruomenes funkcijas.
@@ -239,6 +249,7 @@
 - Temu ir UI architektura:
 - isskirti bendrus UI helperius, view komponentu dalis ir `design token` saltinius
 - palaipsniui mazinti atsitiktinius vienkartinius stilius puslapiuose
+- apsvarstyti bendra ikon renderinimo helperi, kad viesoje ir admin dalyje ikonos butu kvieciamos vienodai
 
 ### Baigtumo kriterijai
 - Versijos ir atnaujinimai turi aisku admin centra.
@@ -295,6 +306,7 @@
 - galutinis kontrasto ir prieinamumo auditas
 - media lazy loading ir `responsive image` strategija
 - vieningas ikonografijos ir iliustraciju stilius
+- pilnas responsive auditas telefonu, plansetese ir mazesniuose laptop ekranuose
 
 ### Baigtumo kriterijai
 - Projektas turi bazini SEO rinkini ir admin audita.
