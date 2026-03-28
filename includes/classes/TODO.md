@@ -73,6 +73,12 @@
 - [ ] `App\\System\\TemporaryFileCleanupService`
 - [ ] `App\\System\\HookDebugger`
 - [ ] `App\\System\\DependencyGraphService`
+- [ ] `App\\MiniCMS\\Infusions\\ModuleHealthResult`
+- [ ] `App\\MiniCMS\\Infusions\\ModuleCompatibilityResult`
+- [ ] `App\\MiniCMS\\Infusions\\ModuleInspectorService`
+- [ ] `App\\MiniCMS\\Infusions\\ModuleLifecycleEvent`
+- [ ] `App\\MiniCMS\\Infusions\\ModuleSettingsContract`
+- [ ] `App\\MiniCMS\\Infusions\\ModuleDiagnosticsContract`
 
 ### Turinys ir paieska
 - [ ] `App\\Search\\SearchIndexService`

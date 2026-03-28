@@ -235,6 +235,15 @@
 - suderinamumas su MiniCMS / PHP / pletiniais
 - ka modulis prideda: route'us, teises, paneles, hook'us
 - sveikatos patikra ir `upgrade preview`
+- aiskus badge rinkinys: `SDK`, `Legacy`, `Has migrations`, `Upgrade available`, `Missing manifest`
+- modulio detales vaizdas: versijos, priklausomybes, teises, admin meniu, assets, hook'ai ir paskutiniai upgrade logai
+- `safe uninstall` patikra: duomenu kiekis, priklausomybes, perspejimai ir patvirtinimo eiga
+- `soft disable mode`, kad modulis galetu buti isjungtas nepaliekant sugedusio UI
+- nustatymu ir diagnostikos kontraktai, kad modulis galetu deklaruoti savo `settings` ir `health` skiltis vienodu budu
+- `developer mode`, rodantis `module_class`, migracijas, hook'us, manifest laukus ir diagnostikos informacija
+- import / export kryptis modulio nustatymams ir konfiguracijai
+- `seed / demo data` strategija: schema, pradinis seed ir demo duomenys turi buti aiskiai atskirti
+- gyvenimo ciklo hook'ai: `before_install`, `after_install`, `before_upgrade`, `after_upgrade`, `before_uninstall`, `after_uninstall`
 - Core update center:
 - changelog
 - checksum validacija
@@ -284,6 +293,8 @@
 - `InfusionManifest`, `InfusionContext`, `AbstractInfusionModule`, `HookRegistry`, `InfusionSdk`
 - `tools/make-infusion-sdk.php` scaffold naujiems moduliams
 - palaipsnis esamu moduliu perkelimas i SDK klases po viena
+- `ModuleHealthResult`, `ModuleCompatibilityResult` ir `ModuleInspectorService` modulio analizei ir admin UI
+- `ModuleLifecycleEvent`, `ModuleSettingsContract`, `ModuleDiagnosticsContract` vieningam modulio gyvenimo ciklui
 - bendras `comments engine` klasiu rinkinys branduolyje
 - bendras `notifications / activity feed` klasiu rinkinys branduolyje
 - bendras `media/embed` klasiu rinkinys branduolyje

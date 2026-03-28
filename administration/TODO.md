@@ -60,10 +60,28 @@
 - [ ] Rodyti, ka modulis prideda: route'us, teises, paneles, paieskos saltinius, hook'us.
 - [ ] Prideti aiskesni `upgrade preview`: changelog, migracijos zingsniai, rollback pastabos.
 - [ ] Prideti modulio sveikatos patikra: ar yra manifest, locale, assets, admin failas, schema.
+- [ ] Prideti aiskius moduliu badge:
+- `SDK`
+- `Legacy`
+- `Has migrations`
+- `Upgrade available`
+- `Missing manifest`
 - [ ] Padaryti aiskesni moduliu saraso vizualini atskyrima: pavadinimas, folder, versija, sveikatos badge ir pagrindinis veiksmas.
 - [ ] Prideti `grid / table` rodymo rezimus, jei moduliu kiekis isaugs.
 - [ ] Isryskinti moduliu `folder`, `slug`, busena ir veiksmus vienodomis admin badge taisyklemis.
 - [ ] Prideti ikonas modulio tipui, sveikatos busenai, atnaujinimui ir pagrindiniams veiksmams.
+- [ ] Prideti modulio detales vaizda arba sonine perziura:
+- versijos
+- priklausomybes ir konfliktai
+- teises, admin meniu, paneles, hook'ai
+- assets, locale, migrations ir paskutiniai upgrade logai
+- [ ] Prideti aisku `developer mode` rodini `infusions.php`, kuriame butu matomi `module_class`, registruoti hook'ai, manifest laukai ir diagnostikos kontraktai.
+- [ ] Prideti `safe uninstall` UI:
+- priklausomu moduliu perspejimai
+- duomenu kiekiu ar lenteliu santrauka
+- papildomas patvirtinimas pries pasalinima
+- [ ] Prideti modulio `settings` ir `diagnostics` nuorodu/logikos sutarti, kad admin UI vienodai rodytu, ka modulis moka.
+- [ ] Prideti modulio `import / export` veiksmu vieta ateities konfiguraciju ir preset'u keitimuisi.
 
 ### Admin irankiai ir saugumas
 - [ ] Prideti `Clear cache / Clear rate limits / Clear reset tokens` irankius.

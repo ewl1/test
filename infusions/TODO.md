@@ -49,6 +49,26 @@
 - `rollback_notes`
 - [ ] Padaryti, kad `administration/infusions.php` moketu rodyti suderinamuma, priklausomybes, konfliktus ir modulio sveikatos busena.
 - [ ] Vienodai pateikti modulio `admin`, `settings`, `health`, `upgrade` veiksmus, jei modulis juos turi.
+- [ ] Apibrezti `ModuleSettingsContract`, kad modulis vienodai deklaruotu savo nustatymu forma, sekcijas ir validavimo taisykles.
+- [ ] Apibrezti `ModuleDiagnosticsContract`, kad modulis galetu grazinti savo health check, missing files, missing tables ir konfiguracijos busenas.
+- [ ] Apibrezti moduliu gyvenimo ciklo hook'us:
+- `before_install`, `after_install`
+- `before_upgrade`, `after_upgrade`
+- `before_uninstall`, `after_uninstall`
+- [ ] Susitarti del `seed / demo data` strategijos:
+- schema, pradinis seed ir demo turinys turi buti atskirti
+- modulis turi galeti isidiegti be demo duomenu
+- [ ] Apibrezti `soft disable mode`, kad isjungtas modulis nepaliktu sugedusiu paneliu, route'u ar admin nuorodu.
+- [ ] Apibrezti `safe uninstall` taisykles:
+- patikrinti ar yra priklausomu moduliu
+- parodyti kiek duomenu bus paliesta
+- reikalauti papildomo patvirtinimo rizikingiems salinimams
+- [ ] Apibrezti moduliu `import / export` krypti nustatymams, seed'ams ar lokaliems presetams.
+- [ ] Apibrezti `developer mode`, kuriame modulis rodo:
+- `module_class`
+- registruotus hook'us
+- migraciju sarasa
+- manifest laukus ir diagnostikos santrauka
 - [ ] Apibrezti, kaip moduliai skelbia:
 - savo route'us
 - savo teises
@@ -77,3 +97,6 @@
 - kategorija / tipas
 - leidimu filtras
 - svoris/relevancija
+- [ ] Apibrezti moduliu badge ir detalios perziuros sutarti:
+- `SDK`, `Legacy`, `Has migrations`, `Upgrade available`, `Missing manifest`
+- ka modulis rodo korteleje, o ka detaliame rodinyje
