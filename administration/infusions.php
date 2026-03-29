@@ -62,6 +62,15 @@ $installedFolders = [];
 foreach ($installed as $i) {
     $installedFolders[$i['folder']] = $i;
 }
+$versionSummaries = [];
+foreach ($scanned as $folder => $meta) {
+    $versionSummaries[$folder] = get_infusion_version_summary($folder, $meta, $installedFolders[$folder] ?? null);
+}
+foreach ($installed as $inf) {
+    if (!isset($versionSummaries[$inf['folder']])) {
+        $versionSummaries[$inf['folder']] = get_infusion_version_summary($inf['folder'], $scanned[$inf['folder']] ?? null, $inf);
+    }
+}
 $migrationLockStatus = get_infusion_migration_lock_status();
 $recentMigrationActivity = get_recent_infusion_migration_activity(10);
 $recentRollbackActivity = get_recent_infusion_rollback_activity(6);
@@ -163,15 +172,22 @@ include THEMES . 'default/admin_header.php';
             <div class="card-header"><?= e(__('infusions.available')) ?></div>
             <div class="table-responsive">
                 <table class="table align-middle mb-0 admin-table-strong">
-                    <thead><tr><th>Folder</th><th>Pavadinimas</th><th>Versija</th><th></th></tr></thead>
+                    <thead><tr><th>Folder</th><th>Pavadinimas</th><th>&#302;diegta</th><th>Manifest</th><th>Atnaujinimas</th><th></th></tr></thead>
                     <tbody>
                     <?php foreach ($scanned as $folder => $meta): ?>
                         <?php $developerMeta = $developerSnapshots[$folder] ?? null; ?>
+                        <?php $versionSummary = $versionSummaries[$folder] ?? get_infusion_version_summary($folder, $meta, $installedFolders[$folder] ?? null); ?>
                         <tr>
                             <td><code class="admin-mono-pill admin-folder-label"><?= e($folder) ?></code></td>
                             <td>
                                 <div class="fw-semibold admin-strong-cell"><?= e($meta['name']) ?></div>
                                 <div class="small admin-table-description admin-description-strong"><?= e($meta['description'] ?? '') ?></div>
+                                <div class="admin-version-summary mt-2">
+                                    <span class="admin-version-pill"><strong>Idiegta:</strong> <?= e($versionSummary['installed_display']) ?></span>
+                                    <span class="admin-version-pill"><strong>Manifest:</strong> <?= e($versionSummary['manifest_display']) ?></span>
+                                    <span class="admin-version-pill"><strong>Atnaujinimas:</strong> <?= e($versionSummary['available_upgrade_display']) ?></span>
+                                    <span class="badge <?= e($versionSummary['status_badge_class']) ?> admin-version-state-badge"><?= e($versionSummary['status_label']) ?></span>
+                                </div>
                                 <?php if ($developerMode && $developerMeta): ?>
                                     <div class="d-flex flex-wrap gap-1 mt-2">
                                         <span class="badge text-bg-dark admin-dev-badge"><?= e($developerMeta['is_sdk_module'] ? 'SDK' : 'Legacy') ?></span>
@@ -189,7 +205,14 @@ include THEMES . 'default/admin_header.php';
                                     </div>
                                 <?php endif; ?>
                             </td>
-                            <td><span class="admin-table-note admin-version-chip"><?= e($meta['version'] ?? '0.0.0') ?></span></td>
+                            <td><span class="admin-table-note admin-version-chip"><?= e($versionSummary['installed_display']) ?></span></td>
+                            <td><span class="admin-table-note admin-version-chip"><?= e($versionSummary['manifest_display']) ?></span></td>
+                            <td>
+                                <span class="admin-table-note admin-version-chip"><?= e($versionSummary['available_upgrade_display']) ?></span>
+                                <div class="mt-1">
+                                    <span class="badge <?= e($versionSummary['status_badge_class']) ?> admin-version-state-badge"><?= e($versionSummary['status_label']) ?></span>
+                                </div>
+                            </td>
                             <td>
                                 <?php if (isset($installedFolders[$folder])): ?>
                                     <span class="badge text-bg-success"><?= e(__('infusions.installed_badge')) ?></span>
@@ -221,13 +244,18 @@ include THEMES . 'default/admin_header.php';
                         $manifest = $scanned[$inf['folder']] ?? null;
                         $developerMeta = $developerSnapshots[$inf['folder']] ?? null;
                         $displayName = $manifest['name'] ?? $inf['name'];
-                        $installedVersion = get_installed_infusion_version((int)$inf['id']) ?: '0.0.0';
-                        $manifestVersion = $manifest['version'] ?? $installedVersion;
+                        $versionSummary = $versionSummaries[$inf['folder']] ?? get_infusion_version_summary($inf['folder'], $manifest, $inf);
                     ?>
                         <tr>
                             <td class="admin-strong-cell"><?= (int)$inf['id'] ?></td>
                             <td>
                                 <span class="fw-semibold admin-strong-cell"><?= e($displayName) ?></span>
+                                <div class="admin-version-summary mt-2">
+                                    <span class="admin-version-pill"><strong>Idiegta:</strong> <?= e($versionSummary['installed_display']) ?></span>
+                                    <span class="admin-version-pill"><strong>Manifest:</strong> <?= e($versionSummary['manifest_display']) ?></span>
+                                    <span class="admin-version-pill"><strong>Atnaujinimas:</strong> <?= e($versionSummary['available_upgrade_display']) ?></span>
+                                    <span class="badge <?= e($versionSummary['status_badge_class']) ?> admin-version-state-badge"><?= e($versionSummary['status_label']) ?></span>
+                                </div>
                                 <?php if ($developerMode && $developerMeta): ?>
                                     <div class="d-flex flex-wrap gap-1 mt-2">
                                         <span class="badge text-bg-dark admin-dev-badge"><?= e($developerMeta['is_sdk_module'] ? 'SDK' : 'Legacy') ?></span>
@@ -246,8 +274,8 @@ include THEMES . 'default/admin_header.php';
                                 <?php endif; ?>
                             </td>
                             <td><code class="admin-mono-pill admin-folder-label"><?= e($inf['folder']) ?></code></td>
-                            <td><span class="admin-table-note admin-version-chip"><?= e($installedVersion) ?></span></td>
-                            <td><span class="admin-table-note admin-version-chip"><?= e($manifestVersion) ?></span></td>
+                            <td><span class="admin-table-note admin-version-chip"><?= e($versionSummary['installed_display']) ?></span></td>
+                            <td><span class="admin-table-note admin-version-chip"><?= e($versionSummary['manifest_display']) ?></span></td>
                             <td>
                                 <div class="d-flex flex-wrap gap-2">
                                     <?php if (!empty($manifest['admin']) && !empty($manifest['has_admin_file'])): ?>
@@ -262,7 +290,7 @@ include THEMES . 'default/admin_header.php';
                                             <button class="btn btn-sm btn-outline-success admin-action-button" name="action" value="enable"><?= e(__('infusions.enable')) ?></button>
                                         <?php endif; ?>
                                     </form>
-                                    <?php if (version_compare($manifestVersion, $installedVersion, '>')): ?>
+                                    <?php if ($versionSummary['status'] === 'upgrade_available'): ?>
                                         <form method="post" class="d-inline">
                                             <?= csrf_field() ?>
                                             <input type="hidden" name="id" value="<?= (int)$inf['id'] ?>">

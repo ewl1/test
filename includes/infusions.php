@@ -880,6 +880,80 @@ function get_installed_infusion_version($infusionId)
     return $stmt->fetchColumn() ?: null;
 }
 
+function get_infusion_version_summary($folder, ?array $manifest = null, $installed = null)
+{
+    $folder = trim((string)$folder);
+    $manifestData = is_array($manifest) ? $manifest : null;
+
+    if ($manifestData === null && $folder !== '') {
+        try {
+            $manifestData = read_infusion_manifest($folder);
+        } catch (Throwable $e) {
+            $manifestData = null;
+        }
+    }
+
+    if ($installed === null && $folder !== '') {
+        $installed = get_installed_infusion_by_folder($folder);
+    } elseif (is_numeric($installed)) {
+        $installed = get_installed_infusion((int)$installed);
+    }
+
+    $isInstalled = is_array($installed) && !empty($installed['id']);
+    $installedVersion = $isInstalled ? (get_installed_infusion_version((int)$installed['id']) ?: '0.0.0') : null;
+    $manifestVersion = null;
+
+    if (is_array($manifestData)) {
+        $candidate = trim((string)($manifestData['version'] ?? ''));
+        if ($candidate !== '') {
+            $manifestVersion = $candidate;
+        }
+    }
+
+    if (!$isInstalled && $manifestVersion === null) {
+        $manifestVersion = '0.0.0';
+    }
+
+    $availableUpgrade = null;
+    $status = 'not_installed';
+    $statusLabel = 'Neidiegtas';
+    $statusBadgeClass = 'text-bg-secondary';
+
+    if ($isInstalled) {
+        if ($manifestVersion === null) {
+            $status = 'manifest_missing';
+            $statusLabel = 'Manifest truksta';
+            $statusBadgeClass = 'text-bg-danger';
+        } elseif (version_compare($manifestVersion, $installedVersion, '>')) {
+            $status = 'upgrade_available';
+            $statusLabel = 'Yra atnaujinimas';
+            $statusBadgeClass = 'text-bg-warning';
+            $availableUpgrade = $manifestVersion;
+        } elseif (version_compare($manifestVersion, $installedVersion, '<')) {
+            $status = 'manifest_older';
+            $statusLabel = 'Manifest senesnis';
+            $statusBadgeClass = 'text-bg-danger';
+        } else {
+            $status = 'up_to_date';
+            $statusLabel = 'Aktualu';
+            $statusBadgeClass = 'text-bg-success';
+        }
+    }
+
+    return [
+        'is_installed' => $isInstalled,
+        'installed_version' => $installedVersion,
+        'installed_display' => $installedVersion ?? '-',
+        'manifest_version' => $manifestVersion,
+        'manifest_display' => $manifestVersion ?? '-',
+        'available_upgrade' => $availableUpgrade,
+        'available_upgrade_display' => $availableUpgrade ?? '-',
+        'status' => $status,
+        'status_label' => $statusLabel,
+        'status_badge_class' => $statusBadgeClass,
+    ];
+}
+
 function list_migration_steps($folder)
 {
     $dir = infusion_migrations_dir($folder);

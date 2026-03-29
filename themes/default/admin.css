@@ -12,6 +12,9 @@
     --admin-warning: #f59e0b;
     --admin-radius: 16px;
     --admin-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
+    --mc-icon-gap: 0.45rem;
+    --mc-icon-size: 1rem;
+    --mc-icon-muted: rgba(255, 255, 255, 0.72);
 }
 
 html, body {
@@ -52,6 +55,42 @@ body {
     letter-spacing: 0.01em;
     font-size: 1.65rem;
     white-space: nowrap;
+    text-rendering: optimizeLegibility;
+}
+
+.nav-link i,
+.dropdown-item i,
+.btn i,
+.card-title i,
+.panel-title i,
+.table .btn i,
+.alert i {
+    display: inline-block;
+    min-width: 1.1em;
+    margin-right: var(--mc-icon-gap);
+    text-align: center;
+    vertical-align: -0.08em;
+}
+
+.btn i:only-child,
+.dropdown-item i:only-child,
+.nav-link i:only-child {
+    margin-right: 0;
+}
+
+.nav-link i,
+.dropdown-item i {
+    color: inherit;
+}
+
+.text-muted i {
+    color: var(--mc-icon-muted);
+}
+
+.fa-fw,
+.icon-fw {
+    width: 1.25em;
+    text-align: center;
 }
 
 .navbar .nav-link,
@@ -368,6 +407,35 @@ code {
 .admin-version-chip {
     color: #f8fafc;
     font-weight: 800;
+}
+
+.admin-version-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    align-items: center;
+}
+
+.admin-version-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
+    background: rgba(148, 163, 184, 0.14);
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    color: #e2e8f0;
+    font-size: 0.78rem;
+    line-height: 1.2;
+}
+
+.admin-version-pill strong {
+    color: #f8fafc;
+    font-weight: 800;
+}
+
+.admin-version-state-badge {
+    letter-spacing: 0.01em;
 }
 
 .admin-message-cell {

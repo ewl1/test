@@ -231,6 +231,7 @@
 - installed version
 - manifest version
 - available upgrade
+- `administration/infusions.php` jau vienodai rodo siuos tris laukus moduliu suvestineje.
 - Infusion valdymo centras:
 - priklausomybes ir konfliktai
 - suderinamumas su MiniCMS / PHP / pletiniais
