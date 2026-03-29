@@ -24,6 +24,7 @@
 
 ### Design system
 - [ ] Apibrezti bendrus `design token` saltinius: spalvos, tarpai, radius, seseliai, ikonografija, `z-index`.
+- [ ] Islaikyti tema kaip vieninteli bendra `:root` tokenu saltini, kuri moduliu CSS vartoja, o ne perraso globaliai.
 - [ ] Apibrezti `layout system` pagrinda: konteineriai, `content/sidebar/full-width`, tarpai tarp sekciju ir bendros grid taisykles.
 - [ ] Paruosti bazinius puslapiu layout sablonus: `home`, vidinis turinys, forumas, naujiena, profilis.
 - [ ] Sukurti tipografijos skale antrastems, turiniui, lentelems, badge ir pagalbiniams tekstams.

@@ -250,6 +250,8 @@
 - moduliu galimybiu deklaravimo taisykle jau sutarta: teises skelbiamos per `manifest.permissions`, paneles per `manifest.provides.panels` ir realu `panel.php` arba klase, paieskos saltiniai per `ModuleSearchContract`, pranesimu ivykius per `ModuleEventContract`, o hook'ai i branduoli per `registerHooks()` ir pasirenkamai `manifest.hooks`.
 - media/embed taisykle jau sutarta: modulis savo leidimus vietiniams paveiksliukams, YouTube embed'ams, limitams ir validacijoms deklaruoja per `manifest.media`, o vykdymas eina per bendra branduolio media sluoksni.
 - vizualiniu busenu taisykle jau sutarta: `featured`, `new`, `locked`, `disabled`, `warning`, `needs_update` pateikiamos per `ModulePresentationContract` badge ir meta laukus, su vienodu ikon ir `tone` zemelapiu viesam bei admin rodiniui.
+- bendra moduliu UI sutartis jau sutarta: moduliai korteles, lenteles, tuscias busenas, pranesimus, antrastes, meta juostas ir integracija i `content/sidebar/full-width` turi gristi bendrais temos komponentais ir neperrasyti puslapio karkaso savavaliskai.
+- `design token` taisykle jau sutarta: bendri spalvu, tarpu, radius, seseliu, tipografijos ir kitu UI kintamuju saltiniai gyvena temoje, o moduliai juos vartoja ir tik isimtinai naudoja savo lokalu CSS specifiniams komponentams.
 - isplestas manifest standartas:
 - `min_core_version`, `min_php_version`
 - `required_extensions`

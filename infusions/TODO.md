@@ -27,13 +27,17 @@
 - [ ] Ta pacia `assets/locale/classes` struktura pritaikyti visiems aktyviems moduliams.
 - [ ] Ta pacia `support/` skaidymo taisykle pritaikyti visiems legacy moduliams, kad neliktu monolitiniu `feature_pack` tipo failu.
 - [ ] Sukurti vieninga manifest lokalizavimo strategija.
-- [ ] Apibrezti bendra moduliu UI sutarti:
-- korteles, lenteles, tuscios busenos, info/klaidu pranesimai
-- admin veiksmu mygtukai ir sveikatos badge
-- viesu vaizdu antrastes, meta juostos ir turinio tipografija
-- ikonografijos taisykles moduliams: navigacija, statusai, veiksmai ir media tipai
-- layout integracijos taisykles moduliams: kaip modulis isikabina i `content`, `sidebar`, `full-width` ir paneliu zonas
-- [ ] Susitarti, kaip moduliai naudos bendrus temos `design token` ir kada jiems leidziami nuosavi CSS variantai.
+- [x] Apibrezti bendra moduliu UI sutarti:
+- korteles, lenteles, tuscios busenos ir info/klaidu pranesimai turi remtis bendrais temos komponentais, o ne modulio atsitiktiniais vienkartiniais stiliais
+- admin veiksmu mygtukai ir sveikatos badge turi naudoti vienoda `tone`, ikonografijos ir isdestymo kalba
+- viesu vaizdu antrastes, meta juostos ir turinio tipografija turi naudoti ta pacia hierarchija kaip tema: antraste, meta, turinio blokas, papildoma informacija
+- ikonografijos taisykles moduliams remiasi bendra `Font Awesome 7` biblioteka navigacijai, statusams, veiksmams ir media tipams
+- layout integracija turi naudoti tik sutartas zonas: `content`, `sidebar`, `full-width` ir paneliu vietas, o ne savavaliskus globalius wrapperius
+- [x] Susitarti, kaip moduliai naudos bendrus temos `design token` ir kada jiems leidziami nuosavi CSS variantai.
+- bendri `design token` saltiniai gyvena temoje per CSS kintamuosius (`:root`) ir yra pagrindinis spalvu, tarpu, radius, seseliu, tipografijos ir `z-index` saltinis
+- modulis turi vartoti esamus temos tokenus, kai sprendzia bendrus UI elementus: mygtukus, badge, korteles, lenteles, pranesimus, meta juostas
+- nuosavas modulio CSS leidziamas tik tada, kai modulis turi specifini komponenta ar isdestyma, kurio tema nesprendzia bendrai
+- modulio CSS turi buti apribotas modulio prefiksu ar konteineriu ir negali globaliai perrasyti temos tokenu ar baziniu komponentu be atskiro sprendimo
 - [x] Susitarti, kaip moduliai naudos bendra ikon biblioteka ir kada galima papildoma rinkini naudoti lokaliai.
 - pagrindine bendra biblioteka moduliams yra `Font Awesome 7`, kraunama is `includes/plugins/webicon/fa7/`
 - modulis gali naudoti lokalu papildoma ikon rinkini tik jei bendra biblioteka neturi reikiamu ikon ir yra aiski produkto priezastis

@@ -48,6 +48,39 @@
 - Hook'ai i branduoli registruojami per `registerHooks()`; jei modulis nori juos parodyti deklaratyviai, jis papildomai gali naudoti `manifest.hooks`.
 - Vienas ir tas pats dalykas neturi buti deklaruojamas dviem skirtingais budais be aiskios priezasties. Manifest skirtas statinei metainformacijai, kontraktai ir `registerHooks()` skirtos vykdomai logikai.
 
+## Bendra moduliu UI sutartis
+- Moduliu UI turi remtis bendrais temos komponentais ir vizualine kalba, o ne atsitiktiniais vienkartiniais stiliais kiekviename modulyje.
+- Korteles, lenteles, tuscios busenos, info ir klaidu pranesimai turi naudoti bendrus temos komponentu stilius ir semantinius `tone` raktus.
+- Admin veiksmu mygtukai ir sveikatos badge turi naudoti vienoda seka ir pateikima:
+- veiksmai `Admin`, `Settings`, `Health`, `Upgrade`
+- badge ir busenos pateikiamos per sutartus `key`, `icon` ir `tone`
+- Viesuose rodiniuose modulis turi naudoti ta pacia turinio hierarchija:
+- antraste
+- meta juosta
+- pagrindinis turinio blokas
+- papildoma informacija ar salutiniai blokai
+- Ikonografija moduliams remiasi bendra `Font Awesome 7` biblioteka, jei atskirai nesutarta kitaip.
+- Layout integracija moduliams leidziama tik per sutartas zonas:
+- `content`
+- `sidebar`
+- `full-width`
+- paneliu vietas, kurias valdo branduolys
+- Modulis neturi kurti savavalisku globaliu wrapperiu ar perrasyti bendro puslapio karkaso vien del savo UI.
+
+## Design token ir modulio CSS taisykles
+- Bendri `design token` saltiniai gyvena temoje per CSS kintamuosius `:root`.
+- Jie yra pagrindinis spalvu, tarpu, radius, seseliu, tipografijos, `z-index` ir baziniu komponentu vizualines kalbos saltinis.
+- Modulis turi naudoti esamus temos tokenus visiems bendriems UI elementams:
+- mygtukams
+- badge
+- kortelems
+- lentelems
+- formoms
+- pranesimams
+- meta juostoms
+- Nuosavas modulio CSS leidziamas tik tada, kai modulis turi specifini komponenta ar isdestyma, kurio tema nesprendzia bendrai.
+- Toks CSS turi buti apribotas modulio prefiksu ar konteineriu ir negali globaliai perrasyti temos `:root` tokenu ar baziniu komponentu be atskiro branduolio sprendimo.
+
 ## Media ir embed taisykliu deklaravimas
 - Modulio media/embed politika deklaruojama per `manifest.media`.
 - Jei `manifest.media` nenurodytas, pagal nutylejima laikoma, kad papildomi upload ir embed leidimai yra isjungti.
