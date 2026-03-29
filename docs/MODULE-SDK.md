@@ -359,6 +359,42 @@ Taisykles:
 - modulis gali deklaruoti papildomus savo badge, meta laukus ir detalaus rodinio sekcijas
 - korteleje turi likti tik trumpa santrauka, o detaliame rodinyje gali buti issamesnes sekcijos
 
+Vizualiniu busenu taisykles:
+- bendri busenu raktai moduliams yra:
+- `featured`
+- `new`
+- `locked`
+- `disabled`
+- `warning`
+- `needs_update`
+- jei modulis nori rodyti sias busenas, rekomenduojama jas teikti per `card.badges` ir `card.meta`
+- badge strukturoje rekomenduojami raktai:
+- `key`
+- `label`
+- `icon`
+- `tone`
+- meta laukuose rekomenduojami raktai:
+- `key`
+- `label`
+- `value`
+- `icon`
+- viesam ir admin rodiniui toms pacioms busenoms turi buti naudojami tie patys `key`, kad branduolys galetu jas vienodai stilizuoti
+- rekomenduojamas ikonografijos zemelapis:
+- `featured` -> `fa-star`
+- `new` -> `fa-sparkles`
+- `locked` -> `fa-lock`
+- `disabled` -> `fa-ban`
+- `warning` -> `fa-triangle-exclamation`
+- `needs_update` -> `fa-rotate`
+- rekomenduojami `tone` raktai:
+- `featured` -> `success` arba `accent`
+- `new` -> `info`
+- `locked` -> `secondary`
+- `disabled` -> `dark`
+- `warning` -> `warning`
+- `needs_update` -> `primary`
+- jei modulis naudoja papildomas savo busenas, jis turi neperrasyti siu core raktu ir pasirinkti naujus, semantiskus `key`
+
 Developer mode per `administration/infusions.php` rodo, ar modulis si kontrakta igyvendina, kiek turi korteles badge, meta lauku, santrauku ir detaliu sekciju.
 
 ## Modulio struktura

@@ -98,10 +98,12 @@
 - ar leidziami YouTube embed'ai nurodoma per `manifest.media.embeds.youtube.enabled`
 - failu tipai, dydziai, matmenys, kiekiai ir `https/host` validacijos nurodomi per `manifest.media.validation`
 - jei modulis media taisykliu nedeklaruoja, pagal nutylejima laikoma, kad papildomi upload/embed leidimai yra isjungti
-- [ ] Vienodai apibrezti, kaip modulis pateikia vizualines busenas:
-- `featured`, `new`, `locked`, `disabled`, `warning`, `needs update`
-- kokie badge ir meta laukeliai naudojami viesame ir admin rodinyje
-- kokios ikonos siejamos su tomis busenomis
+- [x] Vienodai apibrezti, kaip modulis pateikia vizualines busenas:
+- bendri busenu raktai yra `featured`, `new`, `locked`, `disabled`, `warning`, `needs_update`
+- viesam ir admin rodiniui busenos pateikiamos per `ModulePresentationContract` korteles `badges` ir `meta`
+- `featured`, `new`, `locked`, `disabled`, `warning`, `needs_update`
+- badge naudoja trumpa `label`, `key`, pasirenkama `icon` ir `tone`, o meta juosta naudoja pilnesni `label/value` poru formatą
+- rekomenduojamos ikonos: `fa-star`, `fa-sparkles`, `fa-lock`, `fa-ban`, `fa-triangle-exclamation`, `fa-rotate`
 - [x] Vienodai apibrezti, kaip modulis pateikia paieskos metaduomenis:
 - indeksuojami laukai
 - rezultato URL
