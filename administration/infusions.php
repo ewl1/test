@@ -469,6 +469,14 @@ include THEMES . 'default/admin_header.php';
                                         <?= !empty($snapshot['settings_contract']['error']) ? e('klaida: ' . $snapshot['settings_contract']['error']) : 'neigyvendintas' ?>
                                     <?php endif; ?>
                                 </div>
+                                <div class="small admin-page-subtitle">
+                                    Diagnostics contract:
+                                    <?php if (!empty($snapshot['diagnostics_contract']['implements'])): ?>
+                                        taip | check'ai <?= (int)$snapshot['diagnostics_contract']['health_check_count'] ?> | problemos <?= (int)$snapshot['diagnostics_contract']['health_issue_count'] ?> | missing files <?= (int)$snapshot['diagnostics_contract']['missing_file_count'] ?> | missing tables <?= (int)$snapshot['diagnostics_contract']['missing_table_count'] ?> | config busenos <?= (int)$snapshot['diagnostics_contract']['configuration_state_count'] ?>
+                                    <?php else: ?>
+                                        <?= !empty($snapshot['diagnostics_contract']['error']) ? e('klaida: ' . $snapshot['diagnostics_contract']['error']) : 'neigyvendintas' ?>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </div>
 

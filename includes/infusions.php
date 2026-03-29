@@ -309,6 +309,71 @@ function get_infusion_settings_contract_summary($folder, $infusionId = 0, ?array
     return $summary;
 }
 
+function count_infusion_diagnostics_issues(array $items)
+{
+    $issueCount = 0;
+
+    foreach ($items as $item) {
+        $status = strtolower(trim((string)($item['status'] ?? $item['state'] ?? 'ok')));
+        if ($status === '' || in_array($status, ['ok', 'pass', 'passed', 'success', 'healthy', 'info'], true)) {
+            continue;
+        }
+
+        $issueCount++;
+    }
+
+    return $issueCount;
+}
+
+function get_infusion_diagnostics_contract_summary($folder, $infusionId = 0, ?array $manifest = null)
+{
+    $summary = [
+        'implements' => false,
+        'interface' => \App\MiniCMS\Infusions\ModuleDiagnosticsContract::class,
+        'health_checks' => [],
+        'missing_files' => [],
+        'missing_tables' => [],
+        'configuration_states' => [],
+        'health_check_count' => 0,
+        'health_issue_count' => 0,
+        'missing_file_count' => 0,
+        'missing_table_count' => 0,
+        'configuration_state_count' => 0,
+        'configuration_issue_count' => 0,
+        'error' => null,
+    ];
+
+    try {
+        $module = infusion_sdk_module($folder, (int)$infusionId, $manifest);
+    } catch (Throwable $e) {
+        $summary['error'] = $e->getMessage();
+        return $summary;
+    }
+
+    if (!$module instanceof \App\MiniCMS\Infusions\ModuleDiagnosticsContract) {
+        return $summary;
+    }
+
+    $healthChecks = (array)$module->diagnosticsHealthChecks();
+    $missingFiles = (array)$module->diagnosticsMissingFiles();
+    $missingTables = (array)$module->diagnosticsMissingTables();
+    $configurationStates = (array)$module->diagnosticsConfigurationStates();
+
+    $summary['implements'] = true;
+    $summary['health_checks'] = $healthChecks;
+    $summary['missing_files'] = $missingFiles;
+    $summary['missing_tables'] = $missingTables;
+    $summary['configuration_states'] = $configurationStates;
+    $summary['health_check_count'] = count($healthChecks);
+    $summary['health_issue_count'] = count_infusion_diagnostics_issues($healthChecks);
+    $summary['missing_file_count'] = count($missingFiles);
+    $summary['missing_table_count'] = count($missingTables);
+    $summary['configuration_state_count'] = count($configurationStates);
+    $summary['configuration_issue_count'] = count_infusion_diagnostics_issues($configurationStates);
+
+    return $summary;
+}
+
 function get_infusion_developer_snapshot($folder, $infusionId = 0, ?array $manifest = null)
 {
     $folder = trim((string)$folder);
@@ -482,6 +547,7 @@ function get_infusion_developer_snapshot($folder, $infusionId = 0, ?array $manif
         'settings_page' => trim((string)($rawManifest['settings_page'] ?? $manifest['settings_page'] ?? '')),
         'diagnostics_page' => trim((string)($rawManifest['diagnostics_page'] ?? '')),
         'settings_contract' => get_infusion_settings_contract_summary($folder, (int)($installed['id'] ?? $infusionId), $manifest),
+        'diagnostics_contract' => get_infusion_diagnostics_contract_summary($folder, (int)($installed['id'] ?? $infusionId), $manifest),
     ];
 }
 

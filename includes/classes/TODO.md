@@ -81,7 +81,7 @@
 - [ ] `App\\MiniCMS\\Infusions\\ModuleInspectorService`
 - [ ] `App\\MiniCMS\\Infusions\\ModuleLifecycleEvent`
 - [x] `App\\MiniCMS\\Infusions\\ModuleSettingsContract`
-- [ ] `App\\MiniCMS\\Infusions\\ModuleDiagnosticsContract`
+- [x] `App\\MiniCMS\\Infusions\\ModuleDiagnosticsContract`
 
 ### Turinys ir paieska
 - [ ] `App\\Search\\SearchIndexService`

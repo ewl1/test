@@ -10,6 +10,7 @@
 - `App\MiniCMS\Infusions\InfusionModuleInterface`
 - `App\MiniCMS\Infusions\AbstractInfusionModule`
 - `App\MiniCMS\Infusions\ModuleSettingsContract`
+- `App\MiniCMS\Infusions\ModuleDiagnosticsContract`
 - `App\MiniCMS\Infusions\SimplePanelModule`
 - `App\MiniCMS\Infusions\HookRegistry`
 - `App\MiniCMS\Infusions\InfusionSdk`
@@ -22,6 +23,7 @@
 - `administration/infusions.php` rodo aktyvu migraciju lock, paskutinius zingsnius ir rollback istorija.
 - `bootstrap.php`, `admin.php` ir `panel.php` turi likti ploni, o proceduriniai helperiai turi keliauti i `support/`.
 - `ModuleSettingsContract` leidzia moduliui vienodai deklaruoti savo nustatymu sekcijas, formos schema ir validavimo taisykles.
+- `ModuleDiagnosticsContract` leidzia moduliui vienodai deklaruoti savo health check, missing files, missing tables ir konfiguracijos busenas.
 
 ## Admin veiksmu deklaravimas
 - `admin: true` ir realus `admin.php` leidzia branduoliui rodyti `Admin` veiksma.
@@ -88,6 +90,65 @@ Paskirtis:
 - `settingsValidationRules()`: validavimo taisykles pagal lauko rakta
 
 Developer mode per `administration/infusions.php` jau rodo, ar modulis si kontrakta igyvendina, ir kiek sekciju, lauku bei taisykliu jis deklaruoja.
+
+## ModuleDiagnosticsContract
+Jei modulis nori ne tik tureti `diagnostics_page`, bet ir vienodai deklaruoti savo diagnostikos duomenis, jis gali papildomai igyvendinti `ModuleDiagnosticsContract`.
+
+```php
+<?php
+
+namespace App\News;
+
+use App\MiniCMS\Infusions\AbstractInfusionModule;
+use App\MiniCMS\Infusions\ModuleDiagnosticsContract;
+
+final class NewsModule extends AbstractInfusionModule implements ModuleDiagnosticsContract
+{
+    public function diagnosticsHealthChecks(): array
+    {
+        return [
+            [
+                'key' => 'table_exists',
+                'label' => 'Pagrindine lentele',
+                'status' => 'ok',
+                'message' => 'Lentele rasta',
+            ],
+        ];
+    }
+
+    public function diagnosticsMissingFiles(): array
+    {
+        return [];
+    }
+
+    public function diagnosticsMissingTables(): array
+    {
+        return [];
+    }
+
+    public function diagnosticsConfigurationStates(): array
+    {
+        return [
+            [
+                'key' => 'news_per_page',
+                'label' => 'Naujienu puslapyje',
+                'status' => 'ok',
+                'value' => 10,
+                'expected' => '1-100',
+                'message' => 'Reiksme tinkama',
+            ],
+        ];
+    }
+}
+```
+
+Paskirtis:
+- `diagnosticsHealthChecks()`: bendri modulio sveikatos patikrinimai
+- `diagnosticsMissingFiles()`: trukstami failai ar katalogai
+- `diagnosticsMissingTables()`: trukstamos DB lenteles
+- `diagnosticsConfigurationStates()`: svarbiu konfiguracijos raktu busenos
+
+Developer mode per `administration/infusions.php` jau rodo, ar modulis si kontrakta igyvendina, kiek jis turi check'u, missing files, missing tables ir konfiguracijos busenu.
 
 ## Modulio struktura
 ```text
@@ -326,3 +387,4 @@ Generatorius sukuria:
 - `support/` katalogas yra rekomenduojamas tada, kai modulyje dar reikia legacy proceduriniu helperiu.
 - Venkite vieno monolitinio failo kaip `feature_pack.php`: geriau skaidyti i `support/schema.php`, `support/settings.php`, `support/admin.php` ir pan.
 - Jei modulis turi atskirus nustatymus, rekomenduojama kartu su `settings_page` igyvendinti ir `ModuleSettingsContract`, kad branduolys galetu vienodai suprasti jo nustatymu struktura.
+- Jei modulis turi atskira diagnostika ar health check logika, rekomenduojama kartu su `diagnostics_page` igyvendinti ir `ModuleDiagnosticsContract`, kad branduolys galetu vienodai suprasti modulio sveikatos duomenis.

@@ -255,6 +255,15 @@ Sis modulis sugeneruotas per MiniCMS Module SDK scaffold.
   - validavimo taisykles
 - `administration/infusions.php` developer mode tada matys, ar modulis si kontrakta igyvendina.
 
+## Diagnostics contract
+- Jei modulis turi savo health check ar diagnostikos puslapi, rekomenduojama klasei papildomai igyvendinti `App\\MiniCMS\\Infusions\\ModuleDiagnosticsContract`.
+- Ta sutartis leidzia vienodai deklaruoti:
+  - health checks
+  - missing files
+  - missing tables
+  - konfiguracijos busenas
+- `administration/infusions.php` developer mode tada matys, ar modulis si kontrakta igyvendina.
+
 ## Standartas
 - `bootstrap.php`, `admin.php` ir `panel.php` turi likti ploni entrypoint failai.
 - Jei modulyje laikinai dar reikia proceduriniu helperiu, jie keliauja i `support/` ir skaidomi pagal atsakomybe.

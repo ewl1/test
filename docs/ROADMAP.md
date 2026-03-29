@@ -238,6 +238,7 @@
 - `administration/infusions.php` jau rodo suderinamumo, priklausomybiu, konfliktu ir sveikatos santraukas kiekvienam moduliui.
 - `administration/infusions.php` jau vienodai pateikia modulio `admin`, `settings`, `health` ir `upgrade` veiksmus, jei modulis juos deklaruoja.
 - `ModuleSettingsContract` jau apibreztas SDK lygyje ir `developer mode` rodo, ar modulis deklaruoja sekcijas, formos schema ir validavimo taisykles.
+- `ModuleDiagnosticsContract` jau apibreztas SDK lygyje ir `developer mode` rodo, ar modulis deklaruoja health checks, missing files, missing tables ir konfiguracijos busenas.
 - isplestas manifest standartas:
 - `min_core_version`, `min_php_version`
 - `required_extensions`
