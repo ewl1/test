@@ -38,6 +38,16 @@
 - Jei `diagnostics_page` nenurodytas, `administration/infusions.php` kaip bendra fallback sveikatos perziura naudoja `developer mode` detale su anchor `#infusion-dev-<folder>`.
 - Branduolio UI modulio veiksmus rodo vienoda tvarka: `Admin`, `Settings`, `Health`, `Upgrade`.
 
+## Modulio galimybiu deklaravimas
+- Modulis turi naudoti viena aisku deklaravimo vieta kiekvienam gebejimu tipui, kad `developer mode`, admin UI ir branduolys matytu ta pacia informacija.
+- Teises deklaruojamos per `manifest.permissions`.
+- Kiekvienas leidimas turi tureti stabilu `slug`, o `title` ir `description` laikomi manifest'e arba locale sluoksnyje.
+- Paneles deklaruojamos per `manifest.provides.panels`, o realus vykdymo taskas turi buti `panel.php`, `SimplePanelModule` arba atskira modulio klase.
+- Paieskos saltiniai deklaruojami per `ModuleSearchContract::searchMetadata()`.
+- Pranesimu ir activity feed ivykiu deklaravimas eina per `ModuleEventContract::publishedEvents()`.
+- Hook'ai i branduoli registruojami per `registerHooks()`; jei modulis nori juos parodyti deklaratyviai, jis papildomai gali naudoti `manifest.hooks`.
+- Vienas ir tas pats dalykas neturi buti deklaruojamas dviem skirtingais budais be aiskios priezasties. Manifest skirtas statinei metainformacijai, kontraktai ir `registerHooks()` skirtos vykdomai logikai.
+
 ## Ikonografijos taisykles moduliams
 - Pagrindine bendra ikon biblioteka visiems moduliams yra `Font Awesome 7`.
 - Bendra biblioteka kraunama is `includes/plugins/webicon/fa7/` ir turi buti naudojama navigacijai, busenoms, veiksmams ir tipiniams media simboliams.

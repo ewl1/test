@@ -80,13 +80,12 @@
 - registruotus hook'us
 - migraciju sarasa
 - manifest laukus ir diagnostikos santrauka
-- [ ] Apibrezti, kaip moduliai skelbia:
-- savo route'us
-- savo teises
-- savo paneles
-- paieskos saltinius
-- pranesimu ivykius
-- hook'us i branduoli
+- [x] Apibrezti, kaip moduliai skelbia:
+- savo teises per `manifest.permissions`
+- savo paneles per `manifest.provides.panels` ir realu `panel.php` arba paneles klase
+- paieskos saltinius per `ModuleSearchContract::searchMetadata()`
+- pranesimu ivykius per `ModuleEventContract::publishedEvents()`
+- hook'us i branduoli per `registerHooks()` ir pasirenkamai deklaratyviai per `manifest.hooks`
 - [x] Vienodai apibrezti, kaip modulis skelbia `notifications` ir `activity feed` ivykius:
 - ivykio tipas
 - ivykio pavadinimas ir santrauka

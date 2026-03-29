@@ -247,6 +247,7 @@
 - `developer mode` jau rodo `module_class`, registruotus runtime hook'us, migraciju sarasa, manifest laukus ir diagnostikos santrauka.
 - `safe uninstall` taisykles jau apibreztos: admin puslapis tikrina priklausomus modulius, rodo paveikiamu irasu santrauka ir rizikingiems salinimams reikalauja papildomo `folder` patvirtinimo.
 - `soft disable mode` taisykle jau sutarta: isjungtas modulis lieka idiegtas, bet neberegistruoja hook'u, neberodo paneliu, slepia viesas ir admin nuorodas, tiesioginius kreipinius uzdaro saugiu `404` arba `modulis isjungtas` atsaku ir netrina savo duomenu.
+- moduliu galimybiu deklaravimo taisykle jau sutarta: teises skelbiamos per `manifest.permissions`, paneles per `manifest.provides.panels` ir realu `panel.php` arba klase, paieskos saltiniai per `ModuleSearchContract`, pranesimu ivykius per `ModuleEventContract`, o hook'ai i branduoli per `registerHooks()` ir pasirenkamai `manifest.hooks`.
 - isplestas manifest standartas:
 - `min_core_version`, `min_php_version`
 - `required_extensions`
