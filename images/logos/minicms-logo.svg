@@ -1,21 +1,17 @@
-<svg width="240" height="64" viewBox="0 0 240 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="minicmsLogoTitle minicmsLogoDesc">
+<svg width="220" height="52" viewBox="0 0 220 52" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="minicmsLogoTitle minicmsLogoDesc">
   <title id="minicmsLogoTitle">MiniCMS logo</title>
-  <desc id="minicmsLogoDesc">Stylized MiniCMS logo with a layered blue symbol and wordmark.</desc>
+  <desc id="minicmsLogoDesc">Text-only MiniCMS wordmark.</desc>
   <defs>
-    <linearGradient id="minicmsLogoGradient" x1="10" y1="8" x2="54" y2="56" gradientUnits="userSpaceOnUse">
+    <linearGradient id="minicmsWordmarkGradient" x1="0" y1="10" x2="180" y2="44" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FAFC"/>
+      <stop offset="0.52" stop-color="#E2E8F0"/>
+      <stop offset="1" stop-color="#7DD3FC"/>
+    </linearGradient>
+    <linearGradient id="minicmsUnderlineGradient" x1="0" y1="0" x2="124" y2="0" gradientUnits="userSpaceOnUse">
       <stop stop-color="#38BDF8"/>
       <stop offset="1" stop-color="#2563EB"/>
     </linearGradient>
-    <linearGradient id="minicmsLogoAccent" x1="16" y1="14" x2="46" y2="50" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#E0F2FE"/>
-      <stop offset="1" stop-color="#BFDBFE"/>
-    </linearGradient>
   </defs>
-  <rect x="8" y="8" width="48" height="48" rx="16" fill="url(#minicmsLogoGradient)"/>
-  <rect x="16" y="16" width="14" height="24" rx="5" fill="url(#minicmsLogoAccent)"/>
-  <rect x="34" y="16" width="14" height="32" rx="5" fill="#0F172A" fill-opacity="0.2"/>
-  <path d="M18 42L18 24.5C18 22.0147 20.0147 20 22.5 20V20C24.9853 20 27 22.0147 27 24.5V34C27 31.5147 29.0147 29.5 31.5 29.5V29.5C33.9853 29.5 36 31.5147 36 34V42" stroke="#F8FAFC" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
-  <text x="72" y="31" fill="#F8FAFC" font-family="Segoe UI, Arial, sans-serif" font-size="21" font-weight="800" letter-spacing="0.3">Mini</text>
-  <text x="121" y="31" fill="#7DD3FC" font-family="Segoe UI, Arial, sans-serif" font-size="21" font-weight="800" letter-spacing="0.3">CMS</text>
-  <text x="72" y="49" fill="#CBD5E1" font-family="Segoe UI, Arial, sans-serif" font-size="10.5" font-weight="600" letter-spacing="1.8">COMMUNITY CORE</text>
+  <text x="2" y="31" fill="url(#minicmsWordmarkGradient)" font-family="Segoe UI, Arial, sans-serif" font-size="29" font-weight="800" letter-spacing="0.5">MiniCMS</text>
+  <rect x="4" y="38" width="124" height="4" rx="2" fill="url(#minicmsUnderlineGradient)"/>
 </svg>
