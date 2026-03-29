@@ -62,6 +62,12 @@ $installedFolders = [];
 foreach ($installed as $i) {
     $installedFolders[$i['folder']] = $i;
 }
+$availableScanned = [];
+foreach ($scanned as $folder => $meta) {
+    if (!isset($installedFolders[$folder])) {
+        $availableScanned[$folder] = $meta;
+    }
+}
 $versionSummaries = [];
 $compatibilitySummaries = [];
 $healthSummaries = [];
@@ -196,12 +202,15 @@ include THEMES . 'default/admin_header.php';
 <div class="row g-4">
     <div class="col-lg-5">
         <div class="card">
-            <div class="card-header"><?= e(__('infusions.available')) ?></div>
+            <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <span>Neidiegti infusion moduliai</span>
+                <span class="badge text-bg-secondary"><?= e((string)count($availableScanned)) ?></span>
+            </div>
             <div class="table-responsive">
                 <table class="table align-middle mb-0 admin-table-strong">
                     <thead><tr><th>Folder</th><th>Pavadinimas</th><th>&#302;diegta</th><th>Manifest</th><th>Atnaujinimas</th><th></th></tr></thead>
                     <tbody>
-                    <?php foreach ($scanned as $folder => $meta): ?>
+                    <?php foreach ($availableScanned as $folder => $meta): ?>
                         <?php $developerMeta = $developerSnapshots[$folder] ?? null; ?>
                         <?php $versionSummary = $versionSummaries[$folder] ?? get_infusion_version_summary($folder, $meta, $installedFolders[$folder] ?? null); ?>
                         <?php $compatibilitySummary = $compatibilitySummaries[$folder] ?? get_infusion_compatibility_summary($folder, $meta, $installedFolders, $scanned); ?>
@@ -298,6 +307,13 @@ include THEMES . 'default/admin_header.php';
                             </td>
                         </tr>
                     <?php endforeach; ?>
+                    <?php if (!$availableScanned): ?>
+                        <tr>
+                            <td colspan="6" class="text-secondary">
+                                Visi failu sistemoje rasti infusion moduliai jau yra idiegti. Nauji moduliai arba manifest pakeitimai bus matomi cia tik tada, kai atsiras dar neidiegtas paketas.
+                            </td>
+                        </tr>
+                    <?php endif; ?>
                     </tbody>
                 </table>
             </div>
