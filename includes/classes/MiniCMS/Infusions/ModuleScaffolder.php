@@ -257,6 +257,13 @@ Sis modulis sugeneruotas per MiniCMS Module SDK scaffold.
   - `migrations/001_1.0.1.php`
   - `migrations/001_1.0.1.rollback.php`
 - Jei `migrations/` neturi vykdomu zingsniu, galima naudoti `upgrade.php` kaip fallback mechanizma.
+
+## Lifecycle taisykles
+- Install turi kurti tik modulio schema ir pradinius techninius duomenis.
+- Demo turinys turi buti atskirtas nuo bazinio seed.
+- Upgrade pirmiausia naudoja `migrations/`, o `upgrade.php` yra tik legacy fallback.
+- Rollback vykdomas tik jau paleistiems zingsniams atbuline tvarka ir remiasi `.rollback.php` failais.
+- Jei moduliui reikia rankinio veiksmo, tai turi buti aprasyta `upgrade_notes` arba `rollback_notes`.
 MD;
     }
 

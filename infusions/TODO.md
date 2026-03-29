@@ -36,7 +36,7 @@
 - [ ] Susitarti, kaip moduliai naudos bendrus temos `design token` ir kada jiems leidziami nuosavi CSS variantai.
 - [ ] Susitarti, kaip moduliai naudos bendra ikon biblioteka ir kada galima papildoma rinkini naudoti lokaliai.
 - [ ] Vienodai rodyti `installed version`, `manifest version` ir `available upgrade`.
-- [ ] Apibrezti bendras `install / upgrade / rollback` taisykles visiems moduliams.
+- [x] Apibrezti bendras `install / upgrade / rollback` taisykles visiems moduliams.
 - [ ] Sutarti, kad core Installer iraso tik branduolio DB, o moduliai savo lenteles ir nustatymus susikuria per savo install/upgrade mechanizma.
 - [ ] Po SDK branduolio pradeti perkelti esamus modulius i klases po viena, pradedant nuo `news`, tada `shoutbox`, o po to `forum`.
 - [x] Isplesti manifest standarta papildomais laukais:

@@ -129,6 +129,37 @@ Veikimo taisykle:
 - jei nauju zingsniu nera, gali buti vykdomas `upgrade.php`
 - rollback istorija ir statusai rodomi admin `infusions` puslapyje
 
+## Bendros install / upgrade / rollback taisykles
+
+### Install
+- Pries diegima tikrinami `min_core_version`, `min_php_version`, `required_extensions`, `dependencies` ir `conflicts`.
+- Install / upgrade / uninstall visada vykdomi po bendru DB lock, kad du administratoriai nepaleistu to paties proceso vienu metu.
+- Diegimas turi kurti tik to modulio schema ir pradinius jam reikalingus duomenis.
+- Demo turinys turi buti atskirtas nuo bazinio seed ir negali buti privaloma diegimo dalis.
+- Jei modulis turi SDK klase, `install()` yra pagrindinis kelias; jei ne, naudojamas `schema.php`.
+- Po sekmingo diegimo registruojamos teises, admin meniu, numatyta paneles konfiguracija ir irasoma idiegta versija.
+
+### Upgrade
+- Upgrade visada vykdomas tik is dabartines idiegtos versijos i naujesne manifest versija.
+- Pirmiausia vykdomi `migrations/` failai pagal versiju tvarka; `upgrade.php` naudojamas tik kaip legacy fallback, kai nera versioned zingsniu.
+- Kiekvienas zingsnis turi buti mazas, aiskus, idempotentiskas arba bent jau saugus nuo pakartotinio paleidimo po nesekmes.
+- Upgrade negali aklai perrasyti naudotojo turinio, nustatymu ar admin konfiguracijos be aiskaus migration zingsnio.
+- Jei keiciasi leidimai, admin meniu ar `provides`, po upgrade jie turi buti persinchronizuojami su manifest.
+- Jei moduliui reikia rankinio veiksmo, tai turi buti aprasyta `upgrade_notes`.
+
+### Rollback
+- Rollback vykdomas tik jau paleistiems ir nepavykusio upgrade metu uzfiksuotiems zingsniams atbuline tvarka.
+- Kiekvienam rollback zingsniui naudojamas atitinkamas `migrations/<version>.rollback.php`, jei jis egzistuoja.
+- Jei rollback failo nera, tai turi buti uzloginta kaip `skipped`, o ne tyliai ignoruojama.
+- Rollback turi stengtis atstatyti schema ir konfiguracija, bet neturi trinti naudotojo duomenu be labai aiskaus ir dokumentuoto sprendimo.
+- Jei upgrade turi negriztamu pokyciu, tai privalo buti aprasyta `rollback_notes`.
+
+### Bendri principai
+- Core Installer yra tik branduolio diegimui; moduliu schema ir lifecycle logika lieka `infusions/<modulis>/`.
+- `bootstrap.php`, `admin.php` ir `panel.php` turi likti ploni; install/upgrade taisykles neturi virsti nauju monolitiniu helper failu.
+- Moduliai neturi daryti pasaliniu veiksmu uz savo ribu be aiskios deklaracijos ir audito.
+- Visi rizikingi lifecycle veiksmai turi palikti loga: migration step, rollback step arba audit irasa.
+
 ## SimplePanelModule
 Jei norite paneles logika laikyti klaseje, galite naudoti:
 

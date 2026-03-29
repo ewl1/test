@@ -240,6 +240,7 @@
 - `dependencies`, `conflicts`
 - `provides`: paneles, teises, hook'ai, paieskos saltiniai
 - `changelog`, `upgrade_notes`, `rollback_notes`
+- bendros `install / upgrade / rollback` taisykles jau apibreztos SDK ir taikomos visiems naujiems moduliams
 - ka modulis prideda: route'us, teises, paneles, hook'us
 - sveikatos patikra ir `upgrade preview`
 - aiskus badge rinkinys: `SDK`, `Legacy`, `Has migrations`, `Upgrade available`, `Missing manifest`
