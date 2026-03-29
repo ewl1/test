@@ -21,6 +21,7 @@ $description = trim((string)($argv[3] ?? ''));
 if ($folder === '') {
     fwrite(STDERR, "Naudojimas: php tools/make-infusion-sdk.php <folder> [Pavadinimas] [Aprasymas]\n");
     fwrite(STDERR, "Scaffold sukuria plonus entrypoint failus, support/, classes/, migrations/, locale/ ir assets/ struktura.\n");
+    fwrite(STDERR, "Jei modulis tures nustatymu puslapi, rekomenduojama veliau igyvendinti ModuleSettingsContract.\n");
     exit(1);
 }
 

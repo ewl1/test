@@ -247,6 +247,14 @@ Sis modulis sugeneruotas per MiniCMS Module SDK scaffold.
 - `locale/`: modulio tekstai
 - `assets/`: modulio CSS ir JS
 
+## Settings contract
+- Jei modulis turi tikra nustatymu puslapi, rekomenduojama klasei papildomai igyvendinti `App\\MiniCMS\\Infusions\\ModuleSettingsContract`.
+- Ta sutartis leidzia vienodai deklaruoti:
+  - nustatymu sekcijas
+  - formos schema
+  - validavimo taisykles
+- `administration/infusions.php` developer mode tada matys, ar modulis si kontrakta igyvendina.
+
 ## Standartas
 - `bootstrap.php`, `admin.php` ir `panel.php` turi likti ploni entrypoint failai.
 - Jei modulyje laikinai dar reikia proceduriniu helperiu, jie keliauja i `support/` ir skaidomi pagal atsakomybe.

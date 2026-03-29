@@ -9,6 +9,7 @@
 - `App\MiniCMS\Infusions\InfusionContext`
 - `App\MiniCMS\Infusions\InfusionModuleInterface`
 - `App\MiniCMS\Infusions\AbstractInfusionModule`
+- `App\MiniCMS\Infusions\ModuleSettingsContract`
 - `App\MiniCMS\Infusions\SimplePanelModule`
 - `App\MiniCMS\Infusions\HookRegistry`
 - `App\MiniCMS\Infusions\InfusionSdk`
@@ -20,6 +21,7 @@
 - Core automatikai uzdeda DB lock per `install / upgrade / uninstall`.
 - `administration/infusions.php` rodo aktyvu migraciju lock, paskutinius zingsnius ir rollback istorija.
 - `bootstrap.php`, `admin.php` ir `panel.php` turi likti ploni, o proceduriniai helperiai turi keliauti i `support/`.
+- `ModuleSettingsContract` leidzia moduliui vienodai deklaruoti savo nustatymu sekcijas, formos schema ir validavimo taisykles.
 
 ## Admin veiksmu deklaravimas
 - `admin: true` ir realus `admin.php` leidzia branduoliui rodyti `Admin` veiksma.
@@ -27,6 +29,65 @@
 - Jei modulis turi atskira diagnostikos ar health vieta, `manifest.json` gali deklaruoti `diagnostics_page`.
 - Jei `diagnostics_page` nenurodytas, `administration/infusions.php` kaip bendra fallback sveikatos perziura naudoja `developer mode` detale su anchor `#infusion-dev-<folder>`.
 - Branduolio UI modulio veiksmus rodo vienoda tvarka: `Admin`, `Settings`, `Health`, `Upgrade`.
+
+## ModuleSettingsContract
+Jei modulis nori ne tik tureti `settings_page`, bet ir vienodai deklaruoti savo nustatymu struktura, jis gali papildomai igyvendinti `ModuleSettingsContract`.
+
+```php
+<?php
+
+namespace App\News;
+
+use App\MiniCMS\Infusions\AbstractInfusionModule;
+use App\MiniCMS\Infusions\ModuleSettingsContract;
+
+final class NewsModule extends AbstractInfusionModule implements ModuleSettingsContract
+{
+    public function settingsSections(): array
+    {
+        return [
+            [
+                'key' => 'general',
+                'title' => 'Bendri nustatymai',
+                'description' => 'Pagrindines naujienu modulio parinktys',
+                'icon' => 'fa fa-gear',
+            ],
+        ];
+    }
+
+    public function settingsFormSchema(): array
+    {
+        return [
+            [
+                'key' => 'news_per_page',
+                'type' => 'number',
+                'label' => 'Naujienu puslapyje',
+                'section' => 'general',
+                'default' => 10,
+            ],
+        ];
+    }
+
+    public function settingsValidationRules(): array
+    {
+        return [
+            'news_per_page' => [
+                'required' => true,
+                'type' => 'int',
+                'min' => 1,
+                'max' => 100,
+            ],
+        ];
+    }
+}
+```
+
+Paskirtis:
+- `settingsSections()`: sekciju metaduomenys (`key`, `title`, `description`, `icon`)
+- `settingsFormSchema()`: lauku schema (`key`, `type`, `label`, `section`, `default`, `options`)
+- `settingsValidationRules()`: validavimo taisykles pagal lauko rakta
+
+Developer mode per `administration/infusions.php` jau rodo, ar modulis si kontrakta igyvendina, ir kiek sekciju, lauku bei taisykliu jis deklaruoja.
 
 ## Modulio struktura
 ```text
@@ -264,3 +325,4 @@ Generatorius sukuria:
 - Naujiems moduliams rekomenduojama pirma naudoti `migrations/`, o ne visa atnaujinimo logika krauti i viena `upgrade.php`.
 - `support/` katalogas yra rekomenduojamas tada, kai modulyje dar reikia legacy proceduriniu helperiu.
 - Venkite vieno monolitinio failo kaip `feature_pack.php`: geriau skaidyti i `support/schema.php`, `support/settings.php`, `support/admin.php` ir pan.
+- Jei modulis turi atskirus nustatymus, rekomenduojama kartu su `settings_page` igyvendinti ir `ModuleSettingsContract`, kad branduolys galetu vienodai suprasti jo nustatymu struktura.

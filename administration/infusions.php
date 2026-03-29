@@ -461,6 +461,14 @@ include THEMES . 'default/admin_header.php';
                                 <div class="small admin-page-subtitle">
                                     Changelog / upgrade / rollback: <?= e((string)count($snapshot['changelog'])) ?> / <?= e((string)count($snapshot['upgrade_notes'])) ?> / <?= e((string)count($snapshot['rollback_notes'])) ?>
                                 </div>
+                                <div class="small admin-page-subtitle">
+                                    Settings contract:
+                                    <?php if (!empty($snapshot['settings_contract']['implements'])): ?>
+                                        taip | sekcijos <?= (int)$snapshot['settings_contract']['section_count'] ?> | laukai <?= (int)$snapshot['settings_contract']['field_count'] ?> | taisykles <?= (int)$snapshot['settings_contract']['rule_count'] ?>
+                                    <?php else: ?>
+                                        <?= !empty($snapshot['settings_contract']['error']) ? e('klaida: ' . $snapshot['settings_contract']['error']) : 'neigyvendintas' ?>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </div>
 

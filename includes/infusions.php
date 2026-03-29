@@ -246,6 +246,69 @@ function get_infusion_registered_hooks($folder, $infusionId = 0, ?array $manifes
     return $registered;
 }
 
+function count_infusion_settings_schema_fields(array $schema)
+{
+    $count = 0;
+
+    foreach ($schema as $field) {
+        if (is_array($field) && isset($field['fields']) && is_array($field['fields'])) {
+            $count += count_infusion_settings_schema_fields($field['fields']);
+            continue;
+        }
+
+        if (is_array($field) && !empty($field)) {
+            $count++;
+            continue;
+        }
+
+        if (!is_array($field) && trim((string)$field) !== '') {
+            $count++;
+        }
+    }
+
+    return $count;
+}
+
+function get_infusion_settings_contract_summary($folder, $infusionId = 0, ?array $manifest = null)
+{
+    $summary = [
+        'implements' => false,
+        'interface' => \App\MiniCMS\Infusions\ModuleSettingsContract::class,
+        'section_count' => 0,
+        'field_count' => 0,
+        'rule_count' => 0,
+        'sections' => [],
+        'schema' => [],
+        'rules' => [],
+        'error' => null,
+    ];
+
+    try {
+        $module = infusion_sdk_module($folder, (int)$infusionId, $manifest);
+    } catch (Throwable $e) {
+        $summary['error'] = $e->getMessage();
+        return $summary;
+    }
+
+    if (!$module instanceof \App\MiniCMS\Infusions\ModuleSettingsContract) {
+        return $summary;
+    }
+
+    $sections = (array)$module->settingsSections();
+    $schema = (array)$module->settingsFormSchema();
+    $rules = (array)$module->settingsValidationRules();
+
+    $summary['implements'] = true;
+    $summary['sections'] = $sections;
+    $summary['schema'] = $schema;
+    $summary['rules'] = $rules;
+    $summary['section_count'] = count($sections);
+    $summary['field_count'] = count_infusion_settings_schema_fields($schema);
+    $summary['rule_count'] = count($rules);
+
+    return $summary;
+}
+
 function get_infusion_developer_snapshot($folder, $infusionId = 0, ?array $manifest = null)
 {
     $folder = trim((string)$folder);
@@ -418,6 +481,7 @@ function get_infusion_developer_snapshot($folder, $infusionId = 0, ?array $manif
         'rollback_notes' => (array)($manifest['rollback_notes'] ?? []),
         'settings_page' => trim((string)($rawManifest['settings_page'] ?? $manifest['settings_page'] ?? '')),
         'diagnostics_page' => trim((string)($rawManifest['diagnostics_page'] ?? '')),
+        'settings_contract' => get_infusion_settings_contract_summary($folder, (int)($installed['id'] ?? $infusionId), $manifest),
     ];
 }
 

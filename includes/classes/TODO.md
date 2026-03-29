@@ -73,11 +73,14 @@
 - [ ] `App\\System\\TemporaryFileCleanupService`
 - [ ] `App\\System\\HookDebugger`
 - [ ] `App\\System\\DependencyGraphService`
+- [ ] `App\\MiniCMS\\Installer\\InstallerFlowService`
+- [ ] `App\\MiniCMS\\Installer\\InstallerRecoveryService`
+- [ ] `App\\MiniCMS\\Installer\\InstallerStepRegistry`
 - [ ] `App\\MiniCMS\\Infusions\\ModuleHealthResult`
 - [ ] `App\\MiniCMS\\Infusions\\ModuleCompatibilityResult`
 - [ ] `App\\MiniCMS\\Infusions\\ModuleInspectorService`
 - [ ] `App\\MiniCMS\\Infusions\\ModuleLifecycleEvent`
-- [ ] `App\\MiniCMS\\Infusions\\ModuleSettingsContract`
+- [x] `App\\MiniCMS\\Infusions\\ModuleSettingsContract`
 - [ ] `App\\MiniCMS\\Infusions\\ModuleDiagnosticsContract`
 
 ### Turinys ir paieska
@@ -134,4 +137,5 @@
 - [ ] Tuo paciu sluoksniu pradeti ir bendra paieskos klasiu rinkini, kad `search.php` netaptu vieninteliu paieskos centru.
 - [ ] Kartu su bendru turinio sluoksniu pradeti media/embed klases, kad forumas ir naujienos nenaudotu skirtingu taisykliu.
 - [ ] Islaikyti riba, kad Installer niekada neprarytu modulio DB logikos ir tik paruostu core pagrinda moduliu diegimui.
+- [ ] Installer klases turi valdyti ne tik branduolio schema, bet ir vedlio tabus bei pakartotinio paleidimo `Recovery mode` scenarijus.
 - [ ] Tik po to skaidyti tolimesnes pagalbines sritis i siauresnes paslaugas.
