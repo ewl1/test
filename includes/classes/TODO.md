@@ -139,6 +139,7 @@
 - [ ] Po pagrindiniu paslaugu pradeti bendro `comments engine` klasiu rinkini, kad naujienos ir profiliai nebesilaikytu ant atskiros logikos.
 - [ ] Tuo paciu sluoksniu pradeti ir bendra paieskos klasiu rinkini, kad `search.php` netaptu vieninteliu paieskos centru.
 - [ ] Kartu su bendru turinio sluoksniu pradeti media/embed klases, kad forumas ir naujienos nenaudotu skirtingu taisykliu.
+- [ ] Media/embed branduolio klases turi vykdyti moduliu `manifest.media` taisykles, o ne palikti limitus ir validacijas kiekvienam moduliui atskirai.
 - [ ] Islaikyti riba, kad Installer niekada neprarytu modulio DB logikos ir tik paruostu core pagrinda moduliu diegimui.
 - [ ] Installer klases turi valdyti ne tik branduolio schema, bet ir vedlio tabus bei pakartotinio paleidimo `Recovery mode` scenarijus.
 - [ ] Tik po to skaidyti tolimesnes pagalbines sritis i siauresnes paslaugas.

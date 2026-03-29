@@ -92,10 +92,12 @@
 - target/actor duomenys
 - matomumo taisykles
 - ar ivyki reikia siusti i notification centra, activity feed ar abu
-- [ ] Vienodai apibrezti, kaip modulis pateikia media/embed taisykles:
-- ar leidziami vietiniai paveiksliukai
-- ar leidziami YouTube embed'ai
-- kokie limitai ir validacijos taikomi
+- [x] Vienodai apibrezti, kaip modulis pateikia media/embed taisykles:
+- media/embed taisykles deklaruojamos per `manifest.media`
+- ar leidziami vietiniai paveiksliukai nurodoma per `manifest.media.images.local.enabled`
+- ar leidziami YouTube embed'ai nurodoma per `manifest.media.embeds.youtube.enabled`
+- failu tipai, dydziai, matmenys, kiekiai ir `https/host` validacijos nurodomi per `manifest.media.validation`
+- jei modulis media taisykliu nedeklaruoja, pagal nutylejima laikoma, kad papildomi upload/embed leidimai yra isjungti
 - [ ] Vienodai apibrezti, kaip modulis pateikia vizualines busenas:
 - `featured`, `new`, `locked`, `disabled`, `warning`, `needs update`
 - kokie badge ir meta laukeliai naudojami viesame ir admin rodinyje

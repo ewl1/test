@@ -48,6 +48,35 @@
 - Hook'ai i branduoli registruojami per `registerHooks()`; jei modulis nori juos parodyti deklaratyviai, jis papildomai gali naudoti `manifest.hooks`.
 - Vienas ir tas pats dalykas neturi buti deklaruojamas dviem skirtingais budais be aiskios priezasties. Manifest skirtas statinei metainformacijai, kontraktai ir `registerHooks()` skirtos vykdomai logikai.
 
+## Media ir embed taisykliu deklaravimas
+- Modulio media/embed politika deklaruojama per `manifest.media`.
+- Jei `manifest.media` nenurodytas, pagal nutylejima laikoma, kad papildomi upload ir embed leidimai yra isjungti.
+- Vietiniai paveiksliukai deklaruojami per `manifest.media.images.local`.
+- Rekomenduojami raktai:
+- `enabled`
+- `directory`
+- `allowed_extensions`
+- `allowed_mime_types`
+- `max_size_kb`
+- `max_width`
+- `max_height`
+- YouTube embed'ai deklaruojami per `manifest.media.embeds.youtube`.
+- Rekomenduojami raktai:
+- `enabled`
+- `allowed_hosts`
+- `privacy_mode`
+- `allow_shorts`
+- Bendra validacija ir limitai deklaruojami per `manifest.media.validation`.
+- Rekomenduojami raktai:
+- `require_https`
+- `max_images_per_item`
+- `max_embeds_per_item`
+- `max_attachments`
+- `max_attachment_size_kb`
+- Modulis neturi pats priimti laisvo `iframe` ar nefiltruoto HTML vien del to, kad leidzia YouTube. Embed'ai turi eiti per bendrus `EmbedService / YoutubeEmbedService`.
+- Failu ikelimai ir paveiksliuku tikrinimas turi eiti per bendra `MediaUploadPolicyService / ImageAttachmentService`, o ne per atsitiktine modulio logika.
+- Jei modulis leidzia ir vietinius paveiksliukus, ir YouTube, abu leidimai turi buti deklaruoti atskirai. Vienas leidimas automatiskai nereiskia kito.
+
 ## Ikonografijos taisykles moduliams
 - Pagrindine bendra ikon biblioteka visiems moduliams yra `Font Awesome 7`.
 - Bendra biblioteka kraunama is `includes/plugins/webicon/fa7/` ir turi buti naudojama navigacijai, busenoms, veiksmams ir tipiniams media simboliams.
