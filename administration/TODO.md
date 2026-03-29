@@ -74,7 +74,8 @@
 - [x] Suspausti `infusions.php` korteliu tanki po ikonu atsiradimo: versiju juosta, badge ir sveikatos meta pateikti aiskesnemis eilutemis be suluzusio isdestymo.
 - pavadinimo stulpelyje palikta tik kompaktiska statusu juosta, o technines santraukos pervestos i tvarkingas `label/value` eilutes
 - [ ] Apsvarstyti `compact / detail` rezima `infusions.php`, kad trumpa moduliu santrauka butu matoma iskart, o pilna diagnostika ir uninstall detales atsivertu tik pagal poreiki.
-- [ ] Po pilno `FA7` pajungimo perziureti `infusions.php` ikonografijos triuksma: ta pati busena neturi buti kartojama badge, meta eiluteje ir veiksmu mygtuke vienu metu.
+- [x] Po pilno `FA7` pajungimo perziureti `infusions.php` ikonografijos triuksma: ta pati busena neturi buti kartojama badge, meta eiluteje ir veiksmu mygtuke vienu metu.
+- neutralus `Admin / Settings / Health` veiksmai deikonizuoti, o ikonos paliktos tik veiksmams, kurie keicia busena arba turi didesni rizikos / proceso svori
 - [ ] `Infusions.php` korteleje palikti viena pagrindine statusu juosta ir viena veiksmu juosta, o technines detales, uninstall rizika ir papildomas badge perkelti i `detail / developer / health` rodinius.
 - [ ] Apsibrezti `infusions.php` ikonu biudzeta: po viena ikona modulio tipui, busenai ir veiksmui, bet ne kelioms greta esancioms etiketeems, kurios kartoja ta pacia prasme.
 - [ ] Prideti `grid / table` rodymo rezimus, jei moduliu kiekis isaugs.

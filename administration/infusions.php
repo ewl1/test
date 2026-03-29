@@ -117,6 +117,13 @@ $actionIcons = [
     'uninstall' => 'fa-solid fa-trash',
     'install_folder' => 'fa-solid fa-download',
 ];
+$actionIconsVisible = [
+    'install_folder' => true,
+    'upgrade' => true,
+    'enable' => true,
+    'disable' => true,
+    'uninstall' => true,
+];
 
 include THEMES . 'default/admin_header.php';
 ?>
@@ -285,9 +292,12 @@ include THEMES . 'default/admin_header.php';
                                         <div class="d-flex flex-wrap gap-2 admin-module-actions">
                                             <?php foreach ($moduleActions as $action): ?>
                                                 <?php $actionIcon = $actionIcons[$action['key'] ?? ''] ?? 'fa-solid fa-circle'; ?>
+                                                <?php $showActionIcon = !empty($actionIconsVisible[$action['key'] ?? '']); ?>
                                                 <?php if ($action['kind'] === 'link'): ?>
                                                     <a class="<?= e($action['class']) ?>" href="<?= e($action['href']) ?>">
-                                                        <i class="<?= e($actionIcon) ?>" aria-hidden="true"></i>
+                                                        <?php if ($showActionIcon): ?>
+                                                            <i class="<?= e($actionIcon) ?>" aria-hidden="true"></i>
+                                                        <?php endif; ?>
                                                         <span><?= e($action['label']) ?></span>
                                                     </a>
                                                 <?php elseif ($action['kind'] === 'post'): ?>
@@ -298,7 +308,9 @@ include THEMES . 'default/admin_header.php';
                                                             <input class="form-control form-control-sm admin-confirm-input" type="text" name="confirm_folder" placeholder="Iveskite <?= e($action['confirmation_value'] ?? '') ?>">
                                                         <?php endif; ?>
                                                         <button class="<?= e($action['class']) ?>" name="action" value="<?= e($action['value']) ?>" <?= (($action['key'] ?? '') === 'uninstall' && empty($action['can_uninstall'])) ? 'disabled' : '' ?>>
-                                                            <i class="<?= e($actionIcon) ?>" aria-hidden="true"></i>
+                                                            <?php if ($showActionIcon): ?>
+                                                                <i class="<?= e($actionIcon) ?>" aria-hidden="true"></i>
+                                                            <?php endif; ?>
                                                             <span><?= e($action['label']) ?></span>
                                                         </button>
                                                     </form>
@@ -413,9 +425,12 @@ include THEMES . 'default/admin_header.php';
                                     <div class="d-flex flex-wrap gap-2 admin-module-actions">
                                     <?php foreach ($moduleActions as $action): ?>
                                         <?php $actionIcon = $actionIcons[$action['key'] ?? ''] ?? 'fa-solid fa-circle'; ?>
+                                        <?php $showActionIcon = !empty($actionIconsVisible[$action['key'] ?? '']); ?>
                                         <?php if ($action['kind'] === 'link'): ?>
                                             <a class="<?= e($action['class']) ?>" href="<?= e($action['href']) ?>">
-                                                <i class="<?= e($actionIcon) ?>" aria-hidden="true"></i>
+                                                <?php if ($showActionIcon): ?>
+                                                    <i class="<?= e($actionIcon) ?>" aria-hidden="true"></i>
+                                                <?php endif; ?>
                                                 <span><?= e($action['label']) ?></span>
                                             </a>
                                         <?php elseif ($action['kind'] === 'post'): ?>
@@ -426,7 +441,9 @@ include THEMES . 'default/admin_header.php';
                                                     <input class="form-control form-control-sm admin-confirm-input" type="text" name="confirm_folder" placeholder="Iveskite <?= e($action['confirmation_value'] ?? '') ?>">
                                                 <?php endif; ?>
                                                 <button class="<?= e($action['class']) ?>" name="action" value="<?= e($action['value']) ?>" <?= (($action['key'] ?? '') === 'uninstall' && empty($action['can_uninstall'])) ? 'disabled' : '' ?>>
-                                                    <i class="<?= e($actionIcon) ?>" aria-hidden="true"></i>
+                                                    <?php if ($showActionIcon): ?>
+                                                        <i class="<?= e($actionIcon) ?>" aria-hidden="true"></i>
+                                                    <?php endif; ?>
                                                     <span><?= e($action['label']) ?></span>
                                                 </button>
                                             </form>
