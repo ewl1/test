@@ -127,3 +127,6 @@
 - ka modulis rodo korteleje, o ka detaliame rodinyje
 - [ ] Suderinti `infusions.php` su `ModulePresentationContract` taip, kad korteleje liktu tik trumpa santrauka, o pilna diagnostika, uninstall poveikis ir kitos technines detales keliautu i detalu rodini.
 - [ ] Apibrezti `danger action` pateikima moduliams: `disable` ir `uninstall` patvirtinimai neturi nuolat uzimti korteles vietos ir turi atsiverti tik pagal poreiki.
+- [ ] Susitarti del `infusions` korteles ikonu tankio: viena busena turi tureti viena pagrindini indikatoriu, o badge, meta laukeliai ir veiksmu mygtukai neturi dubliuoti tos pacios prasmes.
+- [ ] `ModulePresentationContract` papildyti rekomendacija, ka modulis rodo trumpame korteles vaizde, o ka perkelia i `detail / developer / health` rodini, kad ikonos ir badge neperkrautu pirmo vaizdo.
+- [ ] Apsibrezti, kad `danger` veiksmu ikonos ir mygtukai turi buti rodomi atskirtame bloke arba antriniame meniu, ne bendroje neutraliu veiksmu eileje.

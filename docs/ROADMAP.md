@@ -40,6 +40,7 @@
 - Atnaujinti admin UX: dashboard korteles, `panels` drag-drop griztamasis rysis, `infusions` sveikatos badge ir aiskesni veiksmai.
 - Pirmas admin UX zingsnis jau padarytas: `panels` turi aiskesnes drop zonas, issaugojimo busena ir `beforeunload` perspejima, o `infusions` veiksmai sugrupuoti i ryskesnius veiksmu blokus.
 - Kitas `infusions` UI zingsnis: atskirti pagrindinius ir antrinius veiksmus, sukompaktinti badge ir versiju juostas, o `disable / uninstall` patvirtinimus perkelti i atskira `danger` srauta.
+- Po pilno `Font Awesome 7` pajungimo atlikti `infusions` ekrano ikonografijos audita: mazinti pasikartojancias ikonas, palikti viena pagrindine statuso juosta ir technines detales perkelti i detalu arba `developer / health` rodini.
 - Admin layout presetai jau paruosti temoje: `dashboard`, `table-view`, `form-view`, `split-settings`, `diagnostics`, su bendra helperio ir CSS baze tolimesniam admin puslapiu suvienodinimui.
 - Ilgainiui prideti temos personalizavimo krypti: `compact / wide` isdestymas, akcento spalvos, o veliau ir alternatyvios temos.
 

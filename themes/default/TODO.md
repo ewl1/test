@@ -58,7 +58,9 @@
 - [ ] Sutvarkyti mobiliu ekranu elgsena admin lentelese, formose ir paneliu isdestyme.
 - [x] Pagerinti `panels` drag-drop griztamaji rysi ir `infusions` veiksmu matomuma.
 - [ ] Po ikonu ivedimo perbalansuoti `infusions` korteliu vizualini tanki: badge auksti, mygtuku ploti, eiluciu ritma ir tarpus tarp meta juostu.
+- [ ] Po galutinio `FA7` pajungimo atlikti `infusions` ekrano ikonografijos audita: mazinti pasikartojancias ikonas ir palikti tik tas, kurios duoda papildoma prasme, o ne dubliuoja teksta.
 - [ ] `Danger` veiksmus administracijoje vizualiai atskirti nuo neutraliu: ne tik spalva, bet ir vieta, kad `disable / uninstall` nebutu sumaisyti su `admin / settings / health`.
+- [ ] `Infusions` kortelese suvienodinti viena statuso juosta ir viena veiksmu juosta, o perteklines technines badge juostas perkelti i detalu rodini.
 - [ ] Toliau isskaidyti papildomu moduliu stilius is bendro `style.css`.
 - [ ] Apibrezti breakpoint'us viesai ir admin daliai, kad elgsena butu prognozuojama, o ne atsitiktine.
 - [x] Paruosti admin layout sablonus: `dashboard`, `table view`, `form view`, `split settings` ir `diagnostics`.

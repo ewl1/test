@@ -73,6 +73,9 @@
 - [ ] `Disable` ir `uninstall` patvirtinimus rodyti tik atidarius rizikinga veiksma, kad `confirm_folder` laukas nuolat neapkrautu korteles.
 - [ ] Suspausti `infusions.php` korteliu tanki po ikonu atsiradimo: versiju juosta, badge ir sveikatos meta pateikti aiskesnemis eilutemis be suluzusio isdestymo.
 - [ ] Apsvarstyti `compact / detail` rezima `infusions.php`, kad trumpa moduliu santrauka butu matoma iskart, o pilna diagnostika ir uninstall detales atsivertu tik pagal poreiki.
+- [ ] Po pilno `FA7` pajungimo perziureti `infusions.php` ikonografijos triuksma: ta pati busena neturi buti kartojama badge, meta eiluteje ir veiksmu mygtuke vienu metu.
+- [ ] `Infusions.php` korteleje palikti viena pagrindine statusu juosta ir viena veiksmu juosta, o technines detales, uninstall rizika ir papildomas badge perkelti i `detail / developer / health` rodinius.
+- [ ] Apsibrezti `infusions.php` ikonu biudzeta: po viena ikona modulio tipui, busenai ir veiksmui, bet ne kelioms greta esancioms etiketeems, kurios kartoja ta pacia prasme.
 - [ ] Prideti `grid / table` rodymo rezimus, jei moduliu kiekis isaugs.
 - [ ] Isryskinti moduliu `folder`, `slug`, busena ir veiksmus vienodomis admin badge taisyklemis.
 - [ ] Prideti ikonas modulio tipui, sveikatos busenai, atnaujinimui ir pagrindiniams veiksmams.
