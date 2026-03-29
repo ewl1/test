@@ -64,7 +64,12 @@
 - [ ] Susitarti del `seed / demo data` strategijos:
 - schema, pradinis seed ir demo turinys turi buti atskirti
 - modulis turi galeti isidiegti be demo duomenu
-- [ ] Apibrezti `soft disable mode`, kad isjungtas modulis nepaliktu sugedusiu paneliu, route'u ar admin nuorodu.
+- [x] Apibrezti `soft disable mode`, kad isjungtas modulis nepaliktu sugedusiu paneliu ar admin nuorodu.
+- isjungtas modulis turi pasilikti idiegtas DB lygyje, bet neturi registruoti nauju hook'u, paneliu ar foniniu darbu vykdymo
+- viesos ir admin nuorodos i isjungta moduli turi buti slepiamos is bendru sarasu, o tiesioginis kreipimasis turi grazinti saugu `404` arba aisku `modulis isjungtas` atsaka
+- modulio paneles turi buti nerodomos arba grazinti tuscia rezultata be fatal klaidu ir be suluzusio layout
+- isjungimas negali trinti modulio duomenu, nustatymu ar migraciju istorijos; tai yra laikina busena, ne uninstall pakaitalas
+- jei modulis turi priklausomu moduliu ar aktyviu integraciju, admin UI turi rodyti perspejima, kad isjungimas gali paveikti susijusi funkcionaluma
 - [x] Apibrezti `safe uninstall` taisykles:
 - patikrinti ar yra priklausomu moduliu
 - parodyti kiek duomenu bus paliesta

@@ -52,6 +52,20 @@
 - apriboti CSS selektorius modulio prefiksu ar konteineriu
 - neitempti antros pilnos globalios bibliotekos vien del keliu ikon
 
+## Soft disable mode taisykles
+- `Soft disable` reiskia, kad modulis lieka idiegtas ir jo duomenys nelieciami, bet jo funkcionalumas laikinai nebeaktyvus.
+- Isjungtas modulis neturi:
+- registruoti nauju hook'u ar filtru `boot` metu
+- rodyti paneliu bendruose puslapiuose
+- paleisti foniniu darbu, notification dispatch ar periodiniu uzduociu
+- Viesos ir admin nuorodos i isjungta moduli turi buti slepiamos is bendru sarasu.
+- Tiesioginis kreipimasis i isjungto modulio puslapi ar route'a turi baigtis saugiai:
+- `404`, jei modulis viesai nepasiekiamas
+- arba aiskia `modulis isjungtas` busena, jei tam yra administracinis scenarijus
+- Isjungimas negali trinti DB lenteliu, duomenu, nustatymu, migraciju logu ar seed'u. Tam yra atskiras `uninstall`.
+- Modulio paneles ir view helperiai turi grazinti tuscia arba saugu fallback rezultata, o ne mesti `fatal` ar palikti suluzusi markup.
+- Jei modulis turi priklausomybiu ar nuo jo priklauso kiti moduliai, admin UI turi rodyti perspejima apie galimas salutines pasekmes ir integraciju nutrukima.
+
 ## ModuleSettingsContract
 Jei modulis nori ne tik tureti `settings_page`, bet ir vienodai deklaruoti savo nustatymu struktura, jis gali papildomai igyvendinti `ModuleSettingsContract`.
 
