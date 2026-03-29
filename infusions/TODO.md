@@ -99,6 +99,6 @@
 - kategorija / tipas
 - leidimu filtras
 - svoris/relevancija
-- [ ] Apibrezti moduliu badge ir detalios perziuros sutarti:
+- [x] Apibrezti moduliu badge ir detalios perziuros sutarti:
 - `SDK`, `Legacy`, `Has migrations`, `Upgrade available`, `Missing manifest`
 - ka modulis rodo korteleje, o ka detaliame rodinyje

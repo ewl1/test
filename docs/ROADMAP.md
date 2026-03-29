@@ -241,6 +241,7 @@
 - `ModuleDiagnosticsContract` jau apibreztas SDK lygyje ir `developer mode` rodo, ar modulis deklaruoja health checks, missing files, missing tables ir konfiguracijos busenas.
 - `ModuleEventContract` jau apibreztas SDK lygyje ir `developer mode` rodo, ar modulis deklaruoja `notifications / activity feed` ivykius ir kokiais kanalais jie keliauja.
 - `ModuleSearchContract` jau apibreztas SDK lygyje ir `developer mode` rodo, ar modulis deklaruoja paieskos saltinius, indeksuojamus laukus, permission filter ir svori.
+- `ModulePresentationContract` jau apibreztas SDK lygyje ir `developer mode` rodo, ar modulis deklaruoja korteles badge, meta laukus, santraukas ir detalias sekcijas.
 - moduliu gyvenimo ciklo hook'ai jau dispatch'inami per `before/after install|upgrade|uninstall`, kartu su modulio-specifiniais `.<folder>` variantais.
 - `developer mode` jau rodo `module_class`, registruotus runtime hook'us, migraciju sarasa, manifest laukus ir diagnostikos santrauka.
 - isplestas manifest standartas:

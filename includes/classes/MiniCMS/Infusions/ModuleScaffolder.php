@@ -285,6 +285,21 @@ Sis modulis sugeneruotas per MiniCMS Module SDK scaffold.
   - svori / relevancija
 - `administration/infusions.php` developer mode tada matys, ar modulis si kontrakta igyvendina.
 
+## Presentation contract
+- Jei modulis nori vienodai deklaruoti, ka rodyti savo korteleje ir ka detaliame rodinyje, rekomenduojama klasei papildomai igyvendinti `App\\MiniCMS\\Infusions\\ModulePresentationContract`.
+- Ta sutartis leidzia vienodai deklaruoti:
+  - korteles badge
+  - korteles meta laukus
+  - korteles santraukas
+  - detalaus rodinio sekcijas
+- Core rezervuoja badge raktus:
+  - `sdk`
+  - `legacy`
+  - `has_migrations`
+  - `upgrade_available`
+  - `missing_manifest`
+- `administration/infusions.php` developer mode tada matys, ar modulis si kontrakta igyvendina.
+
 ## Standartas
 - `bootstrap.php`, `admin.php` ir `panel.php` turi likti ploni entrypoint failai.
 - Jei modulyje laikinai dar reikia proceduriniu helperiu, jie keliauja i `support/` ir skaidomi pagal atsakomybe.

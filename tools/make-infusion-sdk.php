@@ -25,6 +25,7 @@ if ($folder === '') {
     fwrite(STDERR, "Jei modulis tures diagnostikos puslapi ar health check logika, rekomenduojama veliau igyvendinti ModuleDiagnosticsContract.\n");
     fwrite(STDERR, "Jei modulis skelbs notifications ar activity feed ivykius, rekomenduojama veliau igyvendinti ModuleEventContract.\n");
     fwrite(STDERR, "Jei modulis teiks paieskos saltinius, rekomenduojama veliau igyvendinti ModuleSearchContract.\n");
+    fwrite(STDERR, "Jei modulis nores vienodai deklaruoti korteles badge ir detales sekcijas, rekomenduojama veliau igyvendinti ModulePresentationContract.\n");
     exit(1);
 }
 

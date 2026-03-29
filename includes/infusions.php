@@ -570,6 +570,48 @@ function get_infusion_search_contract_summary($folder, $infusionId = 0, ?array $
     return $summary;
 }
 
+function get_infusion_presentation_contract_summary($folder, $infusionId = 0, ?array $manifest = null)
+{
+    $summary = [
+        'implements' => false,
+        'interface' => \App\MiniCMS\Infusions\ModulePresentationContract::class,
+        'card_badge_count' => 0,
+        'card_meta_count' => 0,
+        'card_summary_count' => 0,
+        'detail_section_count' => 0,
+        'reserved_badges' => ['sdk', 'legacy', 'has_migrations', 'upgrade_available', 'missing_manifest'],
+        'error' => null,
+    ];
+
+    try {
+        $module = infusion_sdk_module($folder, (int)$infusionId, $manifest);
+    } catch (Throwable $e) {
+        $summary['error'] = $e->getMessage();
+        return $summary;
+    }
+
+    if (!$module instanceof \App\MiniCMS\Infusions\ModulePresentationContract) {
+        return $summary;
+    }
+
+    $metadata = (array)$module->presentationMetadata();
+    $card = isset($metadata['card']) && is_array($metadata['card']) ? $metadata['card'] : [];
+    $detail = isset($metadata['detail']) && is_array($metadata['detail']) ? $metadata['detail'] : [];
+
+    $cardBadges = isset($card['badges']) && is_array($card['badges']) ? $card['badges'] : [];
+    $cardMeta = isset($card['meta']) && is_array($card['meta']) ? $card['meta'] : [];
+    $cardSummary = isset($card['summary']) && is_array($card['summary']) ? $card['summary'] : [];
+    $detailSections = isset($detail['sections']) && is_array($detail['sections']) ? $detail['sections'] : [];
+
+    $summary['implements'] = true;
+    $summary['card_badge_count'] = count($cardBadges);
+    $summary['card_meta_count'] = count($cardMeta);
+    $summary['card_summary_count'] = count($cardSummary);
+    $summary['detail_section_count'] = count($detailSections);
+
+    return $summary;
+}
+
 function get_infusion_developer_snapshot($folder, $infusionId = 0, ?array $manifest = null)
 {
     $folder = trim((string)$folder);
@@ -746,6 +788,7 @@ function get_infusion_developer_snapshot($folder, $infusionId = 0, ?array $manif
         'diagnostics_contract' => get_infusion_diagnostics_contract_summary($folder, (int)($installed['id'] ?? $infusionId), $manifest),
         'event_contract' => get_infusion_event_contract_summary($folder, (int)($installed['id'] ?? $infusionId), $manifest),
         'search_contract' => get_infusion_search_contract_summary($folder, (int)($installed['id'] ?? $infusionId), $manifest),
+        'presentation_contract' => get_infusion_presentation_contract_summary($folder, (int)($installed['id'] ?? $infusionId), $manifest),
     ];
 }
 

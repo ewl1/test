@@ -13,6 +13,7 @@
 - `App\MiniCMS\Infusions\ModuleDiagnosticsContract`
 - `App\MiniCMS\Infusions\ModuleEventContract`
 - `App\MiniCMS\Infusions\ModuleSearchContract`
+- `App\MiniCMS\Infusions\ModulePresentationContract`
 - `App\MiniCMS\Infusions\SimplePanelModule`
 - `App\MiniCMS\Infusions\HookRegistry`
 - `App\MiniCMS\Infusions\InfusionSdk`
@@ -28,6 +29,7 @@
 - `ModuleDiagnosticsContract` leidzia moduliui vienodai deklaruoti savo health check, missing files, missing tables ir konfiguracijos busenas.
 - `ModuleEventContract` leidzia moduliui vienodai deklaruoti `notifications / activity feed` ivykius.
 - `ModuleSearchContract` leidzia moduliui vienodai deklaruoti paieskos saltinius ir ju metaduomenis.
+- `ModulePresentationContract` leidzia moduliui vienodai deklaruoti, ka jis rodo korteleje ir ka detaliame rodinyje.
 
 ## Admin veiksmu deklaravimas
 - `admin: true` ir realus `admin.php` leidzia branduoliui rodyti `Admin` veiksma.
@@ -236,6 +238,61 @@ Paskirtis:
 - `weight`: koki svori / relevancijos koeficienti saltinis turi bendrame rezultate
 
 Developer mode per `administration/infusions.php` rodo, ar modulis si kontrakta igyvendina, kiek jis turi paieskos saltiniu, indeksuojamu lauku, URL, permission filter ir svoriu.
+
+## ModulePresentationContract
+Jei modulis nori vienodai deklaruoti savo korteles ir detalaus rodinio pateikimo duomenis, jis gali papildomai igyvendinti `ModulePresentationContract`.
+
+```php
+<?php
+
+namespace App\News;
+
+use App\MiniCMS\Infusions\AbstractInfusionModule;
+use App\MiniCMS\Infusions\ModulePresentationContract;
+
+final class NewsModule extends AbstractInfusionModule implements ModulePresentationContract
+{
+    public function presentationMetadata(): array
+    {
+        return [
+            'card' => [
+                'badges' => [
+                    ['key' => 'featured', 'label' => 'Featured'],
+                ],
+                'meta' => [
+                    ['label' => 'Feed', 'value' => 'RSS / Atom'],
+                ],
+                'summary' => [
+                    'Publikavimas, komentarai ir feed palaikymas.',
+                ],
+            ],
+            'detail' => [
+                'sections' => [
+                    [
+                        'key' => 'capabilities',
+                        'title' => 'Galimybes',
+                        'items' => ['Komentarai', 'SEO', 'RSS / Atom'],
+                    ],
+                ],
+            ],
+        ];
+    }
+}
+```
+
+Rezervuoti core badge raktai:
+- `sdk`
+- `legacy`
+- `has_migrations`
+- `upgrade_available`
+- `missing_manifest`
+
+Taisykles:
+- sie badge priklauso branduoliui ir negali buti perrasomi modulio
+- modulis gali deklaruoti papildomus savo badge, meta laukus ir detalaus rodinio sekcijas
+- korteleje turi likti tik trumpa santrauka, o detaliame rodinyje gali buti issamesnes sekcijos
+
+Developer mode per `administration/infusions.php` rodo, ar modulis si kontrakta igyvendina, kiek turi korteles badge, meta lauku, santrauku ir detaliu sekciju.
 
 ## Modulio struktura
 ```text
@@ -514,3 +571,4 @@ Generatorius sukuria:
 - Jei modulis turi atskira diagnostika ar health check logika, rekomenduojama kartu su `diagnostics_page` igyvendinti ir `ModuleDiagnosticsContract`, kad branduolys galetu vienodai suprasti modulio sveikatos duomenis.
 - Jei modulis skelbia pranesimu ar activity feed ivykius, rekomenduojama igyvendinti `ModuleEventContract`, kad branduolys galetu vienodai suprasti ivykiu metaduomenis ir kanalus.
 - Jei modulis teikia paieskos saltinius, rekomenduojama igyvendinti `ModuleSearchContract`, kad branduolys galetu vienodai suprasti indeksuojamus laukus, rezultatui reikalingus metaduomenis ir leidimu filtra.
+- Jei moduliui svarbu vienodai deklaruoti korteles badge ir detalias UI sekcijas, rekomenduojama igyvendinti `ModulePresentationContract`, kad branduolys galetu vienodai suprasti, kas rodoma suvestineje, o kas tik detaliame rodinyje.

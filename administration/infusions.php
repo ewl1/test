@@ -493,6 +493,14 @@ include THEMES . 'default/admin_header.php';
                                         <?= !empty($snapshot['search_contract']['error']) ? e('klaida: ' . $snapshot['search_contract']['error']) : 'neigyvendintas' ?>
                                     <?php endif; ?>
                                 </div>
+                                <div class="small admin-page-subtitle">
+                                    Presentation contract:
+                                    <?php if (!empty($snapshot['presentation_contract']['implements'])): ?>
+                                        taip | korteles badge <?= (int)$snapshot['presentation_contract']['card_badge_count'] ?> | korteles meta <?= (int)$snapshot['presentation_contract']['card_meta_count'] ?> | korteles santraukos <?= (int)$snapshot['presentation_contract']['card_summary_count'] ?> | detales sekcijos <?= (int)$snapshot['presentation_contract']['detail_section_count'] ?>
+                                    <?php else: ?>
+                                        <?= !empty($snapshot['presentation_contract']['error']) ? e('klaida: ' . $snapshot['presentation_contract']['error']) : 'neigyvendintas' ?>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </div>
 
