@@ -78,7 +78,7 @@
 - paieskos saltinius
 - pranesimu ivykius
 - hook'us i branduoli
-- [ ] Vienodai apibrezti, kaip modulis skelbia `notifications` ir `activity feed` ivykius:
+- [x] Vienodai apibrezti, kaip modulis skelbia `notifications` ir `activity feed` ivykius:
 - ivykio tipas
 - ivykio pavadinimas ir santrauka
 - target/actor duomenys

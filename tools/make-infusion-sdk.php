@@ -23,6 +23,7 @@ if ($folder === '') {
     fwrite(STDERR, "Scaffold sukuria plonus entrypoint failus, support/, classes/, migrations/, locale/ ir assets/ struktura.\n");
     fwrite(STDERR, "Jei modulis tures nustatymu puslapi, rekomenduojama veliau igyvendinti ModuleSettingsContract.\n");
     fwrite(STDERR, "Jei modulis tures diagnostikos puslapi ar health check logika, rekomenduojama veliau igyvendinti ModuleDiagnosticsContract.\n");
+    fwrite(STDERR, "Jei modulis skelbs notifications ar activity feed ivykius, rekomenduojama veliau igyvendinti ModuleEventContract.\n");
     exit(1);
 }
 

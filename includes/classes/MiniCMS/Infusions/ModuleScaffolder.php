@@ -264,6 +264,16 @@ Sis modulis sugeneruotas per MiniCMS Module SDK scaffold.
   - konfiguracijos busenas
 - `administration/infusions.php` developer mode tada matys, ar modulis si kontrakta igyvendina.
 
+## Events contract
+- Jei modulis skelbia ivykius i notification centra ar activity feed, rekomenduojama klasei papildomai igyvendinti `App\\MiniCMS\\Infusions\\ModuleEventContract`.
+- Ta sutartis leidzia vienodai deklaruoti:
+  - ivykio tipa
+  - pavadinima ir santrauka
+  - actor / target duomenis
+  - matomumo taisykles
+  - kanalus: `notifications`, `activity_feed` arba abu
+- `administration/infusions.php` developer mode tada matys, ar modulis si kontrakta igyvendina.
+
 ## Standartas
 - `bootstrap.php`, `admin.php` ir `panel.php` turi likti ploni entrypoint failai.
 - Jei modulyje laikinai dar reikia proceduriniu helperiu, jie keliauja i `support/` ir skaidomi pagal atsakomybe.

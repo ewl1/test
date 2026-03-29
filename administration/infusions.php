@@ -477,6 +477,14 @@ include THEMES . 'default/admin_header.php';
                                         <?= !empty($snapshot['diagnostics_contract']['error']) ? e('klaida: ' . $snapshot['diagnostics_contract']['error']) : 'neigyvendintas' ?>
                                     <?php endif; ?>
                                 </div>
+                                <div class="small admin-page-subtitle">
+                                    Events contract:
+                                    <?php if (!empty($snapshot['event_contract']['implements'])): ?>
+                                        taip | ivykiai <?= (int)$snapshot['event_contract']['event_count'] ?> | notifications <?= (int)$snapshot['event_contract']['notification_event_count'] ?> | activity feed <?= (int)$snapshot['event_contract']['activity_feed_event_count'] ?> | abu <?= (int)$snapshot['event_contract']['dual_channel_event_count'] ?>
+                                    <?php else: ?>
+                                        <?= !empty($snapshot['event_contract']['error']) ? e('klaida: ' . $snapshot['event_contract']['error']) : 'neigyvendintas' ?>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </div>
 

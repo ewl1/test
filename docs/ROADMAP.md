@@ -239,6 +239,7 @@
 - `administration/infusions.php` jau vienodai pateikia modulio `admin`, `settings`, `health` ir `upgrade` veiksmus, jei modulis juos deklaruoja.
 - `ModuleSettingsContract` jau apibreztas SDK lygyje ir `developer mode` rodo, ar modulis deklaruoja sekcijas, formos schema ir validavimo taisykles.
 - `ModuleDiagnosticsContract` jau apibreztas SDK lygyje ir `developer mode` rodo, ar modulis deklaruoja health checks, missing files, missing tables ir konfiguracijos busenas.
+- `ModuleEventContract` jau apibreztas SDK lygyje ir `developer mode` rodo, ar modulis deklaruoja `notifications / activity feed` ivykius ir kokiais kanalais jie keliauja.
 - moduliu gyvenimo ciklo hook'ai jau dispatch'inami per `before/after install|upgrade|uninstall`, kartu su modulio-specifiniais `.<folder>` variantais.
 - `developer mode` jau rodo `module_class`, registruotus runtime hook'us, migraciju sarasa, manifest laukus ir diagnostikos santrauka.
 - isplestas manifest standartas:

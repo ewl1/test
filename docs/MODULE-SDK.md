@@ -11,6 +11,7 @@
 - `App\MiniCMS\Infusions\AbstractInfusionModule`
 - `App\MiniCMS\Infusions\ModuleSettingsContract`
 - `App\MiniCMS\Infusions\ModuleDiagnosticsContract`
+- `App\MiniCMS\Infusions\ModuleEventContract`
 - `App\MiniCMS\Infusions\SimplePanelModule`
 - `App\MiniCMS\Infusions\HookRegistry`
 - `App\MiniCMS\Infusions\InfusionSdk`
@@ -24,6 +25,7 @@
 - `bootstrap.php`, `admin.php` ir `panel.php` turi likti ploni, o proceduriniai helperiai turi keliauti i `support/`.
 - `ModuleSettingsContract` leidzia moduliui vienodai deklaruoti savo nustatymu sekcijas, formos schema ir validavimo taisykles.
 - `ModuleDiagnosticsContract` leidzia moduliui vienodai deklaruoti savo health check, missing files, missing tables ir konfiguracijos busenas.
+- `ModuleEventContract` leidzia moduliui vienodai deklaruoti `notifications / activity feed` ivykius.
 
 ## Admin veiksmu deklaravimas
 - `admin: true` ir realus `admin.php` leidzia branduoliui rodyti `Admin` veiksma.
@@ -149,6 +151,47 @@ Paskirtis:
 - `diagnosticsConfigurationStates()`: svarbiu konfiguracijos raktu busenos
 
 Developer mode per `administration/infusions.php` jau rodo, ar modulis si kontrakta igyvendina, kiek jis turi check'u, missing files, missing tables ir konfiguracijos busenu.
+
+## ModuleEventContract
+Jei modulis nori vienodai deklaruoti, kokius ivykius jis skelbia i `notification centra`, `activity feed` arba abu, jis gali papildomai igyvendinti `ModuleEventContract`.
+
+```php
+<?php
+
+namespace App\News;
+
+use App\MiniCMS\Infusions\AbstractInfusionModule;
+use App\MiniCMS\Infusions\ModuleEventContract;
+
+final class NewsModule extends AbstractInfusionModule implements ModuleEventContract
+{
+    public function publishedEvents(): array
+    {
+        return [
+            [
+                'key' => 'news.article.published',
+                'type' => 'published',
+                'title' => 'Naujiena publikuota',
+                'summary' => 'Publikuojama nauja naujiena',
+                'actor' => ['type' => 'user', 'source' => 'author_id'],
+                'target' => ['type' => 'news_article', 'source' => 'id'],
+                'visibility' => ['scope' => 'public'],
+                'channels' => ['notifications', 'activity_feed'],
+            ],
+        ];
+    }
+}
+```
+
+Paskirtis:
+- `key`: stabilus ivykio identifikatorius
+- `type`: ivykio tipas (`created`, `updated`, `published`, `reply`, ...)
+- `title` ir `summary`: zmogui suprantami pavadinimas ir santrauka
+- `actor` ir `target`: kas sukure ivyki ir ka jis liecia
+- `visibility`: kam leidziama ji matyti
+- `channels`: ar ivyki reikia siusti i `notifications`, `activity_feed` ar abu
+
+Developer mode per `administration/infusions.php` rodo, ar modulis si kontrakta igyvendina, kiek turi ivykiu ir kiek ju eina i `notifications`, `activity feed` ar abu kanalus.
 
 ## Modulio struktura
 ```text
@@ -425,3 +468,4 @@ Generatorius sukuria:
 - Venkite vieno monolitinio failo kaip `feature_pack.php`: geriau skaidyti i `support/schema.php`, `support/settings.php`, `support/admin.php` ir pan.
 - Jei modulis turi atskirus nustatymus, rekomenduojama kartu su `settings_page` igyvendinti ir `ModuleSettingsContract`, kad branduolys galetu vienodai suprasti jo nustatymu struktura.
 - Jei modulis turi atskira diagnostika ar health check logika, rekomenduojama kartu su `diagnostics_page` igyvendinti ir `ModuleDiagnosticsContract`, kad branduolys galetu vienodai suprasti modulio sveikatos duomenis.
+- Jei modulis skelbia pranesimu ar activity feed ivykius, rekomenduojama igyvendinti `ModuleEventContract`, kad branduolys galetu vienodai suprasti ivykiu metaduomenis ir kanalus.
