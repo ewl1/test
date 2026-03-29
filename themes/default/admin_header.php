@@ -2,6 +2,7 @@
 if (!defined('IN_ADMIN')) {
     define('IN_ADMIN', true);
 }
+require_once __DIR__ . '/admin_layout.php';
 
 $siteTitle = setting('site_name', __('site.title'));
 $me = current_user();
@@ -21,8 +22,8 @@ $brandLabel = 'Mini CMS';
 <title><?= e($siteTitle) ?> - <?= e(__('admin.title')) ?></title>
 
 <link rel="stylesheet" href="<?= asset_path('themes/default/bootstrap.min.css') ?>">
+<link rel="stylesheet" href="<?= asset_path('includes/plugins/webicon/fa7/css/all.min.css') ?>">
 <link rel="stylesheet" href="<?= asset_path('themes/default/admin.css') ?>">
-<link rel="stylesheet" href="<?= asset_path('themes/default/css/all.min.css') ?>">
 <?php foreach (get_registered_page_styles() as $stylePath): ?>
 <link rel="stylesheet" href="<?= asset_path($stylePath) ?>">
 <?php endforeach; ?>

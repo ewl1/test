@@ -61,7 +61,10 @@
 - [ ] `Danger` veiksmus administracijoje vizualiai atskirti nuo neutraliu: ne tik spalva, bet ir vieta, kad `disable / uninstall` nebutu sumaisyti su `admin / settings / health`.
 - [ ] Toliau isskaidyti papildomu moduliu stilius is bendro `style.css`.
 - [ ] Apibrezti breakpoint'us viesai ir admin daliai, kad elgsena butu prognozuojama, o ne atsitiktine.
-- [ ] Paruosti admin layout sablonus: `dashboard`, `table view`, `form view`, `split settings` ir `diagnostics`.
+- [x] Paruosti admin layout sablonus: `dashboard`, `table view`, `form view`, `split settings` ir `diagnostics`.
+- bendra admin layout baze dabar yra `themes/default/admin_layout.php` ir `docs/ADMIN-LAYOUTS.md`
+- `dashboard` ir `diagnostics` jau pervesti ant naujo helperio bei preset klasiu
+- `table view`, `form view` ir `split settings` presetai paruosti kaip tema/helperio standartas tolimesniam perkelimui
 - [ ] Admin lentelese parengti `table-to-card` arba horizontal scroll strategija maziems ekranams.
 
 ### Ikonografija ir prieinamumas

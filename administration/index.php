@@ -2,15 +2,45 @@
 require_once __DIR__ . '/_guard.php';
 include THEMES . 'default/admin_header.php';
 ?>
-<div class="admin-dashboard-hero d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
-    <div>
-        <h1 class="admin-dashboard-title mb-1"><?= e(__('admin.dashboard')) ?></h1>
-        <div class="admin-dashboard-subtitle">Mini CMS v<?= e(app_version()) ?> &middot; PHP <?= e(PHP_VERSION) ?></div>
-    </div>
-    <a class="btn btn-outline-secondary" href="<?= public_path('index.php') ?>"><?= e(__('admin.site')) ?></a>
-</div>
+<div class="<?= e(admin_layout_preset_class('dashboard')) ?>">
+<?php
+admin_render_page_header([
+    'variant' => 'dashboard',
+    'title' => __('admin.dashboard'),
+    'subtitle' => 'Mini CMS v' . app_version() . ' | PHP ' . PHP_VERSION,
+    'actions' => [
+        [
+            'label' => __('admin.site'),
+            'href' => public_path('index.php'),
+            'class' => 'btn btn-outline-secondary admin-action-button',
+            'icon' => 'fa-solid fa-globe',
+        ],
+    ],
+]);
 
-<div class="row g-3 admin-dashboard-grid">
+admin_render_stat_strip([
+    [
+        'label' => 'Versija',
+        'value' => 'v' . app_version(),
+        'tone' => 'info',
+        'icon' => 'fa-solid fa-code-branch',
+    ],
+    [
+        'label' => 'PHP',
+        'value' => PHP_VERSION,
+        'tone' => 'info',
+        'icon' => 'fa-brands fa-php',
+    ],
+    [
+        'label' => 'OPcache',
+        'value' => is_opcache_enabled() ? 'Ijungta' : 'Isjungta',
+        'tone' => is_opcache_enabled() ? 'success' : 'warning',
+        'icon' => 'fa-solid fa-gauge-high',
+    ],
+]);
+?>
+
+<div class="row g-3 admin-dashboard-grid admin-layout-dashboard-grid">
     <div class="col-lg-4">
         <div class="card admin-dashboard-card h-100">
             <div class="card-header">Branduolys</div>
@@ -48,5 +78,6 @@ include THEMES . 'default/admin_header.php';
             </div>
         </div>
     </div>
+</div>
 </div>
 <?php include THEMES . 'default/admin_footer.php'; ?>

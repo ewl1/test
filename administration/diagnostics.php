@@ -11,15 +11,38 @@ $badgeClass = static function ($ok) {
 
 include THEMES . 'default/admin_header.php';
 ?>
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-        <h1 class="h3 mb-0">Serverio diagnostika</h1>
-        <div class="admin-page-subtitle small">Branduolio ir serverio būsena vienoje vietoje</div>
-    </div>
-    <span class="badge text-bg-dark">v<?= e(app_version()) ?></span>
-</div>
+<div class="<?= e(admin_layout_preset_class('diagnostics', 'admin-layout-diagnostics-shell')) ?>">
+<?php
+admin_render_page_header([
+    'variant' => 'diagnostics',
+    'title' => 'Serverio diagnostika',
+    'subtitle' => 'Branduolio ir serverio busena vienoje vietoje',
+    'badge_html' => '<span class="badge text-bg-dark">v' . e(app_version()) . '</span>',
+]);
 
-<div class="row g-4">
+admin_render_stat_strip([
+    [
+        'label' => 'PHP',
+        'value' => $diagnostics['php']['version'],
+        'tone' => 'info',
+        'icon' => 'fa-brands fa-php',
+    ],
+    [
+        'label' => 'OPcache',
+        'value' => is_opcache_enabled() ? 'Ijungtas' : 'Isjungtas',
+        'tone' => is_opcache_enabled() ? 'success' : 'warning',
+        'icon' => 'fa-solid fa-gauge-high',
+    ],
+    [
+        'label' => 'Pletiniai',
+        'value' => (string)count($diagnostics['extensions']),
+        'tone' => 'info',
+        'icon' => 'fa-solid fa-puzzle-piece',
+    ],
+]);
+?>
+
+<div class="row g-4 admin-layout-diagnostics-grid">
     <div class="col-lg-6">
         <div class="card h-100">
             <div class="card-header">Programa</div>
@@ -64,7 +87,7 @@ include THEMES . 'default/admin_header.php';
 
     <div class="col-lg-6">
         <div class="card h-100">
-            <div class="card-header">Resursų limitai</div>
+            <div class="card-header">Resursu limitai</div>
             <div class="card-body">
                 <dl class="row mb-0">
                     <dt class="col-sm-5">memory_limit</dt>
@@ -86,7 +109,7 @@ include THEMES . 'default/admin_header.php';
             <div class="card-body">
                 <p class="mb-3">
                     <span class="badge <?= is_opcache_enabled() ? 'text-bg-success' : 'text-bg-secondary' ?>">
-                        <?= is_opcache_enabled() ? 'Įjungtas' : 'Išjungtas' ?>
+                        <?= is_opcache_enabled() ? 'Ijungtas' : 'Isjungtas' ?>
                     </span>
                 </p>
                 <?php if ($opcache): ?>
@@ -103,7 +126,7 @@ include THEMES . 'default/admin_header.php';
                         <dd class="col-sm-7"><?= e(format_bytes_human((int)$opcache['free_memory'])) ?></dd>
                     </dl>
                 <?php else: ?>
-                    <p class="text-secondary mb-0">Išsami OPcache statistika šiuo metu nepasiekiama.</p>
+                    <p class="text-secondary mb-0">Issami OPcache statistika siuo metu nepasiekiama.</p>
                 <?php endif; ?>
             </div>
         </div>
@@ -111,7 +134,7 @@ include THEMES . 'default/admin_header.php';
 
     <div class="col-lg-6">
         <div class="card h-100">
-            <div class="card-header">Plėtiniai</div>
+            <div class="card-header">Pletiniai</div>
             <div class="card-body d-flex flex-wrap gap-2">
                 <?php foreach ($diagnostics['extensions'] as $extension => $enabled): ?>
                     <span class="badge <?= $enabled ? 'text-bg-success' : 'text-bg-secondary' ?> admin-extension-badge">
@@ -119,9 +142,9 @@ include THEMES . 'default/admin_header.php';
                     </span>
                 <?php endforeach; ?>
                 <div class="alert alert-info mt-3 mb-0 w-100">
-                    <strong>Būtini:</strong> `pdo`, `pdo_mysql`, `mbstring`, `json`, `session`, `fileinfo`, `openssl`.
+                    <strong>Butini:</strong> `pdo`, `pdo_mysql`, `mbstring`, `json`, `session`, `fileinfo`, `openssl`.
                     <strong class="ms-2">Rekomenduojami:</strong> `curl`, `gd`, `intl`, `Zend OPcache`.
-                    <strong class="ms-2">Pasirenkami:</strong> `zip`, `sodium`, `exif`, XML šeimos plėtiniai, jei jų konkrečiai reikia moduliams.
+                    <strong class="ms-2">Pasirenkami:</strong> `zip`, `sodium`, `exif`, XML seimos pletiniai, jei ju konkreciai reikia moduliams.
                 </div>
             </div>
         </div>
@@ -129,7 +152,7 @@ include THEMES . 'default/admin_header.php';
 
     <div class="col-lg-6">
         <div class="card h-100">
-            <div class="card-header">Keliai ir teisės</div>
+            <div class="card-header">Keliai ir teises</div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-sm align-middle mb-0 admin-table-strong">
@@ -158,9 +181,10 @@ include THEMES . 'default/admin_header.php';
                 <span class="badge text-bg-success">Login brute-force ribojimas: On</span>
                 <span class="badge text-bg-success">Upload MIME whitelist: On</span>
                 <span class="badge text-bg-success">Upload extension whitelist: On</span>
-                <span class="badge text-bg-success">Uploads vykdymas Apache pusėje blokuojamas</span>
+                <span class="badge text-bg-success">Uploads vykdymas Apache puseje blokuojamas</span>
             </div>
         </div>
     </div>
+</div>
 </div>
 <?php include THEMES . 'default/admin_footer.php'; ?>
