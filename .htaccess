@@ -23,6 +23,12 @@ RewriteRule ^(?:config\.php|composer\.(json|lock)|\.env|logs/.*)$ - [F,L]
     Header always setifempty X-Permitted-Cross-Domain-Policies "none"
 </IfModule>
 
+<IfModule mod_mime.c>
+    AddType font/woff2 .woff2
+    AddType font/woff .woff
+    AddType font/ttf .ttf
+</IfModule>
+
 <FilesMatch "\.(log|sql|ini|sh)$">
     Require all denied
 </FilesMatch>

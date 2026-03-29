@@ -3,6 +3,10 @@ $me = current_user();
 $themeCss = defined('IN_ADMIN') ? 'themes/default/admin.css' : 'themes/default/style.css';
 $registeredStyles = get_registered_page_styles();
 $brandLabel = 'Mini CMS';
+$memberStatus = $me ? user_membership_status_meta($me) : null;
+$memberDashboardUrl = ($me && has_permission($GLOBALS['pdo'], (int)$me['id'], 'admin.access'))
+    ? public_path('administration/index.php')
+    : public_path('index.php');
 ?>
 <!doctype html>
 <html lang="<?= e(site_locale()) ?>">
@@ -16,6 +20,7 @@ $brandLabel = 'Mini CMS';
 <link rel="icon" type="image/png" sizes="32x32" href="<?= public_path('images/favicons/favicon-32x32.png') ?>">
 <link rel="apple-touch-icon" href="<?= public_path('images/favicons/apple-touch-icon.png') ?>">
 <link rel="stylesheet" href="<?= asset_path('themes/default/bootstrap.min.css') ?>">
+<link rel="stylesheet" href="<?= asset_path('themes/default/css/all.min.css') ?>">
 <link rel="stylesheet" href="<?= asset_path($themeCss) ?>">
 <?php foreach ($registeredStyles as $stylePath): ?>
 <link rel="stylesheet" href="<?= asset_path($stylePath) ?>">
@@ -98,17 +103,20 @@ if (!$allowed) {
 <div class="dropdown-menu dropdown-menu-end member-menu-dropdown">
 <div class="member-menu-header px-3 py-2 border-bottom">
 <div class="fw-semibold"><a class="text-decoration-none" href="<?= user_profile_url((int)$me['id']) ?>"><?= e($me['username']) ?></a></div>
-<div class="small text-secondary"><?= e($me['email']) ?></div>
+<?php if ($memberStatus): ?>
+<div class="member-menu-status small">
+<span class="member-status-badge <?= e($memberStatus['class']) ?>"><i class="<?= e($memberStatus['icon']) ?>"></i> <?= e($memberStatus['label']) ?></span>
 </div>
-<a class="dropdown-item" href="<?= public_path('profile.php') ?>"><?= e(__('member.profile.edit')) ?></a>
-<a class="dropdown-item" href="<?= user_profile_url((int)$me['id']) ?>"><?= e(__('member.profile.public')) ?></a>
-<?php if (has_permission($GLOBALS['pdo'], $me['id'], 'admin.access')): ?>
-<a class="dropdown-item" href="<?= public_path('administration/index.php') ?>"><?= e(__('nav.admin.dashboard')) ?></a>
 <?php endif; ?>
+</div>
+<a class="dropdown-item" href="<?= public_path('profile.php') ?>"><i class="fa-solid fa-user-pen me-2"></i><?= e(__('member.profile.edit')) ?></a>
+<a class="dropdown-item" href="<?= public_path('messages.php') ?>"><i class="fa-solid fa-envelope me-2"></i><?= e(__('member.messages')) ?></a>
+<a class="dropdown-item" href="<?= public_path('members.php') ?>"><i class="fa-solid fa-users me-2"></i><?= e(__('member.members')) ?></a>
+<a class="dropdown-item" href="<?= $memberDashboardUrl ?>"><i class="fa-solid fa-gauge-high me-2"></i><?= e(__('member.dashboard')) ?></a>
 <div class="dropdown-divider"></div>
 <form method="post" action="<?= public_path('logout.php') ?>" class="px-3 py-2 member-menu-logout">
 <?= csrf_field() ?>
-<button class="btn btn-sm btn-outline-secondary w-100" type="submit"><?= e(__('member.logout')) ?></button>
+<button class="btn btn-sm btn-outline-secondary w-100" type="submit"><i class="fa-solid fa-right-from-bracket me-2"></i><?= e(__('member.logout')) ?></button>
 </form>
 </div>
 </div>
