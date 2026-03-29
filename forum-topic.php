@@ -16,7 +16,8 @@ if (!$topic) {
 
 $currentPage = max(1, (int)($_GET['page'] ?? 1));
 $canModerateTopic = forum_can_moderate_topic($topic);
-$topicEditMode = $canModerateTopic && (string)($_GET['mode'] ?? '') === 'edit';
+$canEditTopic = $canModerateTopic || forum_can_edit_own_topic($topic);
+$topicEditMode = $canEditTopic && (string)($_GET['mode'] ?? '') === 'edit';
 $topicEditError = null;
 $moderationError = null;
 $topicEditTitle = (string)$topic['title'];
@@ -29,7 +30,7 @@ $replyEdit = $replyEditId > 0 ? forum_get_reply($replyEditId) : null;
 if ($replyEdit && (int)$replyEdit['topic_id'] !== (int)$topic['id']) {
     $replyEdit = null;
 }
-$replyEditMode = $replyEdit && forum_can_moderate_reply($replyEdit);
+$replyEditMode = $replyEdit && (forum_can_moderate_reply($replyEdit) || forum_can_edit_own_reply($replyEdit));
 $replyEditError = null;
 $replyEditContent = $replyEdit ? (string)$replyEdit['content'] : '';
 
@@ -39,7 +40,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 
     if ($action === 'reply') {
         $replyContent = (string)($_POST['content'] ?? '');
-        [$ok, $message, $postId] = forum_create_reply($topic['id'], $replyContent);
+        [$ok, $message, $postId] = forum_create_reply($topic['id'], $replyContent, $_FILES['attachments'] ?? []);
         if ($ok && $postId) {
             flash('forum_success', $message);
             $lastPage = forum_topic_last_page($topic['id']);
@@ -71,7 +72,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     } elseif ($action === 'edit_topic') {
         $topicEditTitle = trim((string)($_POST['title'] ?? ''));
         $topicEditContent = (string)($_POST['content'] ?? '');
-        [$ok, $message] = forum_update_topic($topic['id'], $topicEditTitle, $topicEditContent);
+        [$ok, $message] = forum_update_topic($topic['id'], $topicEditTitle, $topicEditContent, (int)($_POST['mood_id'] ?? 0));
         if ($ok) {
             flash('forum_success', $message);
             redirect(forum_topic_url($topic['id'], $currentPage));
@@ -85,7 +86,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         if (!$replyEdit || (int)$replyEdit['topic_id'] !== (int)$topic['id']) {
             $moderationError = __('forum.reply.not_found');
         } else {
-            $replyEditMode = forum_can_moderate_reply($replyEdit);
+            $replyEditMode = forum_can_moderate_reply($replyEdit) || forum_can_edit_own_reply($replyEdit);
             $replyEditContent = (string)($_POST['content'] ?? '');
             [$ok, $message] = forum_update_reply($replyId, $replyEditContent);
             if ($ok) {
@@ -131,6 +132,11 @@ $successMessage = flash('forum_success');
 $forum = forum_get_forum((int)$topic['forum_id']);
 $parentForum = $forum && !empty($forum['parent_id']) ? forum_get_forum((int)$forum['parent_id']) : null;
 $canModerateTopic = forum_can_moderate_topic($topic);
+$canEditTopic = $canModerateTopic || forum_can_edit_own_topic($topic);
+$topicAttachments = forum_get_attachments_for_topic((int)$topic['id']);
+$replyAttachmentMap = forum_get_attachments_for_posts(array_map(static function ($reply) {
+    return (int)$reply['id'];
+}, $replies));
 
 include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
 ?>
@@ -158,6 +164,13 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
             <div class="alert alert-danger"><?= e($moderationError) ?></div>
         <?php endif; ?>
 
+        <?php if ($forum && !empty($forum['rules_html'])): ?>
+            <div class="alert alert-warning forum-rules-box mb-4">
+                <div class="fw-semibold mb-2">Forumo taisyklės ir perspėjimai</div>
+                <div><?= $forum['rules_html'] ?></div>
+            </div>
+        <?php endif; ?>
+
         <div class="card forum-topic-header-card mb-4">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
@@ -168,6 +181,10 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                             <?php endif; ?>
                             <?php if ((int)$topic['is_locked'] === 1): ?>
                                 <span class="badge text-bg-dark"><?= e(__('forum.locked')) ?></span>
+                            <?php endif; ?>
+                            <?= forum_render_mood_badge((int)($topic['mood_id'] ?? 0)) ?>
+                            <?php if (forum_is_popular_topic($topic)): ?>
+                                <span class="badge text-bg-danger">Populiari</span>
                             <?php endif; ?>
                         </div>
                         <h1 class="h3 mb-2"><?= e($topic['title']) ?></h1>
@@ -184,7 +201,7 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
             </div>
         </div>
 
-        <?php if ($canModerateTopic): ?>
+                <?php if ($canModerateTopic): ?>
             <div class="card forum-moderation-card mb-4">
                 <div class="card-body d-flex justify-content-between align-items-center gap-3 flex-wrap">
                     <div>
@@ -213,7 +230,13 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
             </div>
         <?php endif; ?>
 
-        <?php if ($canModerateTopic && $topicEditMode): ?>
+        <?php if (!$canModerateTopic && $canEditTopic): ?>
+            <div class="mb-3">
+                <a class="btn btn-sm btn-outline-primary" href="<?= forum_topic_url((int)$topic['id'], $page) . '&mode=edit' ?>">Redaguoti savo temą</a>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($canEditTopic && $topicEditMode): ?>
             <div class="card forum-editor-card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center gap-3">
                     <span><?= e(__('forum.edit')) ?></span>
@@ -245,6 +268,18 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                             <div class="form-text"><?= e(__('forum.allowed_bbcode')) ?></div>
                         </div>
 
+                        <?php if ($moods = forum_get_moods(true)): ?>
+                            <div class="mb-3">
+                                <label class="form-label" for="forum-edit-topic-mood">Forumo nuotaika</label>
+                                <select class="form-select" id="forum-edit-topic-mood" name="mood_id">
+                                    <option value="0">Be nuotaikos</option>
+                                    <?php foreach ($moods as $mood): ?>
+                                        <option value="<?= (int)$mood['id'] ?>" <?= (int)($topic['mood_id'] ?? 0) === (int)$mood['id'] ? 'selected' : '' ?>><?= e($mood['title']) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        <?php endif; ?>
+
                         <button class="btn btn-primary"><?= e(__('forum.save_changes')) ?></button>
                     </form>
                 </div>
@@ -263,7 +298,15 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                                 <?= e($topic['username'] ?? __('member.guest')) ?>
                             <?php endif; ?>
                         </div>
+                        <?= forum_render_rank_badge((int)($topic['user_id'] ?? 0)) ?>
+                        <?php if (forum_show_reputation_enabled() && !empty($topic['user_id'])): ?>
+                            <?php $reputation = fetch_user_reputation_summary((int)$topic['user_id']); ?>
+                            <div class="small text-secondary">Reputacija: <?= (int)$reputation['total'] ?></div>
+                        <?php endif; ?>
                         <div class="small text-secondary"><?= e(format_dt($topic['created_at'])) ?></div>
+                        <?php if (forum_show_ip_publicly() && !empty($topic['ip_address'])): ?>
+                            <div class="small text-secondary">IP: <?= e($topic['ip_address']) ?></div>
+                        <?php endif; ?>
                     </div>
                 </aside>
                 <div class="forum-post-content">
@@ -271,12 +314,16 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                         <span class="badge text-bg-primary"><?= e(__('forum.topic_badge')) ?></span>
                     </div>
                     <div class="forum-post-body"><?= forum_format_body($topic['content']) ?></div>
+                    <?php if ($topicAttachments): ?>
+                        <?= forum_render_attachments($topicAttachments) ?>
+                    <?php endif; ?>
                 </div>
             </div>
         </article>
 
         <?php foreach ($replies as $reply): ?>
             <?php $canModerateReply = forum_can_moderate_reply($reply); ?>
+            <?php $canEditReply = $canModerateReply || forum_can_edit_own_reply($reply); ?>
             <article class="card forum-post-card mb-3" id="forum-reply-<?= (int)$reply['id'] ?>">
                 <div class="card-body forum-post-layout">
                     <aside class="forum-post-author">
@@ -289,7 +336,15 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                                     <?= e($reply['username'] ?? __('member.guest')) ?>
                                 <?php endif; ?>
                             </div>
+                            <?= forum_render_rank_badge((int)($reply['user_id'] ?? 0)) ?>
+                            <?php if (forum_show_reputation_enabled() && !empty($reply['user_id'])): ?>
+                                <?php $replyReputation = fetch_user_reputation_summary((int)$reply['user_id']); ?>
+                                <div class="small text-secondary">Reputacija: <?= (int)$replyReputation['total'] ?></div>
+                            <?php endif; ?>
                             <div class="small text-secondary"><?= e(format_dt($reply['created_at'])) ?></div>
+                            <?php if (forum_show_ip_publicly() && !empty($reply['ip_address'])): ?>
+                                <div class="small text-secondary">IP: <?= e($reply['ip_address']) ?></div>
+                            <?php endif; ?>
                             <?php if (!empty($reply['updated_at']) && $reply['updated_at'] !== $reply['created_at']): ?>
                                 <div class="small text-secondary"><?= e(__('forum.edited')) ?>: <?= e(format_dt($reply['updated_at'])) ?></div>
                             <?php endif; ?>
@@ -300,16 +355,18 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                             <div class="d-flex align-items-center gap-2 flex-wrap">
                                 <span class="badge text-bg-secondary"><?= e(__('forum.reply_badge')) ?></span>
                             </div>
-                            <?php if ($canModerateReply): ?>
+                            <?php if ($canEditReply): ?>
                                 <div class="d-flex flex-wrap gap-2">
                                     <a class="btn btn-sm btn-outline-primary" href="<?= forum_topic_url((int)$topic['id'], $page) . '&edit_reply=' . (int)$reply['id'] . '#forum-reply-' . (int)$reply['id'] ?>"><?= e(__('forum.edit')) ?></a>
-                                    <form method="post" class="d-inline">
-                                        <?= csrf_field() ?>
-                                        <input type="hidden" name="forum_action" value="delete_reply">
-                                        <input type="hidden" name="reply_id" value="<?= (int)$reply['id'] ?>">
-                                        <input type="hidden" name="reply_page" value="<?= (int)$page ?>">
-                                        <button class="btn btn-sm btn-outline-danger" type="submit" data-confirm-message="<?= e(__('forum.reply.delete.confirm')) ?>"><?= e(__('forum.reply.delete')) ?></button>
-                                    </form>
+                                    <?php if ($canModerateReply): ?>
+                                        <form method="post" class="d-inline">
+                                            <?= csrf_field() ?>
+                                            <input type="hidden" name="forum_action" value="delete_reply">
+                                            <input type="hidden" name="reply_id" value="<?= (int)$reply['id'] ?>">
+                                            <input type="hidden" name="reply_page" value="<?= (int)$page ?>">
+                                            <button class="btn btn-sm btn-outline-danger" type="submit" data-confirm-message="<?= e(__('forum.reply.delete.confirm')) ?>"><?= e(__('forum.reply.delete')) ?></button>
+                                        </form>
+                                    <?php endif; ?>
                                 </div>
                             <?php endif; ?>
                         </div>
@@ -345,6 +402,9 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                             </div>
                         <?php else: ?>
                             <div class="forum-post-body"><?= forum_format_body($reply['content']) ?></div>
+                            <?php if (!empty($replyAttachmentMap[(int)$reply['id']])): ?>
+                                <?= forum_render_attachments($replyAttachmentMap[(int)$reply['id']]) ?>
+                            <?php endif; ?>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -363,12 +423,16 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                     <div class="alert alert-danger"><?= e($replyError) ?></div>
                 <?php endif; ?>
 
-                <?php if ((int)$topic['is_locked'] === 1): ?>
+                <?php if ($forum && !empty($forum['is_locked'])): ?>
+                    <div class="alert alert-warning mb-0">Šis forumas užrakintas. Nauji atsakymai negalimi.</div>
+                <?php elseif ((int)$topic['is_locked'] === 1): ?>
                     <div class="alert alert-warning mb-0"><?= e(__('forum.reply_locked')) ?></div>
+                <?php elseif ($forum && empty($forum['enable_quick_reply'])): ?>
+                    <div class="alert alert-secondary mb-0">Šiame forume greitas atsakymas išjungtas.</div>
                 <?php elseif (!current_user()): ?>
                     <div class="alert alert-info mb-0"><?= e(__('forum.reply_login')) ?> <a href="<?= public_path('login.php') ?>"><?= e(__('nav.login')) ?></a>.</div>
                 <?php else: ?>
-                    <form method="post">
+                    <form method="post" enctype="multipart/form-data">
                         <?= csrf_field() ?>
                         <input type="hidden" name="forum_action" value="reply">
 
@@ -385,11 +449,40 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
                             <div class="form-text"><?= e(__('forum.allowed_bbcode')) ?></div>
                         </div>
 
+                        <?php if ($forum && !empty($forum['allow_attachments'])): ?>
+                            <div class="mb-3">
+                                <label class="form-label" for="forum-reply-attachments">Prisegti failus</label>
+                                <input class="form-control" id="forum-reply-attachments" type="file" name="attachments[]" multiple>
+                                <div class="form-text">Leidžiami tipai: <?= e(implode(', ', forum_attachment_allowed_extensions())) ?></div>
+                            </div>
+                        <?php endif; ?>
+
                         <button class="btn btn-primary"><?= e(__('forum.reply')) ?></button>
                     </form>
                 <?php endif; ?>
             </div>
         </div>
+
+        <?php if (forum_show_latest_posts_below_reply_form()): ?>
+            <?php $latestPreviews = forum_fetch_latest_reply_previews((int)$topic['id'], 3); ?>
+            <?php if ($latestPreviews): ?>
+                <div class="card mt-4">
+                    <div class="card-header">Naujausi atsakymai</div>
+                    <div class="card-body">
+                        <div class="vstack gap-3">
+                            <?php foreach ($latestPreviews as $preview): ?>
+                                <div>
+                                    <div class="small text-secondary mb-1">
+                                        <?= e($preview['username'] ?? __('member.guest')) ?> · <?= e(format_dt($preview['created_at'])) ?>
+                                    </div>
+                                    <div><?= e(forum_excerpt($preview['content'], 180)) ?></div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+        <?php endif; ?>
     </div>
 </div>
 <?php include THEMES . setting('current_theme', CURRENT_THEME) . '/footer.php'; ?>

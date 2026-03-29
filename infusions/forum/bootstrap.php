@@ -51,17 +51,17 @@ function forum_bbcode_buttons()
 
 function forum_topics_per_page()
 {
-    return 12;
+    return forum_topics_per_page_setting();
 }
 
 function forum_posts_per_page()
 {
-    return 10;
+    return forum_posts_per_page_setting();
 }
 
 function forum_panel_topics_limit()
 {
-    return 5;
+    return forum_recent_threads_limit_setting();
 }
 
 function forum_index_url()
@@ -398,7 +398,15 @@ function forum_fetch_forum_rows()
                    WHERE t7.forum_id = f.id
                    ORDER BY t7.last_post_at DESC, t7.id DESC
                    LIMIT 1
-               ) AS last_post_username
+               ) AS last_post_username,
+               (
+                   SELECT u2.avatar
+                   FROM ' . forum_table_topics() . ' t8
+                   LEFT JOIN users u2 ON u2.id = t8.last_post_user_id
+                   WHERE t8.forum_id = f.id
+                   ORDER BY t8.last_post_at DESC, t8.id DESC
+                   LIMIT 1
+               ) AS last_post_avatar
         FROM ' . forum_table_forums() . ' f
         INNER JOIN ' . forum_table_categories() . ' c ON c.id = f.category_id
         WHERE c.is_active = 1 AND f.is_active = 1
@@ -413,14 +421,23 @@ function forum_get_index_data()
     $categories = forum_fetch_categories();
     $rows = forum_fetch_forum_rows();
 
+    $categoryMetaMap = forum_get_category_meta_map(array_map(static function ($category) {
+        return (int)$category['id'];
+    }, $categories));
+    $forumMetaMap = forum_get_forum_meta_map(array_map(static function ($row) {
+        return (int)$row['id'];
+    }, $rows));
+
     $result = [];
     foreach ($categories as $category) {
+        $category = forum_apply_category_meta($category, $categoryMetaMap[(int)$category['id']] ?? []);
         $category['forums'] = [];
         $result[(int)$category['id']] = $category;
     }
 
     $orphans = [];
     foreach ($rows as $row) {
+        $row = forum_apply_forum_meta($row, $forumMetaMap[(int)$row['id']] ?? []);
         if ((int)$row['parent_id'] === 0) {
             $row['subforums'] = [];
             if (isset($result[(int)$row['category_id']])) {
@@ -464,7 +481,12 @@ function forum_get_forum($forumId)
     ');
     $stmt->execute([':id' => (int)$forumId]);
 
-    return $stmt->fetch() ?: null;
+    $forum = $stmt->fetch() ?: null;
+    if (!$forum) {
+        return null;
+    }
+
+    return forum_apply_forum_meta($forum, forum_get_forum_meta((int)$forum['id']));
 }
 
 function forum_get_forum_options()
@@ -751,9 +773,10 @@ function forum_create_forum($categoryId, $parentId, $title, $description, $sortO
     return [true, $parentId > 0 ? __('forum.message.subforum_created') : __('forum.message.forum_created')];
 }
 
-function forum_create_topic($forumId, $title, $content)
+function forum_create_topic($forumId, $title, $content, $moodId = 0, array $files = [])
 {
     forum_ensure_schema();
+    forum_ensure_extended_schema();
 
     $user = current_user();
     if (!$user) {
@@ -764,9 +787,13 @@ function forum_create_topic($forumId, $title, $content)
     if (!$forum) {
         return [false, 'Forumas nerastas.', null];
     }
+    if (!empty($forum['is_locked'])) {
+        return [false, 'Šis forumas užrakintas. Naujų temų kurti negalima.', null];
+    }
 
     $title = trim((string)$title);
     $content = forum_prepare_body($content, 15000);
+    $moodId = max(0, (int)$moodId);
 
     if (mb_strlen($title) < 3 || mb_strlen($title) > 190) {
         return [false, __('forum.validation.topic_title'), null];
@@ -774,14 +801,17 @@ function forum_create_topic($forumId, $title, $content)
     if ($content === '') {
         return [false, __('forum.validation.topic_content'), null];
     }
+    if ($moodId > 0 && !forum_get_mood($moodId)) {
+        $moodId = 0;
+    }
 
     $slug = forum_unique_slug(forum_table_topics(), $title, 'tema', 0, 'forum_id = :forum_id', [
         ':forum_id' => (int)$forum['id'],
     ]);
 
     $stmt = $GLOBALS['pdo']->prepare('
-        INSERT INTO ' . forum_table_topics() . ' (forum_id, user_id, title, slug, content, views, is_locked, is_pinned, created_at, updated_at, last_post_at, last_post_user_id)
-        VALUES (:forum_id, :user_id, :title, :slug, :content, 0, 0, 0, NOW(), NOW(), NOW(), :last_post_user_id)
+        INSERT INTO ' . forum_table_topics() . ' (forum_id, user_id, title, slug, content, views, is_locked, is_pinned, mood_id, created_at, updated_at, last_post_at, last_post_user_id, ip_address)
+        VALUES (:forum_id, :user_id, :title, :slug, :content, 0, 0, 0, :mood_id, NOW(), NOW(), NOW(), :last_post_user_id, :ip_address)
     ');
     $stmt->execute([
         ':forum_id' => (int)$forum['id'],
@@ -789,21 +819,33 @@ function forum_create_topic($forumId, $title, $content)
         ':title' => $title,
         ':slug' => $slug,
         ':content' => $content,
+        ':mood_id' => $moodId > 0 ? $moodId : null,
         ':last_post_user_id' => (int)$user['id'],
+        ':ip_address' => client_ip(),
     ]);
 
     $topicId = (int)$GLOBALS['pdo']->lastInsertId();
+    if (!empty($forum['allow_attachments'])) {
+        [$attachmentsOk, $attachmentsMessage] = forum_store_attachment_files((int)$forum['id'], $topicId, null, (int)$user['id'], $files);
+        if (!$attachmentsOk) {
+            $deleteTopic = $GLOBALS['pdo']->prepare('DELETE FROM ' . forum_table_topics() . ' WHERE id = :id');
+            $deleteTopic->execute([':id' => $topicId]);
+            return [false, $attachmentsMessage, null];
+        }
+    }
     audit_log((int)$user['id'], 'forum_topic_create', 'infusion_forum_topics', $topicId, [
         'forum_id' => (int)$forum['id'],
         'title' => $title,
+        'mood_id' => $moodId > 0 ? $moodId : null,
     ]);
 
     return [true, __('forum.message.topic_created'), $topicId];
 }
 
-function forum_create_reply($topicId, $content)
+function forum_create_reply($topicId, $content, array $files = [])
 {
     forum_ensure_schema();
+    forum_ensure_extended_schema();
 
     $user = current_user();
     if (!$user) {
@@ -814,6 +856,10 @@ function forum_create_reply($topicId, $content)
     if (!$topic) {
         return [false, __('forum.topic.not_found'), null];
     }
+    $forum = forum_get_forum((int)$topic['forum_id']);
+    if ($forum && !empty($forum['is_locked'])) {
+        return [false, 'Šis forumas užrakintas. Nauji atsakymai negalimi.', null];
+    }
     if ((int)$topic['is_locked'] === 1) {
         return [false, __('forum.message.locked'), null];
     }
@@ -823,18 +869,68 @@ function forum_create_reply($topicId, $content)
         return [false, __('forum.validation.reply_content'), null];
     }
 
-    $stmt = $GLOBALS['pdo']->prepare('
-        INSERT INTO ' . forum_table_posts() . ' (topic_id, forum_id, user_id, content, created_at, updated_at)
-        VALUES (:topic_id, :forum_id, :user_id, :content, NOW(), NOW())
-    ');
-    $stmt->execute([
-        ':topic_id' => (int)$topic['id'],
-        ':forum_id' => (int)$topic['forum_id'],
-        ':user_id' => (int)$user['id'],
-        ':content' => $content,
-    ]);
+    $postId = 0;
+    $mergedReply = false;
+    if ($forum && !empty($forum['enable_post_merge'])) {
+        $lastReplyStmt = $GLOBALS['pdo']->prepare('
+            SELECT id, user_id, content
+            FROM ' . forum_table_posts() . '
+            WHERE topic_id = :topic_id
+            ORDER BY created_at DESC, id DESC
+            LIMIT 1
+        ');
+        $lastReplyStmt->execute([':topic_id' => (int)$topic['id']]);
+        $lastReply = $lastReplyStmt->fetch();
+        if ($lastReply && (int)$lastReply['user_id'] === (int)$user['id']) {
+            $mergedContent = trim((string)$lastReply['content']) . "\n\n---\n" . $content;
+            $mergeStmt = $GLOBALS['pdo']->prepare('
+                UPDATE ' . forum_table_posts() . '
+                SET content = :content,
+                    updated_at = NOW()
+                WHERE id = :id
+            ');
+            $mergeStmt->execute([
+                ':content' => $mergedContent,
+                ':id' => (int)$lastReply['id'],
+            ]);
+            $postId = (int)$lastReply['id'];
+            $mergedReply = true;
+        }
+    }
 
-    $postId = (int)$GLOBALS['pdo']->lastInsertId();
+    if ($postId === 0) {
+        $stmt = $GLOBALS['pdo']->prepare('
+            INSERT INTO ' . forum_table_posts() . ' (topic_id, forum_id, user_id, content, created_at, updated_at, ip_address)
+            VALUES (:topic_id, :forum_id, :user_id, :content, NOW(), NOW(), :ip_address)
+        ');
+        $stmt->execute([
+            ':topic_id' => (int)$topic['id'],
+            ':forum_id' => (int)$topic['forum_id'],
+            ':user_id' => (int)$user['id'],
+            ':content' => $content,
+            ':ip_address' => client_ip(),
+        ]);
+
+        $postId = (int)$GLOBALS['pdo']->lastInsertId();
+    }
+
+    if ($forum && !empty($forum['allow_attachments'])) {
+        [$attachmentsOk, $attachmentsMessage] = forum_store_attachment_files((int)$topic['forum_id'], (int)$topic['id'], $postId, (int)$user['id'], $files);
+        if (!$attachmentsOk) {
+            if ($mergedReply && !empty($lastReply['content'])) {
+                $restorePost = $GLOBALS['pdo']->prepare('UPDATE ' . forum_table_posts() . ' SET content = :content WHERE id = :id');
+                $restorePost->execute([
+                    ':content' => (string)$lastReply['content'],
+                    ':id' => $postId,
+                ]);
+            } elseif (!$mergedReply && $postId > 0) {
+                $deletePost = $GLOBALS['pdo']->prepare('DELETE FROM ' . forum_table_posts() . ' WHERE id = :id');
+                $deletePost->execute([':id' => $postId]);
+            }
+            return [false, $attachmentsMessage, null];
+        }
+    }
+
     $updateTopic = $GLOBALS['pdo']->prepare('
         UPDATE ' . forum_table_topics() . '
         SET updated_at = NOW(),
@@ -850,6 +946,7 @@ function forum_create_reply($topicId, $content)
     audit_log((int)$user['id'], 'forum_reply_create', 'infusion_forum_posts', $postId, [
         'topic_id' => (int)$topic['id'],
         'forum_id' => (int)$topic['forum_id'],
+        'merged' => $mergedReply ? 1 : 0,
     ]);
 
     return [true, __('forum.message.reply_created'), $postId];
@@ -865,26 +962,31 @@ function forum_can_moderate_reply(array $reply)
     return forum_can_admin();
 }
 
-function forum_update_topic($topicId, $title, $content)
+function forum_update_topic($topicId, $title, $content, $moodId = 0)
 {
     forum_ensure_schema();
+    forum_ensure_extended_schema();
 
     $topic = forum_get_topic($topicId);
     if (!$topic) {
         return [false, __('forum.topic.not_found'), null];
     }
-    if (!forum_can_moderate_topic($topic)) {
+    if (!forum_can_moderate_topic($topic) && !forum_can_edit_own_topic($topic)) {
         return [false, __('forum.message.edit_topic_denied'), null];
     }
 
     $title = trim((string)$title);
     $content = forum_prepare_body($content, 15000);
+    $moodId = max(0, (int)$moodId);
 
     if (mb_strlen($title) < 3 || mb_strlen($title) > 190) {
         return [false, __('forum.validation.topic_title'), null];
     }
     if ($content === '') {
         return [false, __('forum.validation.topic_content'), null];
+    }
+    if ($moodId > 0 && !forum_get_mood($moodId)) {
+        $moodId = 0;
     }
 
     $slug = forum_unique_slug(forum_table_topics(), $title, 'tema', (int)$topic['id'], 'forum_id = :forum_id', [
@@ -896,13 +998,15 @@ function forum_update_topic($topicId, $title, $content)
         SET title = :title,
             slug = :slug,
             content = :content,
-            updated_at = NOW()
+            mood_id = :mood_id,
+            updated_at = ' . (forum_update_time_on_edit_enabled() ? 'NOW()' : 'updated_at') . '
         WHERE id = :id
     ');
     $stmt->execute([
         ':title' => $title,
         ':slug' => $slug,
         ':content' => $content,
+        ':mood_id' => $moodId > 0 ? $moodId : null,
         ':id' => (int)$topic['id'],
     ]);
 
@@ -981,6 +1085,8 @@ function forum_delete_topic($topicId)
 
     $GLOBALS['pdo']->beginTransaction();
     try {
+        forum_delete_attachments_for_topic((int)$topic['id']);
+
         $deletePosts = $GLOBALS['pdo']->prepare('DELETE FROM ' . forum_table_posts() . ' WHERE topic_id = :topic_id');
         $deletePosts->execute([':topic_id' => (int)$topic['id']]);
 
@@ -1014,12 +1120,13 @@ function forum_delete_topic($topicId)
 function forum_update_reply($replyId, $content)
 {
     forum_ensure_schema();
+    forum_ensure_extended_schema();
 
     $reply = forum_get_reply($replyId);
     if (!$reply) {
         return [false, __('forum.reply.not_found'), null];
     }
-    if (!forum_can_moderate_reply($reply)) {
+    if (!forum_can_moderate_reply($reply) && !forum_can_edit_own_reply($reply)) {
         return [false, __('forum.message.reply_edit_denied'), null];
     }
 
@@ -1031,7 +1138,7 @@ function forum_update_reply($replyId, $content)
     $stmt = $GLOBALS['pdo']->prepare('
         UPDATE ' . forum_table_posts() . '
         SET content = :content,
-            updated_at = NOW()
+            updated_at = ' . (forum_update_time_on_edit_enabled() ? 'NOW()' : 'updated_at') . '
         WHERE id = :id
     ');
     $stmt->execute([
@@ -1070,6 +1177,7 @@ function forum_delete_reply($replyId)
         return [false, __('forum.message.reply_delete_denied'), null];
     }
 
+    forum_delete_attachments_for_post((int)$reply['id']);
     $stmt = $GLOBALS['pdo']->prepare('DELETE FROM ' . forum_table_posts() . ' WHERE id = :id');
     $stmt->execute([':id' => (int)$reply['id']]);
     forum_sync_topic_activity((int)$reply['topic_id']);
@@ -1124,5 +1232,8 @@ function forum_render_breadcrumb(array $items)
     echo '</ol></nav>';
 }
 
+require_once __DIR__ . '/feature_pack.php';
+
 forum_register_assets();
 forum_ensure_schema();
+forum_ensure_extended_schema();

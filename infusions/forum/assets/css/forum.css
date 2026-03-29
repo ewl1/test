@@ -201,6 +201,126 @@
     border-top: 1px solid var(--site-border);
 }
 
+.forum-node-visual,
+.forum-category-visual,
+.forum-header-visual {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 18px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.forum-node-visual {
+    width: 56px;
+    height: 56px;
+    background: #eff6ff;
+    border: 1px solid #dbeafe;
+}
+
+.forum-category-visual {
+    width: 42px;
+    height: 42px;
+    background: #eff6ff;
+    border: 1px solid #dbeafe;
+}
+
+.forum-header-visual {
+    width: 72px;
+    height: 72px;
+    background: #eff6ff;
+    border: 1px solid #dbeafe;
+}
+
+.forum-node-visual img,
+.forum-category-visual img,
+.forum-header-visual img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.forum-node-visual i,
+.forum-category-visual i,
+.forum-header-visual i {
+    font-size: 1.3rem;
+    color: var(--site-primary);
+}
+
+.forum-header-visual i {
+    font-size: 1.8rem;
+}
+
+.forum-rank-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.5rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    background: #eef6ff;
+    color: var(--site-primary);
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.forum-rank-badge-image img,
+.forum-admin-rank-image {
+    width: 42px;
+    height: 42px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.forum-mood-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.forum-rules-box {
+    border-color: #fde68a;
+}
+
+.forum-attachments {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    margin-top: 1rem;
+}
+
+.forum-attachment {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid var(--site-border);
+    border-radius: 14px;
+    background: #f8fafc;
+    text-decoration: none;
+    color: var(--site-text);
+}
+
+.forum-attachment:hover {
+    color: var(--site-primary);
+    border-color: #bfdbfe;
+}
+
+.forum-attachment-image {
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 220px;
+}
+
+.forum-attachment-image img {
+    width: 100%;
+    max-width: 200px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
 @media (max-width: 991.98px) {
     .forum-forum-row,
     .forum-topic-list-item,
