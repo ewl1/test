@@ -47,8 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($action === 'uninstall') {
             $id = (int)($_POST['id'] ?? 0);
-            uninstall_infusion_by_id($id);
-            audit_log(current_user()['id'], 'infusion_uninstall', 'infusions', $id);
+            $result = uninstall_infusion_by_id($id, (string)($_POST['confirm_folder'] ?? ''));
+            audit_log(current_user()['id'], 'infusion_uninstall', 'infusions', $id, $result);
             flash('success', 'Infusion modulis pašalintas.');
             redirect($redirectTarget);
         }
@@ -65,10 +65,14 @@ foreach ($installed as $i) {
 $versionSummaries = [];
 $compatibilitySummaries = [];
 $healthSummaries = [];
+$uninstallSummaries = [];
 foreach ($scanned as $folder => $meta) {
     $versionSummaries[$folder] = get_infusion_version_summary($folder, $meta, $installedFolders[$folder] ?? null);
     $compatibilitySummaries[$folder] = get_infusion_compatibility_summary($folder, $meta, $installedFolders, $scanned);
     $healthSummaries[$folder] = get_infusion_health_summary($folder, $meta);
+    if (isset($installedFolders[$folder])) {
+        $uninstallSummaries[$folder] = get_infusion_uninstall_summary($folder, $installedFolders[$folder], $meta, $installedFolders, $scanned);
+    }
 }
 foreach ($installed as $inf) {
     if (!isset($versionSummaries[$inf['folder']])) {
@@ -79,6 +83,9 @@ foreach ($installed as $inf) {
     }
     if (!isset($healthSummaries[$inf['folder']])) {
         $healthSummaries[$inf['folder']] = get_infusion_health_summary($inf['folder'], $scanned[$inf['folder']] ?? null);
+    }
+    if (!isset($uninstallSummaries[$inf['folder']])) {
+        $uninstallSummaries[$inf['folder']] = get_infusion_uninstall_summary($inf['folder'], $inf, $scanned[$inf['folder']] ?? null, $installedFolders, $scanned);
     }
 }
 $migrationLockStatus = get_infusion_migration_lock_status();
@@ -189,6 +196,7 @@ include THEMES . 'default/admin_header.php';
                         <?php $versionSummary = $versionSummaries[$folder] ?? get_infusion_version_summary($folder, $meta, $installedFolders[$folder] ?? null); ?>
                         <?php $compatibilitySummary = $compatibilitySummaries[$folder] ?? get_infusion_compatibility_summary($folder, $meta, $installedFolders, $scanned); ?>
                         <?php $healthSummary = $healthSummaries[$folder] ?? get_infusion_health_summary($folder, $meta); ?>
+                        <?php $uninstallSummary = $uninstallSummaries[$folder] ?? null; ?>
                         <?php $moduleActions = get_infusion_module_actions($folder, $meta, $installedFolders[$folder] ?? null, $versionSummary); ?>
                         <tr>
                             <td><code class="admin-mono-pill admin-folder-label"><?= e($folder) ?></code></td>
@@ -206,6 +214,9 @@ include THEMES . 'default/admin_header.php';
                                 <div class="small admin-module-meta mt-2">Suderinamumas: <?= e($compatibilitySummary['environment_summary']) ?></div>
                                 <div class="small admin-module-meta">Priklausomybes: <?= e($compatibilitySummary['dependencies_summary']) ?> | Konfliktai: <?= e($compatibilitySummary['conflicts_summary']) ?></div>
                                 <div class="small admin-module-meta">Sveikata: <?= e($healthSummary['summary']) ?></div>
+                                <?php if ($uninstallSummary): ?>
+                                    <div class="small admin-module-meta">Salinimas: <?= e($uninstallSummary['summary']) ?></div>
+                                <?php endif; ?>
                                 <?php if ($developerMode && $developerMeta): ?>
                                     <div class="d-flex flex-wrap gap-1 mt-2">
                                         <span class="badge text-bg-dark admin-dev-badge"><?= e($developerMeta['is_sdk_module'] ? 'SDK' : 'Legacy') ?></span>
@@ -241,7 +252,10 @@ include THEMES . 'default/admin_header.php';
                                                 <form method="post" class="d-inline">
                                                     <?= csrf_field() ?>
                                                     <input type="hidden" name="id" value="<?= (int)($installedFolders[$folder]['id'] ?? 0) ?>">
-                                                    <button class="<?= e($action['class']) ?>" name="action" value="<?= e($action['value']) ?>"><?= e($action['label']) ?></button>
+                                                    <?php if (($action['key'] ?? '') === 'uninstall' && !empty($action['requires_confirmation'])): ?>
+                                                        <input class="form-control form-control-sm admin-confirm-input" type="text" name="confirm_folder" placeholder="Iveskite <?= e($action['confirmation_value'] ?? '') ?>">
+                                                    <?php endif; ?>
+                                                    <button class="<?= e($action['class']) ?>" name="action" value="<?= e($action['value']) ?>" <?= (($action['key'] ?? '') === 'uninstall' && empty($action['can_uninstall'])) ? 'disabled' : '' ?>><?= e($action['label']) ?></button>
                                                 </form>
                                             <?php endif; ?>
                                         <?php endforeach; ?>
@@ -278,6 +292,7 @@ include THEMES . 'default/admin_header.php';
                         $versionSummary = $versionSummaries[$inf['folder']] ?? get_infusion_version_summary($inf['folder'], $manifest, $inf);
                         $compatibilitySummary = $compatibilitySummaries[$inf['folder']] ?? get_infusion_compatibility_summary($inf['folder'], $manifest, $installedFolders, $scanned);
                         $healthSummary = $healthSummaries[$inf['folder']] ?? get_infusion_health_summary($inf['folder'], $manifest);
+                        $uninstallSummary = $uninstallSummaries[$inf['folder']] ?? get_infusion_uninstall_summary($inf['folder'], $inf, $manifest, $installedFolders, $scanned);
                         $moduleActions = get_infusion_module_actions($inf['folder'], $manifest, $inf, $versionSummary);
                     ?>
                         <tr>
@@ -295,6 +310,7 @@ include THEMES . 'default/admin_header.php';
                                 <div class="small admin-module-meta mt-2">Suderinamumas: <?= e($compatibilitySummary['environment_summary']) ?></div>
                                 <div class="small admin-module-meta">Priklausomybes: <?= e($compatibilitySummary['dependencies_summary']) ?> | Konfliktai: <?= e($compatibilitySummary['conflicts_summary']) ?></div>
                                 <div class="small admin-module-meta">Sveikata: <?= e($healthSummary['summary']) ?></div>
+                                <div class="small admin-module-meta">Salinimas: <?= e($uninstallSummary['summary']) ?></div>
                                 <?php if ($developerMode && $developerMeta): ?>
                                     <div class="d-flex flex-wrap gap-1 mt-2">
                                         <span class="badge text-bg-dark admin-dev-badge"><?= e($developerMeta['is_sdk_module'] ? 'SDK' : 'Legacy') ?></span>
@@ -324,7 +340,10 @@ include THEMES . 'default/admin_header.php';
                                             <form method="post" class="d-inline">
                                                 <?= csrf_field() ?>
                                                 <input type="hidden" name="id" value="<?= (int)$inf['id'] ?>">
-                                                <button class="<?= e($action['class']) ?>" name="action" value="<?= e($action['value']) ?>"><?= e($action['label']) ?></button>
+                                                <?php if (($action['key'] ?? '') === 'uninstall' && !empty($action['requires_confirmation'])): ?>
+                                                    <input class="form-control form-control-sm admin-confirm-input" type="text" name="confirm_folder" placeholder="Iveskite <?= e($action['confirmation_value'] ?? '') ?>">
+                                                <?php endif; ?>
+                                                <button class="<?= e($action['class']) ?>" name="action" value="<?= e($action['value']) ?>" <?= (($action['key'] ?? '') === 'uninstall' && empty($action['can_uninstall'])) ? 'disabled' : '' ?>><?= e($action['label']) ?></button>
                                             </form>
                                         <?php endif; ?>
                                     <?php endforeach; ?>
@@ -340,7 +359,10 @@ include THEMES . 'default/admin_header.php';
                                     <form method="post" class="d-inline">
                                         <?= csrf_field() ?>
                                         <input type="hidden" name="id" value="<?= (int)$inf['id'] ?>">
-                                        <button class="btn btn-sm btn-outline-danger admin-danger-button" name="action" value="uninstall" data-confirm-message="Tikrai pašalinti infusion modulį?"><?= e(__('infusions.uninstall')) ?></button>
+                                        <?php if (!empty($uninstallSummary['requires_confirmation'])): ?>
+                                            <input class="form-control form-control-sm admin-confirm-input" type="text" name="confirm_folder" placeholder="Iveskite <?= e($uninstallSummary['confirmation_value'] ?? '') ?>">
+                                        <?php endif; ?>
+                                        <button class="btn btn-sm btn-outline-danger admin-danger-button" name="action" value="uninstall" data-confirm-message="Tikrai pašalinti infusion modulį?" <?= empty($uninstallSummary['can_uninstall']) ? 'disabled' : '' ?>><?= e(__('infusions.uninstall')) ?></button>
                                     </form>
                                 </div>
                             </td>
@@ -500,6 +522,10 @@ include THEMES . 'default/admin_header.php';
                                     <?php else: ?>
                                         <?= !empty($snapshot['presentation_contract']['error']) ? e('klaida: ' . $snapshot['presentation_contract']['error']) : 'neigyvendintas' ?>
                                     <?php endif; ?>
+                                </div>
+                                <div class="small admin-page-subtitle">
+                                    Safe uninstall:
+                                    rizika <?= e($snapshot['uninstall_summary']['risk_label'] ?? '-') ?> | priklausomi moduliai <?= (int)($snapshot['uninstall_summary']['dependent_count'] ?? 0) ?> | palies irasus <?= (int)($snapshot['uninstall_summary']['affected_record_count'] ?? 0) ?> | papildomas patvirtinimas <?= !empty($snapshot['uninstall_summary']['requires_confirmation']) ? 'taip' : 'ne' ?>
                                 </div>
                             </div>
                         </div>

@@ -320,6 +320,11 @@ Sis modulis sugeneruotas per MiniCMS Module SDK scaffold.
 - Rollback vykdomas tik jau paleistiems zingsniams atbuline tvarka ir remiasi `.rollback.php` failais.
 - Jei moduliui reikia rankinio veiksmo, tai turi buti aprasyta `upgrade_notes` arba `rollback_notes`.
 
+## Safe uninstall
+- Core pries uninstall tikrina, ar modulis neturi priklausomu idiegtu moduliu.
+- Admin UI turi parodyti, kiek core ir modulio irasu bus paliesta.
+- Jei uninstall paliecia duomenis, turi buti papildomas patvirtinimas, pvz. `folder` ivestis.
+
 ## Lifecycle hook'ai
 - Branduolys automatikai dispatch'ina:
   - `before_install`, `after_install`

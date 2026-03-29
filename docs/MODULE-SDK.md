@@ -427,6 +427,16 @@ Veikimo taisykle:
 - Rollback turi stengtis atstatyti schema ir konfiguracija, bet neturi trinti naudotojo duomenu be labai aiskaus ir dokumentuoto sprendimo.
 - Jei upgrade turi negriztamu pokyciu, tai privalo buti aprasyta `rollback_notes`.
 
+### Safe uninstall
+- Pries pasalinant moduli, core turi patikrinti, ar nuo jo nepriklauso kiti idiegti moduliai.
+- Jei yra priklausomu moduliu, uninstall turi buti blokuojamas su aiskia zinute.
+- Admin UI turi parodyti bent minimali paveikiamu duomenu santrauka:
+  - core irasai (`infusion_panels`, `infusion_admin_menu`, `infusion_versions`, migraciju logai)
+  - modulio DB lenteles ir eiluciu skaicius, jei jos atitinka modulio prefiksa
+- Jei salinimas palies duomenis, turi buti reikalaujamas papildomas patvirtinimas, pvz. modulio `folder` ivestis.
+- `safe uninstall` nera tas pats, kas `rollback`: rollback skirtas nepavykusiam upgrade, o uninstall yra samoningas modulio pasalinimas.
+- Jei modulis turi daug duomenu ar rizikinga salinimo logika, tai turi buti aprasyta `rollback_notes` arba atskiroje admin dokumentacijoje.
+
 ### Bendri principai
 - Core Installer yra tik branduolio diegimui; moduliu schema ir lifecycle logika lieka `infusions/<modulis>/`.
 - `bootstrap.php`, `admin.php` ir `panel.php` turi likti ploni; install/upgrade taisykles neturi virsti nauju monolitiniu helper failu.

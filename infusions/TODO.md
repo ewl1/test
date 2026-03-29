@@ -61,7 +61,7 @@
 - schema, pradinis seed ir demo turinys turi buti atskirti
 - modulis turi galeti isidiegti be demo duomenu
 - [ ] Apibrezti `soft disable mode`, kad isjungtas modulis nepaliktu sugedusiu paneliu, route'u ar admin nuorodu.
-- [ ] Apibrezti `safe uninstall` taisykles:
+- [x] Apibrezti `safe uninstall` taisykles:
 - patikrinti ar yra priklausomu moduliu
 - parodyti kiek duomenu bus paliesta
 - reikalauti papildomo patvirtinimo rizikingiems salinimams

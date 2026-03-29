@@ -789,6 +789,7 @@ function get_infusion_developer_snapshot($folder, $infusionId = 0, ?array $manif
         'event_contract' => get_infusion_event_contract_summary($folder, (int)($installed['id'] ?? $infusionId), $manifest),
         'search_contract' => get_infusion_search_contract_summary($folder, (int)($installed['id'] ?? $infusionId), $manifest),
         'presentation_contract' => get_infusion_presentation_contract_summary($folder, (int)($installed['id'] ?? $infusionId), $manifest),
+        'uninstall_summary' => get_infusion_uninstall_summary($folder, (int)($installed['id'] ?? $infusionId), $manifest),
     ];
 }
 
@@ -1569,6 +1570,215 @@ function get_infusion_health_summary($folder, ?array $manifest = null)
     ];
 }
 
+function infusion_escape_like_pattern($value)
+{
+    return strtr((string)$value, [
+        '\\' => '\\\\',
+        '%' => '\%',
+        '_' => '\_',
+    ]);
+}
+
+function get_infusion_dependent_modules($folder, ?array $installedFolders = null, ?array $scanned = null)
+{
+    $folder = trim((string)$folder);
+    if ($folder === '') {
+        return [];
+    }
+
+    $installedFolders = is_array($installedFolders) ? $installedFolders : get_installed_infusions_map();
+    $scanned = is_array($scanned) ? $scanned : scan_infusions();
+    $dependents = [];
+
+    foreach ($scanned as $candidateFolder => $candidateManifest) {
+        if ($candidateFolder === $folder) {
+            continue;
+        }
+
+        foreach ((array)($candidateManifest['dependencies'] ?? []) as $dependency) {
+            $dependencyFolder = '';
+            $dependencyVersion = '';
+
+            if (is_array($dependency)) {
+                $dependencyFolder = trim((string)($dependency['folder'] ?? ''));
+                $dependencyVersion = trim((string)($dependency['version'] ?? ''));
+            } else {
+                $dependencyFolder = trim((string)$dependency);
+            }
+
+            if ($dependencyFolder !== $folder) {
+                continue;
+            }
+
+            $installedDependency = $installedFolders[$candidateFolder] ?? null;
+            $dependents[] = [
+                'folder' => $candidateFolder,
+                'name' => trim((string)($candidateManifest['name'] ?? $candidateFolder)),
+                'required_version' => $dependencyVersion,
+                'installed' => is_array($installedDependency) && (int)($installedDependency['is_installed'] ?? 0) === 1,
+                'enabled' => is_array($installedDependency) && (int)($installedDependency['is_enabled'] ?? 0) === 1,
+            ];
+        }
+    }
+
+    usort($dependents, static function ($left, $right) {
+        return [$right['installed'] ? 1 : 0, $left['enabled'] ? 1 : 0, $left['name'], $left['folder']]
+            <=> [$left['installed'] ? 1 : 0, $right['enabled'] ? 1 : 0, $right['name'], $right['folder']];
+    });
+
+    return $dependents;
+}
+
+function get_infusion_prefixed_tables($folder)
+{
+    $folder = trim((string)$folder);
+    if ($folder === '') {
+        return [];
+    }
+
+    $prefix = infusion_escape_like_pattern('infusion_' . $folder) . '%';
+    $stmt = $GLOBALS['pdo']->prepare("
+        SELECT TABLE_NAME
+        FROM information_schema.TABLES
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME LIKE :prefix ESCAPE '\\'
+        ORDER BY TABLE_NAME ASC
+    ");
+    $stmt->execute([':prefix' => $prefix]);
+
+    return array_values(array_filter(array_map('strval', $stmt->fetchAll(\PDO::FETCH_COLUMN))));
+}
+
+function get_infusion_table_row_count($table)
+{
+    $table = trim((string)$table);
+    if ($table === '' || !preg_match('/^[A-Za-z0-9_]+$/', $table)) {
+        return 0;
+    }
+
+    $sql = 'SELECT COUNT(*) FROM `' . str_replace('`', '``', $table) . '`';
+    return (int)$GLOBALS['pdo']->query($sql)->fetchColumn();
+}
+
+function get_infusion_uninstall_summary($folder, $installed = null, ?array $manifest = null, ?array $installedFolders = null, ?array $scanned = null)
+{
+    $folder = trim((string)$folder);
+    $installed = is_array($installed) ? $installed : ($installed !== null && is_numeric($installed) ? get_installed_infusion((int)$installed) : get_installed_infusion_by_folder($folder));
+    $installedFolders = is_array($installedFolders) ? $installedFolders : get_installed_infusions_map();
+    $scanned = is_array($scanned) ? $scanned : scan_infusions();
+    $manifest = is_array($manifest) ? $manifest : ($scanned[$folder] ?? null);
+
+    $summary = [
+        'folder' => $folder,
+        'can_uninstall' => false,
+        'requires_confirmation' => false,
+        'confirmation_value' => $folder,
+        'risk_level' => 'low',
+        'risk_label' => 'Zema rizika',
+        'dependents' => [],
+        'installed_dependents' => [],
+        'dependent_count' => 0,
+        'core_records' => [],
+        'module_tables' => [],
+        'core_record_count' => 0,
+        'module_row_count' => 0,
+        'affected_record_count' => 0,
+        'summary' => 'Nera duomenu salinimo perziurai.',
+    ];
+
+    if (!$installed || empty($installed['id'])) {
+        return $summary;
+    }
+
+    $infusionId = (int)$installed['id'];
+    $dependents = get_infusion_dependent_modules($folder, $installedFolders, $scanned);
+    $installedDependents = array_values(array_filter($dependents, static fn($item) => !empty($item['installed'])));
+
+    $coreRecords = [];
+    $coreQueries = [
+        'Admin meniu irasai' => "SELECT COUNT(*) FROM infusion_admin_menu WHERE infusion_id = :id",
+        'Paneliu irasai' => "SELECT COUNT(*) FROM infusion_panels WHERE infusion_id = :id",
+        'Versiju irasai' => "SELECT COUNT(*) FROM infusion_versions WHERE infusion_id = :id",
+        'Migraciju logai' => "SELECT COUNT(*) FROM infusion_migration_log WHERE infusion_id = :id",
+        'Rollback logai' => "SELECT COUNT(*) FROM infusion_rollback_log WHERE infusion_id = :id",
+    ];
+    foreach ($coreQueries as $label => $sql) {
+        $stmt = $GLOBALS['pdo']->prepare($sql);
+        $stmt->execute([':id' => $infusionId]);
+        $count = (int)$stmt->fetchColumn();
+        if ($count > 0) {
+            $coreRecords[] = [
+                'label' => $label,
+                'count' => $count,
+            ];
+        }
+    }
+    $coreRecords[] = [
+        'label' => 'Infusion registracijos irasas',
+        'count' => 1,
+    ];
+
+    $moduleTables = [];
+    foreach (get_infusion_prefixed_tables($folder) as $tableName) {
+        $rowCount = get_infusion_table_row_count($tableName);
+        $moduleTables[] = [
+            'table' => $tableName,
+            'rows' => $rowCount,
+        ];
+    }
+
+    $coreRecordCount = array_sum(array_map(static fn($item) => (int)$item['count'], $coreRecords));
+    $moduleRowCount = array_sum(array_map(static fn($item) => (int)$item['rows'], $moduleTables));
+    $affectedRecordCount = $coreRecordCount + $moduleRowCount;
+    $canUninstall = count($installedDependents) === 0;
+    $requiresConfirmation = $affectedRecordCount > 0;
+
+    $riskLevel = 'low';
+    $riskLabel = 'Zema rizika';
+    if (!$canUninstall) {
+        $riskLevel = 'blocked';
+        $riskLabel = 'Blokuojama';
+    } elseif ($moduleRowCount > 0 || $affectedRecordCount >= 10) {
+        $riskLevel = 'high';
+        $riskLabel = 'Auksta rizika';
+    } elseif ($affectedRecordCount > 0) {
+        $riskLevel = 'medium';
+        $riskLabel = 'Vidutine rizika';
+    }
+
+    $summaryParts = [];
+    if ($installedDependents) {
+        $summaryParts[] = 'Priklausomi moduliai: ' . implode(', ', array_map(static fn($item) => $item['name'] . ' (' . $item['folder'] . ')', $installedDependents));
+    } else {
+        $summaryParts[] = 'Priklausomu moduliu nera';
+    }
+    $summaryParts[] = 'Palies irasus: ' . $affectedRecordCount;
+    if ($moduleRowCount > 0) {
+        $summaryParts[] = 'Modulio duomenu eiluciu: ' . $moduleRowCount;
+    }
+    if ($requiresConfirmation) {
+        $summaryParts[] = 'Patvirtinimui reikia ivesti folder: ' . $folder;
+    }
+
+    return [
+        'folder' => $folder,
+        'can_uninstall' => $canUninstall,
+        'requires_confirmation' => $requiresConfirmation,
+        'confirmation_value' => $folder,
+        'risk_level' => $riskLevel,
+        'risk_label' => $riskLabel,
+        'dependents' => $dependents,
+        'installed_dependents' => $installedDependents,
+        'dependent_count' => count($installedDependents),
+        'core_records' => $coreRecords,
+        'module_tables' => $moduleTables,
+        'core_record_count' => $coreRecordCount,
+        'module_row_count' => $moduleRowCount,
+        'affected_record_count' => $affectedRecordCount,
+        'summary' => implode(' | ', $summaryParts),
+    ];
+}
+
 function get_infusion_module_actions($folder, ?array $manifest = null, $installed = null, ?array $versionSummary = null)
 {
     $folder = trim((string)$folder);
@@ -1645,6 +1855,26 @@ function get_infusion_module_actions($folder, ?array $manifest = null, $installe
     }
 
     return $actions;
+}
+
+function assert_infusion_uninstall_is_safe($id, $confirmationValue = '')
+{
+    $infusion = get_installed_infusion((int)$id);
+    if (!$infusion) {
+        throw new RuntimeException('Infusion nerasta.');
+    }
+
+    $summary = get_infusion_uninstall_summary((string)$infusion['folder'], $infusion);
+    if (!$summary['can_uninstall']) {
+        $dependentLabels = implode(', ', array_map(static fn($item) => $item['name'] . ' (' . $item['folder'] . ')', $summary['installed_dependents']));
+        throw new RuntimeException('Negalima pasalinti modulio, nes nuo jo priklauso: ' . ($dependentLabels !== '' ? $dependentLabels : 'kiti moduliai'));
+    }
+
+    if (!empty($summary['requires_confirmation']) && trim((string)$confirmationValue) !== (string)$summary['confirmation_value']) {
+        throw new RuntimeException('Patvirtinimui irasykite modulio folder pavadinima: ' . $summary['confirmation_value']);
+    }
+
+    return $summary;
 }
 
 function list_migration_steps($folder)
@@ -1950,15 +2180,16 @@ function upgrade_infusion_by_id($id)
     }, 'upgrade', 'infusion:' . $id);
 }
 
-function uninstall_infusion_by_id($id)
+function uninstall_infusion_by_id($id, $confirmationValue = '')
 {
     $id = (int)$id;
 
-    return with_infusion_migration_lock(function () use ($id) {
+    return with_infusion_migration_lock(function () use ($id, $confirmationValue) {
         ensure_infusion_tables();
         $infusion = get_installed_infusion($id);
         if (!$infusion) throw new RuntimeException('Infusion nerasta.');
         $path = INFUSIONS . $infusion['folder'];
+        $uninstallSummary = assert_infusion_uninstall_is_safe($id, $confirmationValue);
 
         $GLOBALS['pdo']->beginTransaction();
         try {
@@ -2010,6 +2241,10 @@ function uninstall_infusion_by_id($id)
             if ($GLOBALS['pdo']->inTransaction()) {
                 $GLOBALS['pdo']->commit();
             }
+            return array_merge($uninstallSummary, [
+                'uninstalled' => true,
+                'folder' => (string)$infusion['folder'],
+            ]);
         } catch (Throwable $e) {
             if ($GLOBALS['pdo']->inTransaction()) $GLOBALS['pdo']->rollBack();
             throw $e;

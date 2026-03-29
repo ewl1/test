@@ -244,6 +244,7 @@
 - `ModulePresentationContract` jau apibreztas SDK lygyje ir `developer mode` rodo, ar modulis deklaruoja korteles badge, meta laukus, santraukas ir detalias sekcijas.
 - moduliu gyvenimo ciklo hook'ai jau dispatch'inami per `before/after install|upgrade|uninstall`, kartu su modulio-specifiniais `.<folder>` variantais.
 - `developer mode` jau rodo `module_class`, registruotus runtime hook'us, migraciju sarasa, manifest laukus ir diagnostikos santrauka.
+- `safe uninstall` taisykles jau apibreztos: admin puslapis tikrina priklausomus modulius, rodo paveikiamu irasu santrauka ir rizikingiems salinimams reikalauja papildomo `folder` patvirtinimo.
 - isplestas manifest standartas:
 - `min_core_version`, `min_php_version`
 - `required_extensions`
