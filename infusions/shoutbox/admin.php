@@ -47,7 +47,7 @@ $success = flash('success');
 <?php endif; ?>
 
 <?php if ($canManageShoutboxSettings): ?>
-    <div class="card mb-4">
+    <div class="card mb-4" id="shoutbox-settings">
         <div class="card-header"><?= e(__('shoutbox.admin.settings.title')) ?></div>
         <div class="card-body">
             <div class="alert alert-info"><?= e(__('shoutbox.admin.settings.description')) ?></div>

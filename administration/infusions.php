@@ -189,6 +189,7 @@ include THEMES . 'default/admin_header.php';
                         <?php $versionSummary = $versionSummaries[$folder] ?? get_infusion_version_summary($folder, $meta, $installedFolders[$folder] ?? null); ?>
                         <?php $compatibilitySummary = $compatibilitySummaries[$folder] ?? get_infusion_compatibility_summary($folder, $meta, $installedFolders, $scanned); ?>
                         <?php $healthSummary = $healthSummaries[$folder] ?? get_infusion_health_summary($folder, $meta); ?>
+                        <?php $moduleActions = get_infusion_module_actions($folder, $meta, $installedFolders[$folder] ?? null, $versionSummary); ?>
                         <tr>
                             <td><code class="admin-mono-pill admin-folder-label"><?= e($folder) ?></code></td>
                             <td>
@@ -232,7 +233,20 @@ include THEMES . 'default/admin_header.php';
                             </td>
                             <td>
                                 <?php if (isset($installedFolders[$folder])): ?>
-                                    <span class="badge text-bg-success"><?= e(__('infusions.installed_badge')) ?></span>
+                                    <div class="d-flex flex-wrap gap-2 admin-module-actions">
+                                        <?php foreach ($moduleActions as $action): ?>
+                                            <?php if ($action['kind'] === 'link'): ?>
+                                                <a class="<?= e($action['class']) ?>" href="<?= e($action['href']) ?>"><?= e($action['label']) ?></a>
+                                            <?php elseif ($action['kind'] === 'post'): ?>
+                                                <form method="post" class="d-inline">
+                                                    <?= csrf_field() ?>
+                                                    <input type="hidden" name="id" value="<?= (int)($installedFolders[$folder]['id'] ?? 0) ?>">
+                                                    <button class="<?= e($action['class']) ?>" name="action" value="<?= e($action['value']) ?>"><?= e($action['label']) ?></button>
+                                                </form>
+                                            <?php endif; ?>
+                                        <?php endforeach; ?>
+                                        <span class="badge text-bg-success"><?= e(__('infusions.installed_badge')) ?></span>
+                                    </div>
                                 <?php else: ?>
                                     <form method="post">
                                         <?= csrf_field() ?>
@@ -264,6 +278,7 @@ include THEMES . 'default/admin_header.php';
                         $versionSummary = $versionSummaries[$inf['folder']] ?? get_infusion_version_summary($inf['folder'], $manifest, $inf);
                         $compatibilitySummary = $compatibilitySummaries[$inf['folder']] ?? get_infusion_compatibility_summary($inf['folder'], $manifest, $installedFolders, $scanned);
                         $healthSummary = $healthSummaries[$inf['folder']] ?? get_infusion_health_summary($inf['folder'], $manifest);
+                        $moduleActions = get_infusion_module_actions($inf['folder'], $manifest, $inf, $versionSummary);
                     ?>
                         <tr>
                             <td class="admin-strong-cell"><?= (int)$inf['id'] ?></td>
@@ -301,10 +316,18 @@ include THEMES . 'default/admin_header.php';
                             <td><span class="admin-table-note admin-version-chip"><?= e($versionSummary['installed_display']) ?></span></td>
                             <td><span class="admin-table-note admin-version-chip"><?= e($versionSummary['manifest_display']) ?></span></td>
                             <td>
-                                <div class="d-flex flex-wrap gap-2">
-                                    <?php if (!empty($manifest['admin']) && !empty($manifest['has_admin_file'])): ?>
-                                        <a class="btn btn-sm btn-outline-primary admin-action-button" href="infusion-admin.php?folder=<?= urlencode($inf['folder']) ?>">Admin</a>
-                                    <?php endif; ?>
+                                <div class="d-flex flex-wrap gap-2 admin-module-actions">
+                                    <?php foreach ($moduleActions as $action): ?>
+                                        <?php if ($action['kind'] === 'link'): ?>
+                                            <a class="<?= e($action['class']) ?>" href="<?= e($action['href']) ?>"><?= e($action['label']) ?></a>
+                                        <?php elseif ($action['kind'] === 'post'): ?>
+                                            <form method="post" class="d-inline">
+                                                <?= csrf_field() ?>
+                                                <input type="hidden" name="id" value="<?= (int)$inf['id'] ?>">
+                                                <button class="<?= e($action['class']) ?>" name="action" value="<?= e($action['value']) ?>"><?= e($action['label']) ?></button>
+                                            </form>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
                                     <form method="post" class="d-inline">
                                         <?= csrf_field() ?>
                                         <input type="hidden" name="id" value="<?= (int)$inf['id'] ?>">
@@ -314,13 +337,6 @@ include THEMES . 'default/admin_header.php';
                                             <button class="btn btn-sm btn-outline-success admin-action-button" name="action" value="enable"><?= e(__('infusions.enable')) ?></button>
                                         <?php endif; ?>
                                     </form>
-                                    <?php if ($versionSummary['status'] === 'upgrade_available'): ?>
-                                        <form method="post" class="d-inline">
-                                            <?= csrf_field() ?>
-                                            <input type="hidden" name="id" value="<?= (int)$inf['id'] ?>">
-                                            <button class="btn btn-sm btn-outline-primary admin-action-button" name="action" value="upgrade"><?= e(__('infusions.upgrade')) ?></button>
-                                        </form>
-                                    <?php endif; ?>
                                     <form method="post" class="d-inline">
                                         <?= csrf_field() ?>
                                         <input type="hidden" name="id" value="<?= (int)$inf['id'] ?>">
@@ -359,7 +375,7 @@ include THEMES . 'default/admin_header.php';
                 $compatibilitySummary = $compatibilitySummaries[$folder] ?? get_infusion_compatibility_summary($folder, $snapshot['manifest'], $installedFolders, $scanned);
                 $healthSummary = $healthSummaries[$folder] ?? get_infusion_health_summary($folder, $snapshot['manifest']);
                 ?>
-                <details class="admin-dev-card">
+                <details class="admin-dev-card" id="infusion-dev-<?= e($folder) ?>">
                     <summary class="admin-dev-summary">
                         <div>
                             <div class="admin-dev-title"><?= e($moduleLabel) ?></div>

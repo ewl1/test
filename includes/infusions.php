@@ -1198,6 +1198,84 @@ function get_infusion_health_summary($folder, ?array $manifest = null)
     ];
 }
 
+function get_infusion_module_actions($folder, ?array $manifest = null, $installed = null, ?array $versionSummary = null)
+{
+    $folder = trim((string)$folder);
+    if ($folder === '') {
+        return [];
+    }
+
+    if (!is_array($manifest)) {
+        try {
+            $manifest = read_infusion_manifest($folder);
+        } catch (Throwable $e) {
+            $manifest = [];
+        }
+    }
+
+    if ($installed === null) {
+        $installed = get_installed_infusion_by_folder($folder);
+    } elseif (is_numeric($installed)) {
+        $installed = get_installed_infusion((int)$installed);
+    }
+
+    $versionSummary = is_array($versionSummary)
+        ? $versionSummary
+        : get_infusion_version_summary($folder, $manifest, $installed);
+
+    $isInstalled = !empty($versionSummary['is_installed']);
+    $actions = [];
+
+    $hasAdminFile = !empty($manifest['has_admin_file']) || file_exists(infusion_admin_path($folder));
+
+    if ($isInstalled && !empty($manifest['admin']) && $hasAdminFile) {
+        $actions[] = [
+            'key' => 'admin',
+            'label' => 'Admin',
+            'kind' => 'link',
+            'href' => 'infusion-admin.php?folder=' . rawurlencode($folder),
+            'class' => 'btn btn-sm btn-outline-primary admin-action-button',
+        ];
+    }
+
+    $settingsPage = trim((string)($manifest['settings_page'] ?? ''));
+    if ($isInstalled && $settingsPage !== '') {
+        $actions[] = [
+            'key' => 'settings',
+            'label' => 'Settings',
+            'kind' => 'link',
+            'href' => $settingsPage,
+            'class' => 'btn btn-sm btn-outline-secondary admin-action-button',
+        ];
+    }
+
+    $healthPage = trim((string)($manifest['diagnostics_page'] ?? ''));
+    if ($healthPage === '') {
+        $healthPage = 'infusions.php?developer=1#infusion-dev-' . rawurlencode($folder);
+    }
+    if ($healthPage !== '') {
+        $actions[] = [
+            'key' => 'health',
+            'label' => 'Health',
+            'kind' => 'link',
+            'href' => $healthPage,
+            'class' => 'btn btn-sm btn-outline-info admin-action-button',
+        ];
+    }
+
+    if ($isInstalled && ($versionSummary['status'] ?? '') === 'upgrade_available') {
+        $actions[] = [
+            'key' => 'upgrade',
+            'label' => 'Atnaujinti',
+            'kind' => 'post',
+            'value' => 'upgrade',
+            'class' => 'btn btn-sm btn-outline-primary admin-action-button',
+        ];
+    }
+
+    return $actions;
+}
+
 function list_migration_steps($folder)
 {
     $dir = infusion_migrations_dir($folder);

@@ -21,6 +21,13 @@
 - `administration/infusions.php` rodo aktyvu migraciju lock, paskutinius zingsnius ir rollback istorija.
 - `bootstrap.php`, `admin.php` ir `panel.php` turi likti ploni, o proceduriniai helperiai turi keliauti i `support/`.
 
+## Admin veiksmu deklaravimas
+- `admin: true` ir realus `admin.php` leidzia branduoliui rodyti `Admin` veiksma.
+- Jei modulis turi atskira nustatymu vieta, `manifest.json` gali deklaruoti `settings_page`.
+- Jei modulis turi atskira diagnostikos ar health vieta, `manifest.json` gali deklaruoti `diagnostics_page`.
+- Jei `diagnostics_page` nenurodytas, `administration/infusions.php` kaip bendra fallback sveikatos perziura naudoja `developer mode` detale su anchor `#infusion-dev-<folder>`.
+- Branduolio UI modulio veiksmus rodo vienoda tvarka: `Admin`, `Settings`, `Health`, `Upgrade`.
+
 ## Modulio struktura
 ```text
 infusions/<modulis>/

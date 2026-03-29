@@ -50,7 +50,7 @@
 - `upgrade_notes`
 - `rollback_notes`
 - [x] Padaryti, kad `administration/infusions.php` moketu rodyti suderinamuma, priklausomybes, konfliktus ir modulio sveikatos busena.
-- [ ] Vienodai pateikti modulio `admin`, `settings`, `health`, `upgrade` veiksmus, jei modulis juos turi.
+- [x] Vienodai pateikti modulio `admin`, `settings`, `health`, `upgrade` veiksmus, jei modulis juos turi.
 - [ ] Apibrezti `ModuleSettingsContract`, kad modulis vienodai deklaruotu savo nustatymu forma, sekcijas ir validavimo taisykles.
 - [ ] Apibrezti `ModuleDiagnosticsContract`, kad modulis galetu grazinti savo health check, missing files, missing tables ir konfiguracijos busenas.
 - [ ] Apibrezti moduliu gyvenimo ciklo hook'us:

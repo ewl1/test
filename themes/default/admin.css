@@ -443,6 +443,10 @@ code {
     line-height: 1.45;
 }
 
+.admin-module-actions {
+    align-items: center;
+}
+
 .admin-message-cell {
     color: #f8fafc !important;
     font-weight: 600;

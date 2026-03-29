@@ -97,7 +97,7 @@ foreach ($moods as $moodRow) {
 
 <div class="row g-4">
     <div class="col-xxl-7">
-        <div class="card mb-4">
+        <div class="card mb-4" id="forum-settings">
             <div class="card-header">Forumo kūrimas</div>
             <div class="card-body">
                 <form method="post" enctype="multipart/form-data" class="row g-3">

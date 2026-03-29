@@ -101,6 +101,8 @@ final class ModuleScaffolder
             ],
             'upgrade_notes' => [],
             'rollback_notes' => [],
+            'settings_page' => 'infusion-admin.php?folder=' . $folder . '#settings',
+            'diagnostics_page' => 'infusions.php?developer=1#infusion-dev-' . $folder,
             'admin_menu' => [
                 [
                     'title' => $name,
@@ -153,7 +155,7 @@ PHP;
 <?php
 require_permission('{$folder}.admin');
 ?>
-<div class="card">
+<div class="card" id="settings">
     <div class="card-header">{$name} administravimas</div>
     <div class="card-body">
         <p class="mb-0 text-secondary">SDK administracijos placeholder. Cia dekite modulio nustatymus, CRUD ir diagnostika.</p>

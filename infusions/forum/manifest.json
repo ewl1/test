@@ -55,6 +55,7 @@
   "rollback_notes": [
     "Rollback metu patikrinkite forumo papildomu lenteliu ir failu suderinamuma."
   ],
+  "settings_page": "infusion-admin.php?folder=forum#forum-settings",
   "permissions": [
     {
       "name": "Forumo perziura",

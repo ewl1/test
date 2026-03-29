@@ -236,6 +236,7 @@
 - priklausomybes ir konfliktai
 - suderinamumas su MiniCMS / PHP / pletiniais
 - `administration/infusions.php` jau rodo suderinamumo, priklausomybiu, konfliktu ir sveikatos santraukas kiekvienam moduliui.
+- `administration/infusions.php` jau vienodai pateikia modulio `admin`, `settings`, `health` ir `upgrade` veiksmus, jei modulis juos deklaruoja.
 - isplestas manifest standartas:
 - `min_core_version`, `min_php_version`
 - `required_extensions`

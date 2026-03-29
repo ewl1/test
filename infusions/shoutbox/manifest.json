@@ -46,6 +46,7 @@
   ],
   "upgrade_notes": [],
   "rollback_notes": [],
+  "settings_page": "infusion-admin.php?folder=shoutbox#shoutbox-settings",
   "permissions": [
     {
       "name": "Shoutbox moderavimas",
