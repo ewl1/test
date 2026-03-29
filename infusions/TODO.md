@@ -53,7 +53,7 @@
 - [x] Vienodai pateikti modulio `admin`, `settings`, `health`, `upgrade` veiksmus, jei modulis juos turi.
 - [x] Apibrezti `ModuleSettingsContract`, kad modulis vienodai deklaruotu savo nustatymu forma, sekcijas ir validavimo taisykles.
 - [x] Apibrezti `ModuleDiagnosticsContract`, kad modulis galetu grazinti savo health check, missing files, missing tables ir konfiguracijos busenas.
-- [ ] Apibrezti moduliu gyvenimo ciklo hook'us:
+- [x] Apibrezti moduliu gyvenimo ciklo hook'us:
 - `before_install`, `after_install`
 - `before_upgrade`, `after_upgrade`
 - `before_uninstall`, `after_uninstall`

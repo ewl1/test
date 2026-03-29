@@ -334,6 +334,43 @@ Branduolys jau naudoja hook'us paneliu renderinimui:
 - `infusion.panel.title`
 - `infusion.panel.title.<folder>`
 
+Moduliu gyvenimo ciklui taip pat naudojami hook'ai:
+- `before_install`
+- `after_install`
+- `before_upgrade`
+- `after_upgrade`
+- `before_uninstall`
+- `after_uninstall`
+
+Kiekvienas is ju turi ir modulio-specifini varianta:
+- `before_install.<folder>`
+- `after_install.<folder>`
+- `before_upgrade.<folder>`
+- `after_upgrade.<folder>`
+- `before_uninstall.<folder>`
+- `after_uninstall.<folder>`
+
+Pavyzdinis payload:
+```php
+[
+    'folder' => 'forum',
+    'infusion_id' => 1,
+    'manifest' => [...],
+    'operation' => 'upgrade',
+    'installed_version' => '1.0.0',
+    'target_version' => '1.1.0',
+    'result' => [
+        'upgraded' => true,
+        'steps' => ['1.1.0'],
+    ],
+]
+```
+
+Taisykles:
+- `before_*` hook'ai vykdomi transakcijos viduje pries pagrindini veiksma
+- `after_*` hook'ai vykdomi transakcijos viduje po pagrindinio veiksmo, bet pries `commit`
+- jei listener'is meta klaida, visa operacija nutraukiama ir esama transakcija / rollback logika perima atstatyma
+
 ## Legacy panel API
 Sena paneliu sintakse irgi palaikoma:
 

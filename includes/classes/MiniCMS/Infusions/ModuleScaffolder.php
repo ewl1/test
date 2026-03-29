@@ -283,6 +283,14 @@ Sis modulis sugeneruotas per MiniCMS Module SDK scaffold.
 - Upgrade pirmiausia naudoja `migrations/`, o `upgrade.php` yra tik legacy fallback.
 - Rollback vykdomas tik jau paleistiems zingsniams atbuline tvarka ir remiasi `.rollback.php` failais.
 - Jei moduliui reikia rankinio veiksmo, tai turi buti aprasyta `upgrade_notes` arba `rollback_notes`.
+
+## Lifecycle hook'ai
+- Branduolys automatikai dispatch'ina:
+  - `before_install`, `after_install`
+  - `before_upgrade`, `after_upgrade`
+  - `before_uninstall`, `after_uninstall`
+- Taip pat yra modulio-specifiniai variantai su `.<folder>` gale.
+- Hook listener'iai gali buti registruojami per `registerHooks()` ir `infusion_add_hook()`.
 MD;
     }
 

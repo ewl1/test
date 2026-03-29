@@ -25,6 +25,43 @@ function infusion_apply_filters($name, $value, array $context = [])
     return infusion_hook_registry()->filter((string)$name, $value, $context);
 }
 
+function infusion_fire_lifecycle_hooks($stage, array $payload = [])
+{
+    $stage = trim((string)$stage);
+    if ($stage === '') {
+        return $payload;
+    }
+
+    $folder = trim((string)($payload['folder'] ?? ''));
+    $context = [
+        'stage' => $stage,
+        'folder' => $folder,
+        'infusion_id' => (int)($payload['infusion_id'] ?? 0),
+        'manifest' => $payload['manifest'] ?? null,
+        'installed_version' => $payload['installed_version'] ?? null,
+        'target_version' => $payload['target_version'] ?? null,
+        'operation_result' => $payload['result'] ?? null,
+    ];
+
+    $result = infusion_do_hook($stage, $payload, $context);
+    if (is_array($result)) {
+        $payload = $result;
+        $context['manifest'] = $payload['manifest'] ?? $context['manifest'];
+        $context['installed_version'] = $payload['installed_version'] ?? $context['installed_version'];
+        $context['target_version'] = $payload['target_version'] ?? $context['target_version'];
+        $context['operation_result'] = $payload['result'] ?? $context['operation_result'];
+    }
+
+    if ($folder !== '') {
+        $result = infusion_do_hook($stage . '.' . $folder, $payload, $context);
+        if (is_array($result)) {
+            $payload = $result;
+        }
+    }
+
+    return $payload;
+}
+
 function infusion_context($folder, $infusionId = 0, ?array $manifest = null)
 {
     return \App\MiniCMS\Infusions\InfusionSdk::context((string)$folder, (int)$infusionId, $manifest);
@@ -1558,6 +1595,16 @@ function install_infusion_from_folder($folder)
             $idStmt->execute([':f' => $folder]);
             $infusionId = (int)$idStmt->fetchColumn();
 
+            $lifecyclePayload = infusion_fire_lifecycle_hooks('before_install', [
+                'folder' => $folder,
+                'infusion_id' => $infusionId,
+                'manifest' => $manifest,
+                'operation' => 'install',
+            ]);
+            if (isset($lifecyclePayload['manifest']) && is_array($lifecyclePayload['manifest'])) {
+                $manifest = $lifecyclePayload['manifest'];
+            }
+
             execute_schema_install($folder, $infusionId, $manifest);
             register_infusion_permissions($infusionId, $manifest['permissions']);
             register_infusion_admin_menu($infusionId, $manifest['admin_menu']);
@@ -1580,6 +1627,18 @@ function install_infusion_from_folder($folder)
                     ]);
                 }
             }
+
+            infusion_fire_lifecycle_hooks('after_install', [
+                'folder' => $folder,
+                'infusion_id' => $infusionId,
+                'manifest' => $manifest,
+                'operation' => 'install',
+                'result' => [
+                    'installed' => true,
+                    'version' => $manifest['version'],
+                    'panel' => !empty($manifest['panel']),
+                ],
+            ]);
 
             if ($GLOBALS['pdo']->inTransaction()) {
                 $GLOBALS['pdo']->commit();
@@ -1616,6 +1675,18 @@ function upgrade_infusion_by_id($id)
         $executedSteps = [];
         $GLOBALS['pdo']->beginTransaction();
         try {
+            $lifecyclePayload = infusion_fire_lifecycle_hooks('before_upgrade', [
+                'folder' => $infusion['folder'],
+                'infusion_id' => (int)$id,
+                'manifest' => $manifest,
+                'operation' => 'upgrade',
+                'installed_version' => $installedVersion,
+                'target_version' => $targetVersion,
+            ]);
+            if (isset($lifecyclePayload['manifest']) && is_array($lifecyclePayload['manifest'])) {
+                $manifest = $lifecyclePayload['manifest'];
+            }
+
             $migrationDir = infusion_migrations_dir($infusion['folder']);
             if (is_dir($migrationDir)) {
                 $executedSteps = run_migration_steps($infusion['folder'], (int)$id, $installedVersion, $targetVersion);
@@ -1645,10 +1716,26 @@ function upgrade_infusion_by_id($id)
             $stmt = $GLOBALS['pdo']->prepare("INSERT INTO infusion_versions (infusion_id, version) VALUES (:iid,:v)");
             $stmt->execute([':iid' => (int)$id, ':v' => $targetVersion]);
 
+            $upgradeResult = [
+                'upgraded' => true,
+                'from' => $installedVersion,
+                'to' => $targetVersion,
+                'steps' => array_map(fn($s) => $s['version'], $executedSteps),
+            ];
+            infusion_fire_lifecycle_hooks('after_upgrade', [
+                'folder' => $infusion['folder'],
+                'infusion_id' => (int)$id,
+                'manifest' => $manifest,
+                'operation' => 'upgrade',
+                'installed_version' => $installedVersion,
+                'target_version' => $targetVersion,
+                'result' => $upgradeResult,
+            ]);
+
             if ($GLOBALS['pdo']->inTransaction()) {
                 $GLOBALS['pdo']->commit();
             }
-            return ['upgraded' => true, 'from' => $installedVersion, 'to' => $targetVersion, 'steps' => array_map(fn($s) => $s['version'], $executedSteps)];
+            return $upgradeResult;
         } catch (Throwable $e) {
             if ($GLOBALS['pdo']->inTransaction()) $GLOBALS['pdo']->rollBack();
             try {
@@ -1678,6 +1765,18 @@ function uninstall_infusion_by_id($id)
                 $manifest = [];
             }
 
+            $installedVersion = get_installed_infusion_version((int)$id);
+            $lifecyclePayload = infusion_fire_lifecycle_hooks('before_uninstall', [
+                'folder' => $infusion['folder'],
+                'infusion_id' => (int)$id,
+                'manifest' => $manifest,
+                'operation' => 'uninstall',
+                'installed_version' => $installedVersion,
+            ]);
+            if (isset($lifecyclePayload['manifest']) && is_array($lifecyclePayload['manifest'])) {
+                $manifest = $lifecyclePayload['manifest'];
+            }
+
             $module = infusion_sdk_module($infusion['folder'], (int)$id, $manifest ?: null);
             if ($module) {
                 $module->uninstall();
@@ -1691,6 +1790,19 @@ function uninstall_infusion_by_id($id)
             $GLOBALS['pdo']->prepare("DELETE FROM infusion_migration_log WHERE infusion_id = :id")->execute([':id' => (int)$id]);
             $GLOBALS['pdo']->prepare("DELETE FROM infusion_rollback_log WHERE infusion_id = :id")->execute([':id' => (int)$id]);
             $GLOBALS['pdo']->prepare("DELETE FROM infusions WHERE id = :id")->execute([':id' => (int)$id]);
+
+            infusion_fire_lifecycle_hooks('after_uninstall', [
+                'folder' => $infusion['folder'],
+                'infusion_id' => (int)$id,
+                'manifest' => $manifest,
+                'operation' => 'uninstall',
+                'installed_version' => $installedVersion,
+                'result' => [
+                    'uninstalled' => true,
+                    'folder' => $infusion['folder'],
+                ],
+            ]);
+
             if ($GLOBALS['pdo']->inTransaction()) {
                 $GLOBALS['pdo']->commit();
             }
