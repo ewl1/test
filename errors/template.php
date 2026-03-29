@@ -5,7 +5,7 @@ if (!headers_sent()) {
 $scriptName = str_replace('\\', '/', (string)($_SERVER['SCRIPT_NAME'] ?? ''));
 $basePath = rtrim(str_replace('\\', '/', dirname(dirname($scriptName))), '/');
 $bootstrapCss = ($basePath !== '' ? $basePath : '') . '/themes/default/bootstrap.min.css';
-$errorCss = ($basePath !== '' ? $basePath : '') . '/errors/error.css';
+$errorCss = ($basePath !== '' ? $basePath : '') . '/themes/default/error.css';
 $defaultBackUrl = ($basePath !== '' ? $basePath : '') . '/index.php';
 if (empty($errorBackUrl) || !preg_match('#^(?:https?:)?/#i', (string)$errorBackUrl)) {
     $errorBackUrl = $defaultBackUrl;
