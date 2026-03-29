@@ -8,9 +8,9 @@ function news_handle_admin_request()
 
     verify_csrf();
     if (news_create_item($_POST['title'] ?? '', $_POST['summary'] ?? '')) {
-        flash('success', 'Naujiena prideta.');
+        flash('success', __('news.admin.created'));
     } else {
-        flash('error', 'Pavadinimas yra privalomas.');
+        flash('error', __('news.admin.title_required'));
     }
 
     redirect('infusion-admin.php?folder=news');
@@ -30,20 +30,20 @@ function news_render_admin_page()
     <?php endif; ?>
 
     <div class="card">
-        <div class="card-header">Naujienu infusion administravimas</div>
+        <div class="card-header"><?= e(__('news.admin.title')) ?></div>
         <div class="card-body">
             <form method="post" class="row g-3">
                 <?= csrf_field() ?>
                 <div class="col-md-6">
-                    <label class="form-label">Pavadinimas</label>
+                    <label class="form-label"><?= e(__('news.field.title')) ?></label>
                     <input class="form-control" name="title">
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">Santrauka</label>
+                    <label class="form-label"><?= e(__('news.field.summary')) ?></label>
                     <input class="form-control" name="summary">
                 </div>
                 <div class="col-12">
-                    <button class="btn btn-primary">Prideti</button>
+                    <button class="btn btn-primary"><?= e(__('news.action.create')) ?></button>
                 </div>
             </form>
             <hr>

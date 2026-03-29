@@ -24,7 +24,9 @@
 ## Likusieji darbai
 - [x] Prideti pradine `Module SDK` baze su manifest parseriu, context objektu, hook registry ir scaffold generatoriumi.
 - [x] Leisti moduliams nurodyti `module_class` ir palaipsniui pereiti nuo vien failu prie klasiu.
-- [ ] Ta pacia `assets/locale/classes` struktura pritaikyti visiems aktyviems moduliams.
+- [x] Ta pacia `assets/locale/classes` struktura pritaikyti visiems aktyviems moduliams.
+- `forum`, `news` ir `shoutbox` dabar visi turi ta pacia bazine `assets/`, `locale/` ir `classes/` krypti.
+- `wysiwyg` i si punkta neitrauktas, nes dar nera pilnas aktyvus modulis su manifest ir pilnu lifecycle.
 - [x] Ta pacia `support/` skaidymo taisykle pritaikyti visiems legacy moduliams, kad neliktu monolitiniu `feature_pack` tipo failu.
 - `forum`, `news` ir `shoutbox` jau naudoja plonus entrypoint failus ir `support/` skaidyma pagal atsakomybe.
 - Nauji legacy helperiai neturi keliauti i monolitinius `feature_pack` tipo failus; juos reikia skaidyti i `support/` failus pagal paskirti.

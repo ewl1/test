@@ -17,6 +17,7 @@
 - `bootstrap.php`: plonas shoutbox entrypoint failas.
 - `admin.php`: plonas moderavimo UI ir nustatymu entrypoint failas.
 - `panel.php`: plonas shoutbox paneles entrypoint failas.
+- `classes/`: modulio klasiu karkasas ir servisu kryptis.
 - `support/`: proceduriniai helperiai ir pereinamojo laikotarpio logika.
 - `assets/css/shoutbox.css`, `assets/js/shoutbox.js`: modulio assetai.
 - `locale/lt.php`: modulio tekstai.
@@ -25,6 +26,7 @@
 - [x] CSS perkeltas i `assets/css/shoutbox.css`.
 - [x] JS perkeltas i `assets/js/shoutbox.js`.
 - [x] Modulio tekstai perkelti i `locale/lt.php`.
+- [x] `classes/` struktura pritaikyta ir siame modulyje.
 - [x] Shoutbox nustatymai perkelti i modulio admin puslapi.
 - [x] `support/` struktura pritaikyta ir siame legacy modulyje, kad `bootstrap.php`, `admin.php` ir `panel.php` liktu ploni.
 - [ ] Prideti flood protection nustatymus per administracija.
