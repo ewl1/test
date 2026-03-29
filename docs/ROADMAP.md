@@ -38,6 +38,7 @@
 - `Entypo` naudoti tik jei tam atsiras labai aiski prieziastis
 - tureti bendra ikon naudijimo zemelapi navigacijai, statusams ir veiksmams
 - Atnaujinti admin UX: dashboard korteles, `panels` drag-drop griztamasis rysis, `infusions` sveikatos badge ir aiskesni veiksmai.
+- Pirmas admin UX zingsnis jau padarytas: `panels` turi aiskesnes drop zonas, issaugojimo busena ir `beforeunload` perspejima, o `infusions` veiksmai sugrupuoti i ryskesnius veiksmu blokus.
 - Ilgainiui prideti temos personalizavimo krypti: `compact / wide` isdestymas, akcento spalvos, o veliau ir alternatyvios temos.
 
 ### Baigtumo kriterijai

@@ -41,7 +41,7 @@
 - [ ] Prideti `duplicate / delete / reset defaults` veiksmus paneliu valdyme.
 - [ ] Prideti layout `import / export` ir `restore default layout`.
 - [ ] Prideti paneliu cache valdyma ir badge, ar panele cache'inama.
-- [ ] Pagerinti drag-drop UX: aiskesni placeholder, `drop zone`, aktyvia zonos busena ir issaugojimo patvirtinima.
+- [x] Pagerinti drag-drop UX: aiskesni placeholder, `drop zone`, aktyvia zonos busena ir issaugojimo patvirtinima.
 - [ ] Prideti paneles mini perziuros kortele su piktograma, trumpu aprasu ir matomumo badge.
 - [ ] Apsvarstyti responsive `panels` valdyma telefonu ir planseteje: ne tik drag-drop, bet ir alternatyvu perkrovimo/isdestymo rezima.
 - [ ] Suderinti `panels.php` su bendru layout system, kad butu aisku, kuri zona yra `content`, `left sidebar`, `right sidebar`, `full-width`.
@@ -68,6 +68,7 @@
 - `Upgrade available`
 - `Missing manifest`
 - [ ] Padaryti aiskesni moduliu saraso vizualini atskyrima: pavadinimas, folder, versija, sveikatos badge ir pagrindinis veiksmas.
+- [x] Pagerinti `infusions.php` veiksmu matomuma: vieningas veiksmu blokas, ryskesni CTA ir aiskesnis veiksmu grupavimas.
 - [ ] Prideti `grid / table` rodymo rezimus, jei moduliu kiekis isaugs.
 - [ ] Isryskinti moduliu `folder`, `slug`, busena ir veiksmus vienodomis admin badge taisyklemis.
 - [ ] Prideti ikonas modulio tipui, sveikatos busenai, atnaujinimui ir pagrindiniams veiksmams.

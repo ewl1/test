@@ -101,6 +101,16 @@ if ($developerMode) {
         );
     }
 }
+$actionIcons = [
+    'admin' => 'fa-solid fa-screwdriver-wrench',
+    'settings' => 'fa-solid fa-sliders',
+    'health' => 'fa-solid fa-heart-pulse',
+    'upgrade' => 'fa-solid fa-rotate',
+    'enable' => 'fa-solid fa-power-off',
+    'disable' => 'fa-solid fa-ban',
+    'uninstall' => 'fa-solid fa-trash',
+    'install_folder' => 'fa-solid fa-download',
+];
 
 include THEMES . 'default/admin_header.php';
 ?>
@@ -244,30 +254,46 @@ include THEMES . 'default/admin_header.php';
                             </td>
                             <td>
                                 <?php if (isset($installedFolders[$folder])): ?>
-                                    <div class="d-flex flex-wrap gap-2 admin-module-actions">
-                                        <?php foreach ($moduleActions as $action): ?>
-                                            <?php if ($action['kind'] === 'link'): ?>
-                                                <a class="<?= e($action['class']) ?>" href="<?= e($action['href']) ?>"><?= e($action['label']) ?></a>
-                                            <?php elseif ($action['kind'] === 'post'): ?>
-                                                <form method="post" class="d-inline">
-                                                    <?= csrf_field() ?>
-                                                    <input type="hidden" name="id" value="<?= (int)($installedFolders[$folder]['id'] ?? 0) ?>">
-                                                    <?php if (($action['key'] ?? '') === 'uninstall' && !empty($action['requires_confirmation'])): ?>
-                                                        <input class="form-control form-control-sm admin-confirm-input" type="text" name="confirm_folder" placeholder="Iveskite <?= e($action['confirmation_value'] ?? '') ?>">
-                                                    <?php endif; ?>
-                                                    <button class="<?= e($action['class']) ?>" name="action" value="<?= e($action['value']) ?>" <?= (($action['key'] ?? '') === 'uninstall' && empty($action['can_uninstall'])) ? 'disabled' : '' ?>><?= e($action['label']) ?></button>
-                                                </form>
-                                            <?php endif; ?>
-                                        <?php endforeach; ?>
-                                        <span class="badge text-bg-success"><?= e(__('infusions.installed_badge')) ?></span>
+                                    <div class="admin-action-cluster">
+                                        <div class="admin-action-cluster-label">Veiksmai</div>
+                                        <div class="d-flex flex-wrap gap-2 admin-module-actions">
+                                            <?php foreach ($moduleActions as $action): ?>
+                                                <?php $actionIcon = $actionIcons[$action['key'] ?? ''] ?? 'fa-solid fa-circle'; ?>
+                                                <?php if ($action['kind'] === 'link'): ?>
+                                                    <a class="<?= e($action['class']) ?>" href="<?= e($action['href']) ?>">
+                                                        <i class="<?= e($actionIcon) ?>" aria-hidden="true"></i>
+                                                        <span><?= e($action['label']) ?></span>
+                                                    </a>
+                                                <?php elseif ($action['kind'] === 'post'): ?>
+                                                    <form method="post" class="d-inline">
+                                                        <?= csrf_field() ?>
+                                                        <input type="hidden" name="id" value="<?= (int)($installedFolders[$folder]['id'] ?? 0) ?>">
+                                                        <?php if (($action['key'] ?? '') === 'uninstall' && !empty($action['requires_confirmation'])): ?>
+                                                            <input class="form-control form-control-sm admin-confirm-input" type="text" name="confirm_folder" placeholder="Iveskite <?= e($action['confirmation_value'] ?? '') ?>">
+                                                        <?php endif; ?>
+                                                        <button class="<?= e($action['class']) ?>" name="action" value="<?= e($action['value']) ?>" <?= (($action['key'] ?? '') === 'uninstall' && empty($action['can_uninstall'])) ? 'disabled' : '' ?>>
+                                                            <i class="<?= e($actionIcon) ?>" aria-hidden="true"></i>
+                                                            <span><?= e($action['label']) ?></span>
+                                                        </button>
+                                                    </form>
+                                                <?php endif; ?>
+                                            <?php endforeach; ?>
+                                            <span class="badge text-bg-success"><?= e(__('infusions.installed_badge')) ?></span>
+                                        </div>
                                     </div>
                                 <?php else: ?>
-                                    <form method="post">
-                                        <?= csrf_field() ?>
-                                        <input type="hidden" name="action" value="install_folder">
-                                        <input type="hidden" name="folder" value="<?= e($folder) ?>">
-                                        <button class="btn btn-sm btn-primary admin-action-button"><?= e(__('infusions.install')) ?></button>
-                                    </form>
+                                    <div class="admin-action-cluster">
+                                        <div class="admin-action-cluster-label">Veiksmai</div>
+                                        <form method="post" class="admin-module-actions">
+                                            <?= csrf_field() ?>
+                                            <input type="hidden" name="action" value="install_folder">
+                                            <input type="hidden" name="folder" value="<?= e($folder) ?>">
+                                            <button class="btn btn-sm btn-primary admin-action-button">
+                                                <i class="<?= e($actionIcons['install_folder']) ?>" aria-hidden="true"></i>
+                                                <span><?= e(__('infusions.install')) ?></span>
+                                            </button>
+                                        </form>
+                                    </div>
                                 <?php endif; ?>
                             </td>
                         </tr>
@@ -332,10 +358,16 @@ include THEMES . 'default/admin_header.php';
                             <td><span class="admin-table-note admin-version-chip"><?= e($versionSummary['installed_display']) ?></span></td>
                             <td><span class="admin-table-note admin-version-chip"><?= e($versionSummary['manifest_display']) ?></span></td>
                             <td>
-                                <div class="d-flex flex-wrap gap-2 admin-module-actions">
+                                <div class="admin-action-cluster">
+                                    <div class="admin-action-cluster-label">Veiksmai</div>
+                                    <div class="d-flex flex-wrap gap-2 admin-module-actions">
                                     <?php foreach ($moduleActions as $action): ?>
+                                        <?php $actionIcon = $actionIcons[$action['key'] ?? ''] ?? 'fa-solid fa-circle'; ?>
                                         <?php if ($action['kind'] === 'link'): ?>
-                                            <a class="<?= e($action['class']) ?>" href="<?= e($action['href']) ?>"><?= e($action['label']) ?></a>
+                                            <a class="<?= e($action['class']) ?>" href="<?= e($action['href']) ?>">
+                                                <i class="<?= e($actionIcon) ?>" aria-hidden="true"></i>
+                                                <span><?= e($action['label']) ?></span>
+                                            </a>
                                         <?php elseif ($action['kind'] === 'post'): ?>
                                             <form method="post" class="d-inline">
                                                 <?= csrf_field() ?>
@@ -343,7 +375,10 @@ include THEMES . 'default/admin_header.php';
                                                 <?php if (($action['key'] ?? '') === 'uninstall' && !empty($action['requires_confirmation'])): ?>
                                                     <input class="form-control form-control-sm admin-confirm-input" type="text" name="confirm_folder" placeholder="Iveskite <?= e($action['confirmation_value'] ?? '') ?>">
                                                 <?php endif; ?>
-                                                <button class="<?= e($action['class']) ?>" name="action" value="<?= e($action['value']) ?>" <?= (($action['key'] ?? '') === 'uninstall' && empty($action['can_uninstall'])) ? 'disabled' : '' ?>><?= e($action['label']) ?></button>
+                                                <button class="<?= e($action['class']) ?>" name="action" value="<?= e($action['value']) ?>" <?= (($action['key'] ?? '') === 'uninstall' && empty($action['can_uninstall'])) ? 'disabled' : '' ?>>
+                                                    <i class="<?= e($actionIcon) ?>" aria-hidden="true"></i>
+                                                    <span><?= e($action['label']) ?></span>
+                                                </button>
                                             </form>
                                         <?php endif; ?>
                                     <?php endforeach; ?>
@@ -351,9 +386,15 @@ include THEMES . 'default/admin_header.php';
                                         <?= csrf_field() ?>
                                         <input type="hidden" name="id" value="<?= (int)$inf['id'] ?>">
                                         <?php if ((int)$inf['is_enabled']): ?>
-                                            <button class="btn btn-sm btn-outline-warning admin-action-button" name="action" value="disable"><?= e(__('infusions.disable')) ?></button>
+                                            <button class="btn btn-sm btn-outline-warning admin-action-button" name="action" value="disable">
+                                                <i class="<?= e($actionIcons['disable']) ?>" aria-hidden="true"></i>
+                                                <span><?= e(__('infusions.disable')) ?></span>
+                                            </button>
                                         <?php else: ?>
-                                            <button class="btn btn-sm btn-outline-success admin-action-button" name="action" value="enable"><?= e(__('infusions.enable')) ?></button>
+                                            <button class="btn btn-sm btn-outline-success admin-action-button" name="action" value="enable">
+                                                <i class="<?= e($actionIcons['enable']) ?>" aria-hidden="true"></i>
+                                                <span><?= e(__('infusions.enable')) ?></span>
+                                            </button>
                                         <?php endif; ?>
                                     </form>
                                     <form method="post" class="d-inline">
@@ -362,8 +403,12 @@ include THEMES . 'default/admin_header.php';
                                         <?php if (!empty($uninstallSummary['requires_confirmation'])): ?>
                                             <input class="form-control form-control-sm admin-confirm-input" type="text" name="confirm_folder" placeholder="Iveskite <?= e($uninstallSummary['confirmation_value'] ?? '') ?>">
                                         <?php endif; ?>
-                                        <button class="btn btn-sm btn-outline-danger admin-danger-button" name="action" value="uninstall" data-confirm-message="Tikrai pašalinti infusion modulį?" <?= empty($uninstallSummary['can_uninstall']) ? 'disabled' : '' ?>><?= e(__('infusions.uninstall')) ?></button>
+                                        <button class="btn btn-sm btn-outline-danger admin-danger-button" name="action" value="uninstall" data-confirm-message="Tikrai pasalinti infusion moduli?" <?= empty($uninstallSummary['can_uninstall']) ? 'disabled' : '' ?>>
+                                            <i class="<?= e($actionIcons['uninstall']) ?>" aria-hidden="true"></i>
+                                            <span><?= e(__('infusions.uninstall')) ?></span>
+                                        </button>
                                     </form>
+                                    </div>
                                 </div>
                             </td>
                         </tr>

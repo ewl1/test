@@ -445,6 +445,56 @@ code {
 
 .admin-module-actions {
     align-items: center;
+    gap: 0.55rem !important;
+}
+
+.admin-action-cluster {
+    display: grid;
+    gap: 0.45rem;
+    min-width: 180px;
+}
+
+.admin-action-cluster-label {
+    color: #dbeafe;
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.admin-module-actions .btn,
+.admin-module-actions .admin-action-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    min-height: 2.35rem;
+    font-weight: 800;
+}
+
+.admin-module-actions .btn i,
+.admin-module-actions .admin-action-button i {
+    margin-right: 0;
+}
+
+.admin-module-actions .btn-outline-danger,
+.admin-module-actions .admin-danger-button {
+    box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.14) inset;
+}
+
+.admin-module-actions .btn-outline-warning,
+.admin-module-actions .btn-outline-success,
+.admin-module-actions .btn-outline-secondary,
+.admin-module-actions .btn-outline-primary,
+.admin-module-actions .btn-primary {
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+}
+
+.admin-module-actions .d-inline,
+.admin-module-actions form {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 0.45rem;
 }
 
 .admin-message-cell {
@@ -519,10 +569,26 @@ footer {
 
 .sortable-panel-list {
     min-height: 150px;
+    border: 1px dashed rgba(148, 163, 184, 0.18);
+    border-radius: 14px;
+    padding: 0.65rem;
+    background: rgba(2, 6, 23, 0.18);
+    transition: border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.sortable-panel-list.is-drop-target {
+    border-color: rgba(56, 189, 248, 0.38);
+    background: rgba(56, 189, 248, 0.08);
+    box-shadow: inset 0 0 0 1px rgba(56, 189, 248, 0.14);
+}
+
+.sortable-panel-list.is-empty {
+    justify-content: start;
 }
 
 .panel-item {
-    cursor: grab;
+    cursor: default;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
 
 .panel-item:active {
@@ -531,6 +597,99 @@ footer {
 
 .panel-item .card {
     border-style: dashed;
+}
+
+.admin-panel-column .card-header {
+    align-items: center;
+}
+
+.admin-panel-item {
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    background: linear-gradient(180deg, rgba(17,24,39,0.96), rgba(12,18,30,0.96));
+}
+
+.admin-panel-item.is-chosen,
+.admin-panel-item.is-dragging {
+    transform: scale(1.01);
+    border-color: rgba(56, 189, 248, 0.42);
+    box-shadow: 0 18px 30px rgba(2, 6, 23, 0.38);
+}
+
+.admin-panel-item.is-ghost {
+    opacity: 0.48;
+    border-color: rgba(125, 211, 252, 0.42);
+    background: rgba(56, 189, 248, 0.09);
+}
+
+.admin-panel-item-title {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.admin-panel-handle {
+    flex: 0 0 auto;
+    cursor: grab;
+    padding-inline: 0.55rem;
+}
+
+.admin-panel-handle:active {
+    cursor: grabbing;
+}
+
+.admin-panel-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    min-height: 92px;
+    padding: 1rem;
+    border: 1px dashed rgba(148, 163, 184, 0.24);
+    border-radius: 12px;
+    color: #cbd5e1;
+    background: rgba(255, 255, 255, 0.03);
+    text-align: center;
+}
+
+.admin-panel-empty i {
+    color: #7dd3fc;
+}
+
+.admin-panels-feedback {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.admin-panels-save-indicator .badge {
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
+}
+
+.admin-panels-savebar {
+    padding: 0.95rem 1rem;
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    border-radius: 14px;
+    background: rgba(15, 23, 42, 0.62);
+}
+
+[data-panels-form][data-dirty="1"] .admin-panels-savebar {
+    border-color: rgba(245, 158, 11, 0.32);
+    background: rgba(245, 158, 11, 0.08);
+}
+
+.admin-save-pulse {
+    animation: admin-save-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes admin-save-pulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.16);
+    }
+    50% {
+        box-shadow: 0 0 0 6px rgba(56, 189, 248, 0.04);
+    }
 }
 
 .admin-dashboard-grid .card {
