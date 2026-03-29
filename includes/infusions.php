@@ -779,6 +779,7 @@ function get_infusion_developer_snapshot($folder, $infusionId = 0, ?array $manif
         'provides' => $provides,
         'min_core_version' => trim((string)($manifest['min_core_version'] ?? '1.0.0')),
         'min_php_version' => trim((string)($manifest['min_php_version'] ?? '8.0.0')),
+        'locale_prefix' => trim((string)($manifest['locale_prefix'] ?? '')),
         'changelog' => (array)($manifest['changelog'] ?? []),
         'upgrade_notes' => (array)($manifest['upgrade_notes'] ?? []),
         'rollback_notes' => (array)($manifest['rollback_notes'] ?? []),

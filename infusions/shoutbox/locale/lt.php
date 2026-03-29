@@ -33,4 +33,12 @@ return [
     'shoutbox.admin.delete' => 'Trinti',
     'shoutbox.admin.delete_confirm' => 'Ištrinti žinutę?',
     'shoutbox.admin.empty' => 'Kol kas žinučių nėra.',
+    'shoutbox.manifest.name' => 'Šaukykla',
+    'shoutbox.manifest.description' => 'Šaukyklos infusion su BBCode ir smailais.',
+    'shoutbox.manifest.default_panel_name' => 'Šaukykla',
+    'shoutbox.manifest.permissions.shoutbox_moderate.name' => 'Šaukyklos moderavimas',
+    'shoutbox.manifest.permissions.shoutbox_moderate.description' => 'Leidžia moderuoti šaukyklos žinutes',
+    'shoutbox.manifest.admin_menu.shoutbox_admin.title' => 'Šaukykla',
+    'shoutbox.manifest.changelog.1_0_0.title' => 'Pradinė shoutbox SDK versija',
+    'shoutbox.manifest.changelog.1_0_0.notes.1' => 'Manifest papildytas reikalavimų ir galimybių laukais.',
 ];

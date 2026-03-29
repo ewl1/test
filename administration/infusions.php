@@ -460,6 +460,9 @@ include THEMES . 'default/admin_header.php';
                                     Core / PHP: <?= e($snapshot['min_core_version']) ?> / <?= e($snapshot['min_php_version']) ?>
                                 </div>
                                 <div class="small admin-page-subtitle">
+                                    Locale prefix: <?= e($snapshot['locale_prefix'] !== '' ? $snapshot['locale_prefix'] : '-') ?>
+                                </div>
+                                <div class="small admin-page-subtitle">
                                     Suderinamumas: <?= e($compatibilitySummary['environment_summary']) ?>
                                 </div>
                                 <div class="small admin-page-subtitle">

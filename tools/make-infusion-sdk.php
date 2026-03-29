@@ -27,6 +27,7 @@ if ($folder === '') {
     fwrite(STDERR, "Jei modulis skelbs notifications ar activity feed ivykius, rekomenduojama veliau igyvendinti ModuleEventContract.\n");
     fwrite(STDERR, "Jei modulis teiks paieskos saltinius, rekomenduojama veliau igyvendinti ModuleSearchContract.\n");
     fwrite(STDERR, "Jei modulis nores vienodai deklaruoti korteles badge ir detales sekcijas, rekomenduojama veliau igyvendinti ModulePresentationContract.\n");
+    fwrite(STDERR, "Manifest lokalizavimui naudokite locale_prefix ir locale/<kalba>.php raktus vietoj teksto dubliavimo manifest'e.\n");
     exit(1);
 }
 

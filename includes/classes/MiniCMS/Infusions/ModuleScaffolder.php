@@ -39,7 +39,7 @@ final class ModuleScaffolder
             $moduleRoot . '/uninstall.php' => self::uninstallTemplate($folder),
             $moduleRoot . '/migrations/.gitkeep' => '',
             $moduleRoot . '/migrations/README.md' => self::migrationsReadmeTemplate($name),
-            $moduleRoot . '/locale/lt.php' => self::localeTemplate($folder, $name),
+            $moduleRoot . '/locale/lt.php' => self::localeTemplate($folder, $name, $description),
             $moduleRoot . '/assets/css/' . $folder . '.css' => self::cssTemplate($folder),
             $moduleRoot . '/assets/js/' . $folder . '.js' => self::jsTemplate($folder),
             $moduleRoot . '/README.md' => self::readmeTemplate($folder, $name),
@@ -61,6 +61,7 @@ final class ModuleScaffolder
         $manifest = [
             'name' => $name,
             'description' => $description,
+            'locale_prefix' => $folder . '.manifest',
             'version' => '1.0.0',
             'author' => 'MiniCMS SDK',
             'admin' => true,
@@ -196,12 +197,20 @@ PHP;
 PHP;
     }
 
-    private static function localeTemplate(string $folder, string $name): string
+    private static function localeTemplate(string $folder, string $name, string $description): string
     {
         return <<<PHP
 <?php
 return [
     '{$folder}.title' => '{$name}',
+    '{$folder}.manifest.name' => '{$name}',
+    '{$folder}.manifest.description' => '{$description}',
+    '{$folder}.manifest.default_panel_name' => '{$name}',
+    '{$folder}.manifest.permissions.{$folder}_admin.name' => '{$name} administravimas',
+    '{$folder}.manifest.permissions.{$folder}_admin.description' => 'Leidzia valdyti {$name}',
+    '{$folder}.manifest.admin_menu.{$folder}_admin.title' => '{$name}',
+    '{$folder}.manifest.changelog.1_0_0.title' => 'Pradine SDK versija',
+    '{$folder}.manifest.changelog.1_0_0.notes.1' => 'Sugeneruotas pradinis modulio karkasas.',
 ];
 PHP;
     }
@@ -246,6 +255,17 @@ Sis modulis sugeneruotas per MiniCMS Module SDK scaffold.
 - `uninstall.php`: pasalinimo logika
 - `locale/`: modulio tekstai
 - `assets/`: modulio CSS ir JS
+
+## Manifest lokalizacija
+- Manifest lokalizuojami tekstai turi naudoti bendra `locale_prefix`, pvz. `{$folder}.manifest`.
+- Branduolys pagal si prefiksa automatikai iesko:
+  - `{$folder}.manifest.name`
+  - `{$folder}.manifest.description`
+  - `{$folder}.manifest.default_panel_name`
+  - `{$folder}.manifest.permissions.<slug>.name`
+  - `{$folder}.manifest.permissions.<slug>.description`
+  - `{$folder}.manifest.admin_menu.<slug>.title`
+- Jei reikia tikslesnes kontroles, manifest gali naudoti explicit `name_key`, `description_key`, `title_key`, `notes_keys`, `upgrade_notes_keys`, `rollback_notes_keys`.
 
 ## Settings contract
 - Jei modulis turi tikra nustatymu puslapi, rekomenduojama klasei papildomai igyvendinti `App\\MiniCMS\\Infusions\\ModuleSettingsContract`.

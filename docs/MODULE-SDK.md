@@ -30,6 +30,7 @@
 - `ModuleEventContract` leidzia moduliui vienodai deklaruoti `notifications / activity feed` ivykius.
 - `ModuleSearchContract` leidzia moduliui vienodai deklaruoti paieskos saltinius ir ju metaduomenis.
 - `ModulePresentationContract` leidzia moduliui vienodai deklaruoti, ka jis rodo korteleje ir ka detaliame rodinyje.
+- Manifest lokalizavimas turi bendra strategija per `locale_prefix` ir `*_key / *_keys` laukus, kad modulis nedubliuotu tekstu tarp `manifest.json` ir `locale/`.
 
 ## Admin veiksmu deklaravimas
 - `admin: true` ir realus `admin.php` leidzia branduoliui rodyti `Admin` veiksma.
@@ -452,7 +453,10 @@ SDK moduliai gali nurodyti ne tik `module_class`, bet ir reikalavimus bei galimy
 
 ```json
 {
+  "locale_prefix": "news.manifest",
   "module_class": "App\\News\\NewsModule",
+  "name_key": "news.manifest.name",
+  "description_key": "news.manifest.description",
   "min_core_version": "1.0.0",
   "min_php_version": "8.0.0",
   "required_extensions": ["json", "pdo", "pdo_mysql"],
@@ -467,13 +471,13 @@ SDK moduliai gali nurodyti ne tik `module_class`, bet ir reikalavimus bei galimy
   "changelog": [
     {
       "version": "1.1.0",
-      "title": "Stabilesne versija",
+      "title_key": "news.manifest.changelog.1_1_0.title",
       "date": "2026-03-29",
-      "notes": ["Atnaujintas modulis"]
+      "notes_keys": ["news.manifest.changelog.1_1_0.notes.1"]
     }
   ],
-  "upgrade_notes": [],
-  "rollback_notes": []
+  "upgrade_notes_keys": [],
+  "rollback_notes_keys": []
 }
 ```
 
@@ -487,6 +491,32 @@ Trumpai apie laukus:
 - `changelog`: versiju istorija
 - `upgrade_notes`: svarbios pastabos pries atnaujinima
 - `rollback_notes`: svarbios pastabos rollback atvejui
+
+## Manifest lokalizavimo strategija
+- Kiekvienas modulis turi naudoti bendra `locale_prefix`, rekomenduojamai `<folder>.manifest`.
+- Branduolys lokalizuoja manifest laukus tokia tvarka:
+  - jei yra explicit `*_key` arba `*_keys`, naudojami jie
+  - jei ju nera, naudojamos sutartos numatytos rakto formos pagal `locale_prefix`
+  - jei locale raktas nerastas, naudojama literal reiksme is `manifest.json`
+- Rekomenduojami laukai:
+  - top-level: `name_key`, `description_key`, `default_panel_name_key`
+  - permissions: `permissions[].name_key`, `permissions[].description_key`
+  - admin menu: `admin_menu[].title_key`
+  - changelog: `changelog[].title_key`, `changelog[].notes_keys`
+  - notes: `upgrade_notes_keys`, `rollback_notes_keys`
+- Rekomenduojami numatytieji raktai pagal `locale_prefix`:
+  - `news.manifest.name`
+  - `news.manifest.description`
+  - `news.manifest.default_panel_name`
+  - `news.manifest.permissions.news_admin.name`
+  - `news.manifest.permissions.news_admin.description`
+  - `news.manifest.admin_menu.news_admin.title`
+  - `news.manifest.changelog.1_1_0.title`
+  - `news.manifest.changelog.1_1_0.notes.1`
+  - `news.manifest.upgrade_notes.1`
+  - `news.manifest.rollback_notes.1`
+- Manifest lokalizavimo raktai turi gyventi `infusions/<modulis>/locale/<locale>.php`, ne root `locale/`.
+- `manifest.json` gali saugoti ir literal tekstus kaip fallback, bet nauji moduliai turi tureti bent `locale_prefix` ir locale raktu karkasa.
 
 Jei `module_class` nenurodytas, SDK bando rasti klase pagal taisykle:
 - `App\\<StudlyFolder>\\<StudlyFolder>Module`

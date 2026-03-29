@@ -30,7 +30,10 @@
 - [x] Ta pacia `support/` skaidymo taisykle pritaikyti visiems legacy moduliams, kad neliktu monolitiniu `feature_pack` tipo failu.
 - `forum`, `news` ir `shoutbox` jau naudoja plonus entrypoint failus ir `support/` skaidyma pagal atsakomybe.
 - Nauji legacy helperiai neturi keliauti i monolitinius `feature_pack` tipo failus; juos reikia skaidyti i `support/` failus pagal paskirti.
-- [ ] Sukurti vieninga manifest lokalizavimo strategija.
+- [x] Sukurti vieninga manifest lokalizavimo strategija.
+- manifest lokalizacija remiasi `locale_prefix` ir `*_key / *_keys` laukais, o fallback lieka literal tekstai is `manifest.json`
+- lokalizuojami top-level laukai, leidimu pavadinimai/aprasymai, admin meniu pavadinimai, changelog ir `upgrade / rollback` pastabos
+- locale raktai gyvena `infusions/<modulis>/locale/<locale>.php`, ne root `locale/`
 - [x] Apibrezti bendra moduliu UI sutarti:
 - korteles, lenteles, tuscios busenos ir info/klaidu pranesimai turi remtis bendrais temos komponentais, o ne modulio atsitiktiniais vienkartiniais stiliais
 - admin veiksmu mygtukai ir sveikatos badge turi naudoti vienoda `tone`, ikonografijos ir isdestymo kalba
