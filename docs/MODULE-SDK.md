@@ -12,6 +12,7 @@
 - `App\MiniCMS\Infusions\ModuleSettingsContract`
 - `App\MiniCMS\Infusions\ModuleDiagnosticsContract`
 - `App\MiniCMS\Infusions\ModuleEventContract`
+- `App\MiniCMS\Infusions\ModuleSearchContract`
 - `App\MiniCMS\Infusions\SimplePanelModule`
 - `App\MiniCMS\Infusions\HookRegistry`
 - `App\MiniCMS\Infusions\InfusionSdk`
@@ -26,6 +27,7 @@
 - `ModuleSettingsContract` leidzia moduliui vienodai deklaruoti savo nustatymu sekcijas, formos schema ir validavimo taisykles.
 - `ModuleDiagnosticsContract` leidzia moduliui vienodai deklaruoti savo health check, missing files, missing tables ir konfiguracijos busenas.
 - `ModuleEventContract` leidzia moduliui vienodai deklaruoti `notifications / activity feed` ivykius.
+- `ModuleSearchContract` leidzia moduliui vienodai deklaruoti paieskos saltinius ir ju metaduomenis.
 
 ## Admin veiksmu deklaravimas
 - `admin: true` ir realus `admin.php` leidzia branduoliui rodyti `Admin` veiksma.
@@ -192,6 +194,48 @@ Paskirtis:
 - `channels`: ar ivyki reikia siusti i `notifications`, `activity_feed` ar abu
 
 Developer mode per `administration/infusions.php` rodo, ar modulis si kontrakta igyvendina, kiek turi ivykiu ir kiek ju eina i `notifications`, `activity feed` ar abu kanalus.
+
+## ModuleSearchContract
+Jei modulis nori vienodai deklaruoti, kaip jo turinys turi buti integruojamas i bendra MiniCMS paieska, jis gali papildomai igyvendinti `ModuleSearchContract`.
+
+```php
+<?php
+
+namespace App\News;
+
+use App\MiniCMS\Infusions\AbstractInfusionModule;
+use App\MiniCMS\Infusions\ModuleSearchContract;
+
+final class NewsModule extends AbstractInfusionModule implements ModuleSearchContract
+{
+    public function searchMetadata(): array
+    {
+        return [
+            [
+                'key' => 'news_articles',
+                'indexed_fields' => ['title', 'excerpt', 'body', 'tags'],
+                'result_url' => 'news.php?id={id}',
+                'title' => 'title',
+                'summary' => 'excerpt',
+                'category' => 'Naujienos',
+                'type' => 'article',
+                'permission_filter' => 'news.view',
+                'weight' => 90,
+            ],
+        ];
+    }
+}
+```
+
+Paskirtis:
+- `indexed_fields`: kurie laukai turi buti indeksuojami
+- `result_url`: kaip sugeneruojamas rezultato URL
+- `title` ir `summary`: kokie laukai naudojami rezultatui atvaizduoti
+- `category` ir `type`: kaip rezultatas kategorizuojamas paieskoje
+- `permission_filter`: kokia teisiu taisykle turi buti taikoma
+- `weight`: koki svori / relevancijos koeficienti saltinis turi bendrame rezultate
+
+Developer mode per `administration/infusions.php` rodo, ar modulis si kontrakta igyvendina, kiek jis turi paieskos saltiniu, indeksuojamu lauku, URL, permission filter ir svoriu.
 
 ## Modulio struktura
 ```text
@@ -469,3 +513,4 @@ Generatorius sukuria:
 - Jei modulis turi atskirus nustatymus, rekomenduojama kartu su `settings_page` igyvendinti ir `ModuleSettingsContract`, kad branduolys galetu vienodai suprasti jo nustatymu struktura.
 - Jei modulis turi atskira diagnostika ar health check logika, rekomenduojama kartu su `diagnostics_page` igyvendinti ir `ModuleDiagnosticsContract`, kad branduolys galetu vienodai suprasti modulio sveikatos duomenis.
 - Jei modulis skelbia pranesimu ar activity feed ivykius, rekomenduojama igyvendinti `ModuleEventContract`, kad branduolys galetu vienodai suprasti ivykiu metaduomenis ir kanalus.
+- Jei modulis teikia paieskos saltinius, rekomenduojama igyvendinti `ModuleSearchContract`, kad branduolys galetu vienodai suprasti indeksuojamus laukus, rezultatui reikalingus metaduomenis ir leidimu filtra.

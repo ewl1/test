@@ -479,6 +479,97 @@ function get_infusion_event_contract_summary($folder, $infusionId = 0, ?array $m
     return $summary;
 }
 
+function get_infusion_search_contract_summary($folder, $infusionId = 0, ?array $manifest = null)
+{
+    $summary = [
+        'implements' => false,
+        'interface' => \App\MiniCMS\Infusions\ModuleSearchContract::class,
+        'sources' => [],
+        'source_count' => 0,
+        'indexed_field_count' => 0,
+        'result_url_count' => 0,
+        'title_summary_count' => 0,
+        'category_type_count' => 0,
+        'permission_filtered_count' => 0,
+        'weighted_source_count' => 0,
+        'error' => null,
+    ];
+
+    try {
+        $module = infusion_sdk_module($folder, (int)$infusionId, $manifest);
+    } catch (Throwable $e) {
+        $summary['error'] = $e->getMessage();
+        return $summary;
+    }
+
+    if (!$module instanceof \App\MiniCMS\Infusions\ModuleSearchContract) {
+        return $summary;
+    }
+
+    $sources = (array)$module->searchMetadata();
+    $indexedFieldCount = 0;
+    $resultUrlCount = 0;
+    $titleSummaryCount = 0;
+    $categoryTypeCount = 0;
+    $permissionFilteredCount = 0;
+    $weightedSourceCount = 0;
+
+    foreach ($sources as $source) {
+        if (!is_array($source)) {
+            continue;
+        }
+
+        $indexedFields = $source['indexed_fields'] ?? [];
+        if (!is_array($indexedFields)) {
+            $indexedFields = [$indexedFields];
+        }
+        foreach ($indexedFields as $field) {
+            if (trim((string)$field) !== '') {
+                $indexedFieldCount++;
+            }
+        }
+
+        if (trim((string)($source['result_url'] ?? '')) !== '') {
+            $resultUrlCount++;
+        }
+
+        if (trim((string)($source['title'] ?? '')) !== '' || trim((string)($source['summary'] ?? '')) !== '') {
+            $titleSummaryCount++;
+        }
+
+        if (trim((string)($source['category'] ?? '')) !== '' || trim((string)($source['type'] ?? '')) !== '') {
+            $categoryTypeCount++;
+        }
+
+        $permissionFilter = $source['permission_filter'] ?? null;
+        if (is_array($permissionFilter)) {
+            $permissionFilter = array_values(array_filter(array_map(static fn($item) => trim((string)$item), $permissionFilter)));
+            if ($permissionFilter !== []) {
+                $permissionFilteredCount++;
+            }
+        } elseif (trim((string)$permissionFilter) !== '') {
+            $permissionFilteredCount++;
+        }
+
+        $weight = $source['weight'] ?? null;
+        if ($weight !== null && trim((string)$weight) !== '') {
+            $weightedSourceCount++;
+        }
+    }
+
+    $summary['implements'] = true;
+    $summary['sources'] = $sources;
+    $summary['source_count'] = count(array_filter($sources, 'is_array'));
+    $summary['indexed_field_count'] = $indexedFieldCount;
+    $summary['result_url_count'] = $resultUrlCount;
+    $summary['title_summary_count'] = $titleSummaryCount;
+    $summary['category_type_count'] = $categoryTypeCount;
+    $summary['permission_filtered_count'] = $permissionFilteredCount;
+    $summary['weighted_source_count'] = $weightedSourceCount;
+
+    return $summary;
+}
+
 function get_infusion_developer_snapshot($folder, $infusionId = 0, ?array $manifest = null)
 {
     $folder = trim((string)$folder);
@@ -654,6 +745,7 @@ function get_infusion_developer_snapshot($folder, $infusionId = 0, ?array $manif
         'settings_contract' => get_infusion_settings_contract_summary($folder, (int)($installed['id'] ?? $infusionId), $manifest),
         'diagnostics_contract' => get_infusion_diagnostics_contract_summary($folder, (int)($installed['id'] ?? $infusionId), $manifest),
         'event_contract' => get_infusion_event_contract_summary($folder, (int)($installed['id'] ?? $infusionId), $manifest),
+        'search_contract' => get_infusion_search_contract_summary($folder, (int)($installed['id'] ?? $infusionId), $manifest),
     ];
 }
 

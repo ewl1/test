@@ -92,7 +92,7 @@
 - `featured`, `new`, `locked`, `disabled`, `warning`, `needs update`
 - kokie badge ir meta laukeliai naudojami viesame ir admin rodinyje
 - kokios ikonos siejamos su tomis busenomis
-- [ ] Vienodai apibrezti, kaip modulis pateikia paieskos metaduomenis:
+- [x] Vienodai apibrezti, kaip modulis pateikia paieskos metaduomenis:
 - indeksuojami laukai
 - rezultato URL
 - rezultato pavadinimas ir santrauka

@@ -83,6 +83,7 @@
 - [x] `App\\MiniCMS\\Infusions\\ModuleSettingsContract`
 - [x] `App\\MiniCMS\\Infusions\\ModuleDiagnosticsContract`
 - [x] `App\\MiniCMS\\Infusions\\ModuleEventContract`
+- [x] `App\\MiniCMS\\Infusions\\ModuleSearchContract`
 
 ### Turinys ir paieska
 - [ ] `App\\Search\\SearchIndexService`

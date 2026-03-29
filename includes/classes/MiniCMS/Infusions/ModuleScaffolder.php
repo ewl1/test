@@ -274,6 +274,17 @@ Sis modulis sugeneruotas per MiniCMS Module SDK scaffold.
   - kanalus: `notifications`, `activity_feed` arba abu
 - `administration/infusions.php` developer mode tada matys, ar modulis si kontrakta igyvendina.
 
+## Search contract
+- Jei modulis teikia paieskos saltinius, rekomenduojama klasei papildomai igyvendinti `App\\MiniCMS\\Infusions\\ModuleSearchContract`.
+- Ta sutartis leidzia vienodai deklaruoti:
+  - indeksuojamus laukus
+  - rezultato URL
+  - rezultato pavadinima ir santrauka
+  - kategorija / tipa
+  - leidimu filtra
+  - svori / relevancija
+- `administration/infusions.php` developer mode tada matys, ar modulis si kontrakta igyvendina.
+
 ## Standartas
 - `bootstrap.php`, `admin.php` ir `panel.php` turi likti ploni entrypoint failai.
 - Jei modulyje laikinai dar reikia proceduriniu helperiu, jie keliauja i `support/` ir skaidomi pagal atsakomybe.

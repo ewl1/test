@@ -485,6 +485,14 @@ include THEMES . 'default/admin_header.php';
                                         <?= !empty($snapshot['event_contract']['error']) ? e('klaida: ' . $snapshot['event_contract']['error']) : 'neigyvendintas' ?>
                                     <?php endif; ?>
                                 </div>
+                                <div class="small admin-page-subtitle">
+                                    Search contract:
+                                    <?php if (!empty($snapshot['search_contract']['implements'])): ?>
+                                        taip | saltiniai <?= (int)$snapshot['search_contract']['source_count'] ?> | indeksuojami laukai <?= (int)$snapshot['search_contract']['indexed_field_count'] ?> | URL <?= (int)$snapshot['search_contract']['result_url_count'] ?> | title/summary <?= (int)$snapshot['search_contract']['title_summary_count'] ?> | kategorija/tipas <?= (int)$snapshot['search_contract']['category_type_count'] ?> | permission filter <?= (int)$snapshot['search_contract']['permission_filtered_count'] ?> | svoris <?= (int)$snapshot['search_contract']['weighted_source_count'] ?>
+                                    <?php else: ?>
+                                        <?= !empty($snapshot['search_contract']['error']) ? e('klaida: ' . $snapshot['search_contract']['error']) : 'neigyvendintas' ?>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </div>
 
