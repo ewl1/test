@@ -30,9 +30,9 @@
 - [ ] Sukurti tipografijos skale antrastems, turiniui, lentelems, badge ir pagalbiniams tekstams.
 - [ ] Suvienodinti mygtuku, badge, korteliu, lenteliu, formu ir pranesimu komponentu stiliu.
 - [ ] Isgryninti bendras turinio stiliaus taisykles BBCode ir WYSIWYG isvedimui.
-- [ ] Apsispresti del pagrindines ikon bibliotekos:
-- rekomenduotina viena pagrindine (`Bootstrap Icons` arba `Font Awesome`)
-- antrine naudoti tik jei truksta konkretaus rinkinio
+- [x] Apsispresti del pagrindines ikon bibliotekos:
+- pagrindine bendra biblioteka yra `Font Awesome 7`
+- antrine biblioteka leidziama tik jei `FA7` neturi konkretaus rinkinio ir yra aiski produkto priezastis
 - `Entypo` nelaikyti lygiaverciu treciu pagrindu be aiskaus poreikio
 - [ ] Susideti ikon zemelapi navigacijai, statusams, veiksmams, tuscioms busenoms ir moderavimui.
 
@@ -71,3 +71,4 @@
 - [ ] Prideti aiskesnes `focus` busenas ir patikrinti klaviaturos navigacija.
 - [ ] Prideti `responsive image` ir `lazy loading` stiliaus taisykles ten, kur jos priklausys nuo temos.
 - [ ] Ilgainiui apsvarstyti temos nustatymus: `compact / wide`, akcento spalvos, alternatyvus kontrasto rezimas.
+

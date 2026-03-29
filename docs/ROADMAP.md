@@ -33,8 +33,8 @@
 - Forumo, naujienu ir shoutbox moduliams parengti savita, bet su bendra tema suderinama UI krypti.
 - Sutvarkyti media pateikima: `featured image`, galeriju santykiai, avataru fallback'ai, YouTube ir paveiksliuku embed stiliai.
 - Apibrezti ikonografijos strategija:
-- pasirinkti viena pagrindine biblioteka (`Bootstrap Icons` arba `Font Awesome`)
-- antrine biblioteka naudoti tik jei truksta konkreciu ikon
+- pagrindine bendra biblioteka jau pasirinkta: `Font Awesome 7`
+- antrine biblioteka naudoti tik jei `FA7` neturi konkreciu ikon ir yra aiski produkto priezastis
 - `Entypo` naudoti tik jei tam atsiras labai aiski prieziastis
 - tureti bendra ikon naudijimo zemelapi navigacijai, statusams ir veiksmams
 - Atnaujinti admin UX: dashboard korteles, `panels` drag-drop griztamasis rysis, `infusions` sveikatos badge ir aiskesni veiksmai.
