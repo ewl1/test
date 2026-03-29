@@ -71,7 +71,8 @@
 - [x] Pagerinti `infusions.php` veiksmu matomuma: vieningas veiksmu blokas, ryskesni CTA ir aiskesnis veiksmu grupavimas.
 - [ ] Atskirti pirminius ir antrinius `infusions` veiksmus: vienas pagrindinis CTA pagal modulio busena, likusius veiksmus perkelti i antrine juosta arba `more` meniu.
 - [ ] `Disable` ir `uninstall` patvirtinimus rodyti tik atidarius rizikinga veiksma, kad `confirm_folder` laukas nuolat neapkrautu korteles.
-- [ ] Suspausti `infusions.php` korteliu tanki po ikonu atsiradimo: versiju juosta, badge ir sveikatos meta pateikti aiskesnemis eilutemis be suluzusio isdestymo.
+- [x] Suspausti `infusions.php` korteliu tanki po ikonu atsiradimo: versiju juosta, badge ir sveikatos meta pateikti aiskesnemis eilutemis be suluzusio isdestymo.
+- pavadinimo stulpelyje palikta tik kompaktiska statusu juosta, o technines santraukos pervestos i tvarkingas `label/value` eilutes
 - [ ] Apsvarstyti `compact / detail` rezima `infusions.php`, kad trumpa moduliu santrauka butu matoma iskart, o pilna diagnostika ir uninstall detales atsivertu tik pagal poreiki.
 - [ ] Po pilno `FA7` pajungimo perziureti `infusions.php` ikonografijos triuksma: ta pati busena neturi buti kartojama badge, meta eiluteje ir veiksmu mygtuke vienu metu.
 - [ ] `Infusions.php` korteleje palikti viena pagrindine statusu juosta ir viena veiksmu juosta, o technines detales, uninstall rizika ir papildomas badge perkelti i `detail / developer / health` rodinius.

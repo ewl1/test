@@ -220,22 +220,39 @@ include THEMES . 'default/admin_header.php';
                         <tr>
                             <td><code class="admin-mono-pill admin-folder-label"><?= e($folder) ?></code></td>
                             <td>
-                                <div class="fw-semibold admin-strong-cell"><?= e($meta['name']) ?></div>
+                                <div class="admin-module-title-row">
+                                    <div class="fw-semibold admin-strong-cell"><?= e($meta['name']) ?></div>
+                                </div>
                                 <div class="small admin-table-description admin-description-strong"><?= e($meta['description'] ?? '') ?></div>
                                 <div class="admin-version-summary mt-2">
-                                    <span class="admin-version-pill"><strong>Idiegta:</strong> <?= e($versionSummary['installed_display']) ?></span>
-                                    <span class="admin-version-pill"><strong>Manifest:</strong> <?= e($versionSummary['manifest_display']) ?></span>
-                                    <span class="admin-version-pill"><strong>Atnaujinimas:</strong> <?= e($versionSummary['available_upgrade_display']) ?></span>
                                     <span class="badge <?= e($versionSummary['status_badge_class']) ?> admin-version-state-badge"><?= e($versionSummary['status_label']) ?></span>
                                     <span class="badge <?= e($compatibilitySummary['badge_class']) ?> admin-version-state-badge"><?= e($compatibilitySummary['label']) ?></span>
                                     <span class="badge <?= e($healthSummary['badge_class']) ?> admin-version-state-badge"><?= e($healthSummary['label']) ?></span>
                                 </div>
-                                <div class="small admin-module-meta mt-2">Suderinamumas: <?= e($compatibilitySummary['environment_summary']) ?></div>
-                                <div class="small admin-module-meta">Priklausomybes: <?= e($compatibilitySummary['dependencies_summary']) ?> | Konfliktai: <?= e($compatibilitySummary['conflicts_summary']) ?></div>
-                                <div class="small admin-module-meta">Sveikata: <?= e($healthSummary['summary']) ?></div>
-                                <?php if ($uninstallSummary): ?>
-                                    <div class="small admin-module-meta">Salinimas: <?= e($uninstallSummary['summary']) ?></div>
-                                <?php endif; ?>
+                                <div class="admin-module-meta-list mt-2">
+                                    <div class="small admin-module-meta-row">
+                                        <span class="admin-module-meta-label">Suderinamumas</span>
+                                        <span class="admin-module-meta-value"><?= e($compatibilitySummary['environment_summary']) ?></span>
+                                    </div>
+                                    <div class="small admin-module-meta-row">
+                                        <span class="admin-module-meta-label">Priklausomybes</span>
+                                        <span class="admin-module-meta-value"><?= e($compatibilitySummary['dependencies_summary']) ?></span>
+                                    </div>
+                                    <div class="small admin-module-meta-row">
+                                        <span class="admin-module-meta-label">Konfliktai</span>
+                                        <span class="admin-module-meta-value"><?= e($compatibilitySummary['conflicts_summary']) ?></span>
+                                    </div>
+                                    <div class="small admin-module-meta-row">
+                                        <span class="admin-module-meta-label">Sveikata</span>
+                                        <span class="admin-module-meta-value"><?= e($healthSummary['summary']) ?></span>
+                                    </div>
+                                    <?php if ($uninstallSummary): ?>
+                                        <div class="small admin-module-meta-row">
+                                            <span class="admin-module-meta-label">Salinimas</span>
+                                            <span class="admin-module-meta-value"><?= e($uninstallSummary['summary']) ?></span>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
                                 <?php if ($developerMode && $developerMeta): ?>
                                     <div class="d-flex flex-wrap gap-1 mt-2">
                                         <span class="badge text-bg-dark admin-dev-badge"><?= e($developerMeta['is_sdk_module'] ? 'SDK' : 'Legacy') ?></span>
@@ -340,19 +357,36 @@ include THEMES . 'default/admin_header.php';
                         <tr>
                             <td class="admin-strong-cell"><?= (int)$inf['id'] ?></td>
                             <td>
-                                <span class="fw-semibold admin-strong-cell"><?= e($displayName) ?></span>
+                                <div class="admin-module-title-row">
+                                    <span class="fw-semibold admin-strong-cell"><?= e($displayName) ?></span>
+                                </div>
                                 <div class="admin-version-summary mt-2">
-                                    <span class="admin-version-pill"><strong>Idiegta:</strong> <?= e($versionSummary['installed_display']) ?></span>
-                                    <span class="admin-version-pill"><strong>Manifest:</strong> <?= e($versionSummary['manifest_display']) ?></span>
-                                    <span class="admin-version-pill"><strong>Atnaujinimas:</strong> <?= e($versionSummary['available_upgrade_display']) ?></span>
                                     <span class="badge <?= e($versionSummary['status_badge_class']) ?> admin-version-state-badge"><?= e($versionSummary['status_label']) ?></span>
                                     <span class="badge <?= e($compatibilitySummary['badge_class']) ?> admin-version-state-badge"><?= e($compatibilitySummary['label']) ?></span>
                                     <span class="badge <?= e($healthSummary['badge_class']) ?> admin-version-state-badge"><?= e($healthSummary['label']) ?></span>
                                 </div>
-                                <div class="small admin-module-meta mt-2">Suderinamumas: <?= e($compatibilitySummary['environment_summary']) ?></div>
-                                <div class="small admin-module-meta">Priklausomybes: <?= e($compatibilitySummary['dependencies_summary']) ?> | Konfliktai: <?= e($compatibilitySummary['conflicts_summary']) ?></div>
-                                <div class="small admin-module-meta">Sveikata: <?= e($healthSummary['summary']) ?></div>
-                                <div class="small admin-module-meta">Salinimas: <?= e($uninstallSummary['summary']) ?></div>
+                                <div class="admin-module-meta-list mt-2">
+                                    <div class="small admin-module-meta-row">
+                                        <span class="admin-module-meta-label">Suderinamumas</span>
+                                        <span class="admin-module-meta-value"><?= e($compatibilitySummary['environment_summary']) ?></span>
+                                    </div>
+                                    <div class="small admin-module-meta-row">
+                                        <span class="admin-module-meta-label">Priklausomybes</span>
+                                        <span class="admin-module-meta-value"><?= e($compatibilitySummary['dependencies_summary']) ?></span>
+                                    </div>
+                                    <div class="small admin-module-meta-row">
+                                        <span class="admin-module-meta-label">Konfliktai</span>
+                                        <span class="admin-module-meta-value"><?= e($compatibilitySummary['conflicts_summary']) ?></span>
+                                    </div>
+                                    <div class="small admin-module-meta-row">
+                                        <span class="admin-module-meta-label">Sveikata</span>
+                                        <span class="admin-module-meta-value"><?= e($healthSummary['summary']) ?></span>
+                                    </div>
+                                    <div class="small admin-module-meta-row">
+                                        <span class="admin-module-meta-label">Salinimas</span>
+                                        <span class="admin-module-meta-value"><?= e($uninstallSummary['summary']) ?></span>
+                                    </div>
+                                </div>
                                 <?php if ($developerMode && $developerMeta): ?>
                                     <div class="d-flex flex-wrap gap-1 mt-2">
                                         <span class="badge text-bg-dark admin-dev-badge"><?= e($developerMeta['is_sdk_module'] ? 'SDK' : 'Legacy') ?></span>
