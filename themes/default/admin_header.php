@@ -11,6 +11,7 @@ $can = function ($permission) use ($me, $adminNavVisible) {
 };
 $canUsers = $can('users.view') || $can('users.manage');
 $canDiagnostics = $can('settings.manage') || $can('logs.view');
+$brandLabel = 'Mini CMS';
 ?>
 <!DOCTYPE html>
 <html lang="<?= e(site_locale()) ?>">
@@ -32,8 +33,7 @@ $canDiagnostics = $can('settings.manage') || $can('logs.view');
 <div class="container-fluid">
 
 <a class="navbar-brand admin-brand" href="<?= public_path($adminNavVisible ? 'administration/index.php' : 'administration/login.php') ?>">
-<img src="<?= asset_path('images/logos/minicms-logo.svg') ?>" alt="<?= e($siteTitle) ?>" class="admin-brand-logo">
-<span class="admin-brand-text"><?= e(__('admin.title')) ?></span>
+<span class="admin-brand-text"><?= e($brandLabel) ?></span>
 </a>
 
 <?php if ($adminNavVisible): ?>

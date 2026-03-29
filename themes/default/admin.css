@@ -43,19 +43,15 @@ body {
 .admin-brand {
     display: inline-flex;
     align-items: center;
-    gap: 0.75rem;
-}
-
-.admin-brand-logo {
-    width: auto;
-    height: 38px;
-    display: block;
+    gap: 0;
 }
 
 .admin-brand-text {
     color: #fff;
     font-weight: 800;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.01em;
+    font-size: 1.65rem;
+    white-space: nowrap;
 }
 
 .navbar .nav-link,
@@ -619,7 +615,7 @@ footer {
         border-radius: 14px;
     }
 
-    .admin-brand-logo {
-        height: 34px;
+    .admin-brand-text {
+        font-size: 1.45rem;
     }
 }

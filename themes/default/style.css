@@ -32,20 +32,16 @@ body {
 .site-brand {
     display: inline-flex;
     align-items: center;
-    gap: 0.75rem;
-}
-
-.site-brand-logo {
-    width: auto;
-    height: 38px;
-    display: block;
+    gap: 0;
 }
 
 .site-brand-text {
     color: #f8fbff;
     font-weight: 800;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.01em;
     line-height: 1;
+    font-size: 1.85rem;
+    white-space: nowrap;
 }
 
 .navbar .nav-link,
@@ -408,8 +404,8 @@ footer {
         min-width: 0;
     }
 
-    .site-brand-logo {
-        height: 34px;
+    .site-brand-text {
+        font-size: 1.6rem;
     }
 
 }
