@@ -39,6 +39,7 @@
 - tureti bendra ikon naudijimo zemelapi navigacijai, statusams ir veiksmams
 - Atnaujinti admin UX: dashboard korteles, `panels` drag-drop griztamasis rysis, `infusions` sveikatos badge ir aiskesni veiksmai.
 - Pirmas admin UX zingsnis jau padarytas: `panels` turi aiskesnes drop zonas, issaugojimo busena ir `beforeunload` perspejima, o `infusions` veiksmai sugrupuoti i ryskesnius veiksmu blokus.
+- Kitas `infusions` UI zingsnis: atskirti pagrindinius ir antrinius veiksmus, sukompaktinti badge ir versiju juostas, o `disable / uninstall` patvirtinimus perkelti i atskira `danger` srauta.
 - Ilgainiui prideti temos personalizavimo krypti: `compact / wide` isdestymas, akcento spalvos, o veliau ir alternatyvios temos.
 
 ### Baigtumo kriterijai

@@ -69,6 +69,10 @@
 - `Missing manifest`
 - [ ] Padaryti aiskesni moduliu saraso vizualini atskyrima: pavadinimas, folder, versija, sveikatos badge ir pagrindinis veiksmas.
 - [x] Pagerinti `infusions.php` veiksmu matomuma: vieningas veiksmu blokas, ryskesni CTA ir aiskesnis veiksmu grupavimas.
+- [ ] Atskirti pirminius ir antrinius `infusions` veiksmus: vienas pagrindinis CTA pagal modulio busena, likusius veiksmus perkelti i antrine juosta arba `more` meniu.
+- [ ] `Disable` ir `uninstall` patvirtinimus rodyti tik atidarius rizikinga veiksma, kad `confirm_folder` laukas nuolat neapkrautu korteles.
+- [ ] Suspausti `infusions.php` korteliu tanki po ikonu atsiradimo: versiju juosta, badge ir sveikatos meta pateikti aiskesnemis eilutemis be suluzusio isdestymo.
+- [ ] Apsvarstyti `compact / detail` rezima `infusions.php`, kad trumpa moduliu santrauka butu matoma iskart, o pilna diagnostika ir uninstall detales atsivertu tik pagal poreiki.
 - [ ] Prideti `grid / table` rodymo rezimus, jei moduliu kiekis isaugs.
 - [ ] Isryskinti moduliu `folder`, `slug`, busena ir veiksmus vienodomis admin badge taisyklemis.
 - [ ] Prideti ikonas modulio tipui, sveikatos busenai, atnaujinimui ir pagrindiniams veiksmams.
@@ -109,3 +113,4 @@
 - [ ] Prideti `broken links checker` rezultatu perziura.
 - [ ] Jei bus reikalinga, prideti `hook debugger` ir `dependency graph` diagnostikos vaizda.
 - [ ] Atlikti admin responsive audita bent telefonu, planseteje ir 1366px plocio ekrane.
+

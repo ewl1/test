@@ -57,6 +57,8 @@
 - [ ] Perziureti kontrasta maziau naudojamiems admin komponentams.
 - [ ] Sutvarkyti mobiliu ekranu elgsena admin lentelese, formose ir paneliu isdestyme.
 - [x] Pagerinti `panels` drag-drop griztamaji rysi ir `infusions` veiksmu matomuma.
+- [ ] Po ikonu ivedimo perbalansuoti `infusions` korteliu vizualini tanki: badge auksti, mygtuku ploti, eiluciu ritma ir tarpus tarp meta juostu.
+- [ ] `Danger` veiksmus administracijoje vizualiai atskirti nuo neutraliu: ne tik spalva, bet ir vieta, kad `disable / uninstall` nebutu sumaisyti su `admin / settings / health`.
 - [ ] Toliau isskaidyti papildomu moduliu stilius is bendro `style.css`.
 - [ ] Apibrezti breakpoint'us viesai ir admin daliai, kad elgsena butu prognozuojama, o ne atsitiktine.
 - [ ] Paruosti admin layout sablonus: `dashboard`, `table view`, `form view`, `split settings` ir `diagnostics`.

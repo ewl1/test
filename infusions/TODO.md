@@ -125,3 +125,5 @@
 - [x] Apibrezti moduliu badge ir detalios perziuros sutarti:
 - `SDK`, `Legacy`, `Has migrations`, `Upgrade available`, `Missing manifest`
 - ka modulis rodo korteleje, o ka detaliame rodinyje
+- [ ] Suderinti `infusions.php` su `ModulePresentationContract` taip, kad korteleje liktu tik trumpa santrauka, o pilna diagnostika, uninstall poveikis ir kitos technines detales keliautu i detalu rodini.
+- [ ] Apibrezti `danger action` pateikima moduliams: `disable` ir `uninstall` patvirtinimai neturi nuolat uzimti korteles vietos ir turi atsiverti tik pagal poreiki.
