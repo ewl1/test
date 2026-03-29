@@ -14,9 +14,10 @@
 - `v1.5`: SEO ir feed sluoksnio uzbaigimas.
 
 ## Svarbus failai
-- `admin.php`: naujienu administravimas.
+- `admin.php`: plonas naujienu administravimo entrypoint failas.
 - `infusion.php`: modulio ikrovimas.
-- `panel.php`: naujienu panele.
+- `panel.php`: plonas naujienu paneles entrypoint failas.
+- `support/`: proceduriniai helperiai ir pereinamojo laikotarpio logika.
 - `schema.php`, `upgrade.php`, `migrations/`: modulio schema ir atnaujinimai.
 - `manifest.json`: modulio metaduomenys.
 
@@ -90,5 +91,6 @@
 - [ ] Sutvarkyti `featured image`, galerijos ir YouTube embed pateikimo stiliu.
 
 ### Architektura
+- [x] `support/` struktura pritaikyta ir siame legacy modulyje, kad `admin.php` ir `panel.php` liktu ploni.
 - [ ] Jei reikes daugiau logikos, prideti `assets/` ir `classes/` struktura kaip kituose moduliuose.
 - [ ] Apsvarstyti `NewsService`, `CategoryService`, `PublicationService`, `FeedService`, `SeoPresenter`, `MediaEmbedService` klases.

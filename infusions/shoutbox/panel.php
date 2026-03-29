@@ -1,4 +1,7 @@
 <?php
+
+require_once __DIR__ . '/support/load.php';
+
 $panelMessages = shoutbox_get_messages(shoutbox_panel_messages_limit());
 $redirectPath = normalize_local_path($_SERVER['REQUEST_URI'] ?? 'index.php', 'index.php');
 ?>

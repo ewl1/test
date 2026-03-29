@@ -713,6 +713,7 @@ Generatorius sukuria:
 - Naujiems moduliams rekomenduojama pirma naudoti `migrations/`, o ne visa atnaujinimo logika krauti i viena `upgrade.php`.
 - `support/` katalogas yra rekomenduojamas tada, kai modulyje dar reikia legacy proceduriniu helperiu.
 - Venkite vieno monolitinio failo kaip `feature_pack.php`: geriau skaidyti i `support/schema.php`, `support/settings.php`, `support/admin.php` ir pan.
+- Esami legacy moduliai (`forum`, `news`, `shoutbox`) jau turi sekti ta pacia taisykle: ploni entrypoint failai ir `support/` pagal atsakomybes.
 - Jei modulis turi atskirus nustatymus, rekomenduojama kartu su `settings_page` igyvendinti ir `ModuleSettingsContract`, kad branduolys galetu vienodai suprasti jo nustatymu struktura.
 - Jei modulis turi atskira diagnostika ar health check logika, rekomenduojama kartu su `diagnostics_page` igyvendinti ir `ModuleDiagnosticsContract`, kad branduolys galetu vienodai suprasti modulio sveikatos duomenis.
 - Jei modulis skelbia pranesimu ar activity feed ivykius, rekomenduojama igyvendinti `ModuleEventContract`, kad branduolys galetu vienodai suprasti ivykiu metaduomenis ir kanalus.

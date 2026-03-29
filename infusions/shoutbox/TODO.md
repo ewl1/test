@@ -14,9 +14,10 @@
 - `v1.4`: jei prireiks, isskaidyti logika i siauresnes klases.
 
 ## Svarbus failai
-- `bootstrap.php`: zinuciu logika, renderinimas ir POST srautas.
-- `admin.php`: moderavimo UI ir nustatymai.
-- `panel.php`: shoutbox panele pagrindiniame puslapyje.
+- `bootstrap.php`: plonas shoutbox entrypoint failas.
+- `admin.php`: plonas moderavimo UI ir nustatymu entrypoint failas.
+- `panel.php`: plonas shoutbox paneles entrypoint failas.
+- `support/`: proceduriniai helperiai ir pereinamojo laikotarpio logika.
 - `assets/css/shoutbox.css`, `assets/js/shoutbox.js`: modulio assetai.
 - `locale/lt.php`: modulio tekstai.
 
@@ -25,6 +26,7 @@
 - [x] JS perkeltas i `assets/js/shoutbox.js`.
 - [x] Modulio tekstai perkelti i `locale/lt.php`.
 - [x] Shoutbox nustatymai perkelti i modulio admin puslapi.
+- [x] `support/` struktura pritaikyta ir siame legacy modulyje, kad `bootstrap.php`, `admin.php` ir `panel.php` liktu ploni.
 - [ ] Prideti flood protection nustatymus per administracija.
 - [ ] Prideti moderavimo veiksmus viesame puslapyje pagal teises.
 - [ ] Prideti blokavimo / mute integracija su naudotoju bendru nustatymu sluoksniu.

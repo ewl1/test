@@ -304,6 +304,7 @@ Sis modulis sugeneruotas per MiniCMS Module SDK scaffold.
 - `bootstrap.php`, `admin.php` ir `panel.php` turi likti ploni entrypoint failai.
 - Jei modulyje laikinai dar reikia proceduriniu helperiu, jie keliauja i `support/` ir skaidomi pagal atsakomybe.
 - Jei logika tampa pakartotinai naudojamu servisu ar presenteriu, ji keliama i `classes/`.
+- Nedarykite vieno monolitinio `feature_pack.php` tipo failo, jei helperius galima isskaidyti i aiskius `support/` failus.
 
 ## Migrations
 - Core automatikai uzdeda lock per install / upgrade / uninstall, todel du adminai negali paleisti to paties proceso vienu metu.
@@ -363,6 +364,7 @@ MD;
 - `bootstrap.php`, `admin.php` ir `panel.php` turi likti ploni entrypoint failai.
 - Proceduriniai helperiai skaidomi i mazesnius failus pagal atsakomybe.
 - Tikri servisai, presenteriai ir objektai turi keliauti i `classes/`.
+- Nedarykite vieno monolitinio `feature_pack.php` tipo failo, jei helperius galima isskaidyti i aiskius `support/` failus.
 MD;
     }
 }
