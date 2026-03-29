@@ -63,12 +63,22 @@ foreach ($installed as $i) {
     $installedFolders[$i['folder']] = $i;
 }
 $versionSummaries = [];
+$compatibilitySummaries = [];
+$healthSummaries = [];
 foreach ($scanned as $folder => $meta) {
     $versionSummaries[$folder] = get_infusion_version_summary($folder, $meta, $installedFolders[$folder] ?? null);
+    $compatibilitySummaries[$folder] = get_infusion_compatibility_summary($folder, $meta, $installedFolders, $scanned);
+    $healthSummaries[$folder] = get_infusion_health_summary($folder, $meta);
 }
 foreach ($installed as $inf) {
     if (!isset($versionSummaries[$inf['folder']])) {
         $versionSummaries[$inf['folder']] = get_infusion_version_summary($inf['folder'], $scanned[$inf['folder']] ?? null, $inf);
+    }
+    if (!isset($compatibilitySummaries[$inf['folder']])) {
+        $compatibilitySummaries[$inf['folder']] = get_infusion_compatibility_summary($inf['folder'], $scanned[$inf['folder']] ?? null, $installedFolders, $scanned);
+    }
+    if (!isset($healthSummaries[$inf['folder']])) {
+        $healthSummaries[$inf['folder']] = get_infusion_health_summary($inf['folder'], $scanned[$inf['folder']] ?? null);
     }
 }
 $migrationLockStatus = get_infusion_migration_lock_status();
@@ -177,6 +187,8 @@ include THEMES . 'default/admin_header.php';
                     <?php foreach ($scanned as $folder => $meta): ?>
                         <?php $developerMeta = $developerSnapshots[$folder] ?? null; ?>
                         <?php $versionSummary = $versionSummaries[$folder] ?? get_infusion_version_summary($folder, $meta, $installedFolders[$folder] ?? null); ?>
+                        <?php $compatibilitySummary = $compatibilitySummaries[$folder] ?? get_infusion_compatibility_summary($folder, $meta, $installedFolders, $scanned); ?>
+                        <?php $healthSummary = $healthSummaries[$folder] ?? get_infusion_health_summary($folder, $meta); ?>
                         <tr>
                             <td><code class="admin-mono-pill admin-folder-label"><?= e($folder) ?></code></td>
                             <td>
@@ -187,7 +199,12 @@ include THEMES . 'default/admin_header.php';
                                     <span class="admin-version-pill"><strong>Manifest:</strong> <?= e($versionSummary['manifest_display']) ?></span>
                                     <span class="admin-version-pill"><strong>Atnaujinimas:</strong> <?= e($versionSummary['available_upgrade_display']) ?></span>
                                     <span class="badge <?= e($versionSummary['status_badge_class']) ?> admin-version-state-badge"><?= e($versionSummary['status_label']) ?></span>
+                                    <span class="badge <?= e($compatibilitySummary['badge_class']) ?> admin-version-state-badge"><?= e($compatibilitySummary['label']) ?></span>
+                                    <span class="badge <?= e($healthSummary['badge_class']) ?> admin-version-state-badge"><?= e($healthSummary['label']) ?></span>
                                 </div>
+                                <div class="small admin-module-meta mt-2">Suderinamumas: <?= e($compatibilitySummary['environment_summary']) ?></div>
+                                <div class="small admin-module-meta">Priklausomybes: <?= e($compatibilitySummary['dependencies_summary']) ?> | Konfliktai: <?= e($compatibilitySummary['conflicts_summary']) ?></div>
+                                <div class="small admin-module-meta">Sveikata: <?= e($healthSummary['summary']) ?></div>
                                 <?php if ($developerMode && $developerMeta): ?>
                                     <div class="d-flex flex-wrap gap-1 mt-2">
                                         <span class="badge text-bg-dark admin-dev-badge"><?= e($developerMeta['is_sdk_module'] ? 'SDK' : 'Legacy') ?></span>
@@ -245,6 +262,8 @@ include THEMES . 'default/admin_header.php';
                         $developerMeta = $developerSnapshots[$inf['folder']] ?? null;
                         $displayName = $manifest['name'] ?? $inf['name'];
                         $versionSummary = $versionSummaries[$inf['folder']] ?? get_infusion_version_summary($inf['folder'], $manifest, $inf);
+                        $compatibilitySummary = $compatibilitySummaries[$inf['folder']] ?? get_infusion_compatibility_summary($inf['folder'], $manifest, $installedFolders, $scanned);
+                        $healthSummary = $healthSummaries[$inf['folder']] ?? get_infusion_health_summary($inf['folder'], $manifest);
                     ?>
                         <tr>
                             <td class="admin-strong-cell"><?= (int)$inf['id'] ?></td>
@@ -255,7 +274,12 @@ include THEMES . 'default/admin_header.php';
                                     <span class="admin-version-pill"><strong>Manifest:</strong> <?= e($versionSummary['manifest_display']) ?></span>
                                     <span class="admin-version-pill"><strong>Atnaujinimas:</strong> <?= e($versionSummary['available_upgrade_display']) ?></span>
                                     <span class="badge <?= e($versionSummary['status_badge_class']) ?> admin-version-state-badge"><?= e($versionSummary['status_label']) ?></span>
+                                    <span class="badge <?= e($compatibilitySummary['badge_class']) ?> admin-version-state-badge"><?= e($compatibilitySummary['label']) ?></span>
+                                    <span class="badge <?= e($healthSummary['badge_class']) ?> admin-version-state-badge"><?= e($healthSummary['label']) ?></span>
                                 </div>
+                                <div class="small admin-module-meta mt-2">Suderinamumas: <?= e($compatibilitySummary['environment_summary']) ?></div>
+                                <div class="small admin-module-meta">Priklausomybes: <?= e($compatibilitySummary['dependencies_summary']) ?> | Konfliktai: <?= e($compatibilitySummary['conflicts_summary']) ?></div>
+                                <div class="small admin-module-meta">Sveikata: <?= e($healthSummary['summary']) ?></div>
                                 <?php if ($developerMode && $developerMeta): ?>
                                     <div class="d-flex flex-wrap gap-1 mt-2">
                                         <span class="badge text-bg-dark admin-dev-badge"><?= e($developerMeta['is_sdk_module'] ? 'SDK' : 'Legacy') ?></span>
@@ -332,6 +356,8 @@ include THEMES . 'default/admin_header.php';
                 $installedInfo = $snapshot['installed'];
                 $statusLabel = !$installedInfo ? 'Neidiegtas' : ((int)($installedInfo['is_enabled'] ?? 0) === 1 ? 'Ijungtas' : 'Isjungtas');
                 $statusClass = !$installedInfo ? 'text-bg-secondary' : ((int)($installedInfo['is_enabled'] ?? 0) === 1 ? 'text-bg-success' : 'text-bg-warning');
+                $compatibilitySummary = $compatibilitySummaries[$folder] ?? get_infusion_compatibility_summary($folder, $snapshot['manifest'], $installedFolders, $scanned);
+                $healthSummary = $healthSummaries[$folder] ?? get_infusion_health_summary($folder, $snapshot['manifest']);
                 ?>
                 <details class="admin-dev-card">
                     <summary class="admin-dev-summary">
@@ -394,6 +420,12 @@ include THEMES . 'default/admin_header.php';
                                 </div>
                                 <div class="small admin-page-subtitle">
                                     Core / PHP: <?= e($snapshot['min_core_version']) ?> / <?= e($snapshot['min_php_version']) ?>
+                                </div>
+                                <div class="small admin-page-subtitle">
+                                    Suderinamumas: <?= e($compatibilitySummary['environment_summary']) ?>
+                                </div>
+                                <div class="small admin-page-subtitle">
+                                    Sveikata: <?= e($healthSummary['summary']) ?>
                                 </div>
                                 <div class="small admin-page-subtitle">
                                     Leidimai: <?= e($snapshot['permissions'] ? implode(', ', $snapshot['permissions']) : '-') ?>

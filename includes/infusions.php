@@ -954,6 +954,250 @@ function get_infusion_version_summary($folder, ?array $manifest = null, $install
     ];
 }
 
+function get_installed_infusions_map()
+{
+    $rows = $GLOBALS['pdo']->query("SELECT * FROM infusions ORDER BY id DESC")->fetchAll();
+    $map = [];
+    foreach ($rows as $row) {
+        $folder = trim((string)($row['folder'] ?? ''));
+        if ($folder !== '') {
+            $map[$folder] = $row;
+        }
+    }
+
+    return $map;
+}
+
+function format_infusion_module_reference(array $reference, $mode = 'dependency')
+{
+    $folder = trim((string)($reference['folder'] ?? ''));
+    $version = trim((string)($reference['version'] ?? ''));
+    if ($folder === '') {
+        return '';
+    }
+
+    if ($version === '') {
+        return $folder;
+    }
+
+    return $mode === 'conflict'
+        ? ($folder . ' @ ' . $version)
+        : ($folder . ' >= ' . $version);
+}
+
+function get_infusion_compatibility_summary($folder, ?array $manifest = null, ?array $installedFolders = null, ?array $scanned = null)
+{
+    $folder = trim((string)$folder);
+    if ($folder === '') {
+        return [
+            'status' => 'unknown',
+            'label' => 'Nera duomenu',
+            'badge_class' => 'text-bg-secondary',
+            'environment_summary' => '-',
+            'dependencies_summary' => '-',
+            'conflicts_summary' => '-',
+            'required_extensions' => [],
+            'missing_extensions' => [],
+            'dependency_statuses' => [],
+            'conflict_statuses' => [],
+            'issues' => [],
+        ];
+    }
+
+    if (!is_array($manifest)) {
+        try {
+            $manifest = read_infusion_manifest($folder);
+        } catch (Throwable $e) {
+            $manifest = null;
+        }
+    }
+
+    $manifest = is_array($manifest) ? $manifest : [];
+    $installedFolders = is_array($installedFolders) ? $installedFolders : get_installed_infusions_map();
+    $scanned = is_array($scanned) ? $scanned : scan_infusions();
+
+    $coreVersion = get_infusion_core_version();
+    $phpVersion = PHP_VERSION;
+    $minCoreVersion = trim((string)($manifest['min_core_version'] ?? '1.0.0'));
+    $minPhpVersion = trim((string)($manifest['min_php_version'] ?? '8.0.0'));
+
+    $coreOk = version_compare($coreVersion, $minCoreVersion, '>=');
+    $phpOk = version_compare($phpVersion, $minPhpVersion, '>=');
+
+    $requiredExtensions = array_values((array)($manifest['required_extensions'] ?? []));
+    $missingExtensions = [];
+    foreach ($requiredExtensions as $extension) {
+        $extension = trim((string)$extension);
+        if ($extension !== '' && !extension_loaded($extension)) {
+            $missingExtensions[] = $extension;
+        }
+    }
+
+    $dependencyStatuses = [];
+    foreach ((array)($manifest['dependencies'] ?? []) as $dependency) {
+        $label = format_infusion_module_reference((array)$dependency, 'dependency');
+        if ($label === '') {
+            continue;
+        }
+
+        $dependencyFolder = trim((string)($dependency['folder'] ?? ''));
+        $requiredVersion = trim((string)($dependency['version'] ?? ''));
+        $installedDependency = $installedFolders[$dependencyFolder] ?? null;
+
+        if (!$installedDependency || (int)($installedDependency['is_installed'] ?? 0) !== 1 || (int)($installedDependency['is_enabled'] ?? 0) !== 1) {
+            $dependencyStatuses[] = [
+                'label' => $label,
+                'status' => 'missing',
+                'message' => 'Truksta arba isjungta',
+            ];
+            continue;
+        }
+
+        $installedDependencyVersion = get_installed_infusion_version((int)$installedDependency['id']) ?: ($scanned[$dependencyFolder]['version'] ?? '0.0.0');
+        if ($requiredVersion !== '' && version_compare($installedDependencyVersion, $requiredVersion, '<')) {
+            $dependencyStatuses[] = [
+                'label' => $label,
+                'status' => 'version_mismatch',
+                'message' => 'Idiegta ' . $installedDependencyVersion,
+            ];
+            continue;
+        }
+
+        $dependencyStatuses[] = [
+            'label' => $label,
+            'status' => 'ok',
+            'message' => 'OK',
+        ];
+    }
+
+    $conflictStatuses = [];
+    foreach ((array)($manifest['conflicts'] ?? []) as $conflict) {
+        $label = format_infusion_module_reference((array)$conflict, 'conflict');
+        if ($label === '') {
+            continue;
+        }
+
+        $conflictFolder = trim((string)($conflict['folder'] ?? ''));
+        $installedConflict = $installedFolders[$conflictFolder] ?? null;
+        $conflictActive = $installedConflict && (int)($installedConflict['is_installed'] ?? 0) === 1 && (int)($installedConflict['is_enabled'] ?? 0) === 1;
+
+        $conflictStatuses[] = [
+            'label' => $label,
+            'status' => $conflictActive ? 'conflict' : 'ok',
+            'message' => $conflictActive ? 'Aktyvus konfliktas' : 'Nera aktyvaus konflikto',
+        ];
+    }
+
+    $issues = [];
+    if (!$coreOk) {
+        $issues[] = 'Core reikia >= ' . $minCoreVersion;
+    }
+    if (!$phpOk) {
+        $issues[] = 'PHP reikia >= ' . $minPhpVersion;
+    }
+    if ($missingExtensions) {
+        $issues[] = 'Truksta plėtinių: ' . implode(', ', $missingExtensions);
+    }
+
+    $dependencyIssues = array_values(array_filter($dependencyStatuses, static fn ($item) => $item['status'] !== 'ok'));
+    if ($dependencyIssues) {
+        $issues[] = 'Priklausomybiu problemos: ' . implode(', ', array_map(static fn ($item) => $item['label'], $dependencyIssues));
+    }
+
+    $conflictIssues = array_values(array_filter($conflictStatuses, static fn ($item) => $item['status'] === 'conflict'));
+    if ($conflictIssues) {
+        $issues[] = 'Aktyvus konfliktas: ' . implode(', ', array_map(static fn ($item) => $item['label'], $conflictIssues));
+    }
+
+    return [
+        'status' => $issues ? 'incompatible' : 'compatible',
+        'label' => $issues ? 'Nesuderinamas' : 'Suderinamas',
+        'badge_class' => $issues ? 'text-bg-danger' : 'text-bg-success',
+        'environment_summary' => 'Core ' . ($coreOk ? 'OK' : ('>=' . $minCoreVersion)) . ' | PHP ' . ($phpOk ? 'OK' : ('>=' . $minPhpVersion)) . ' | Pletiniai ' . ($missingExtensions ? ('truksta: ' . implode(', ', $missingExtensions)) : 'OK'),
+        'dependencies_summary' => $dependencyIssues ? implode(', ', array_map(static fn ($item) => $item['label'], $dependencyIssues)) : ($dependencyStatuses ? 'Visos tenkinamos' : 'Nera'),
+        'conflicts_summary' => $conflictIssues ? implode(', ', array_map(static fn ($item) => $item['label'], $conflictIssues)) : ($conflictStatuses ? 'Aktyviu nera' : 'Nera'),
+        'required_extensions' => $requiredExtensions,
+        'missing_extensions' => $missingExtensions,
+        'dependency_statuses' => $dependencyStatuses,
+        'conflict_statuses' => $conflictStatuses,
+        'issues' => $issues,
+    ];
+}
+
+function get_infusion_health_summary($folder, ?array $manifest = null)
+{
+    $folder = trim((string)$folder);
+    $manifest = is_array($manifest) ? $manifest : [];
+    $rawManifest = read_infusion_manifest_raw($folder);
+    $moduleClass = trim((string)($manifest['module_class'] ?? ''));
+    $moduleClassExists = $moduleClass === '' ? true : class_exists($moduleClass);
+
+    $errors = [];
+    $warnings = [];
+
+    if ($rawManifest === null) {
+        $errors[] = 'Manifest nerastas arba klaidingas';
+    }
+
+    if (!empty($manifest['bootstrap']) && !file_exists(INFUSIONS . $folder . '/bootstrap.php')) {
+        $errors[] = 'Truksta bootstrap.php';
+    }
+
+    if (!empty($manifest['admin']) && !file_exists(infusion_admin_path($folder))) {
+        $errors[] = 'Truksta admin.php';
+    }
+
+    if (!empty($manifest['panel']) && !file_exists(INFUSIONS . $folder . '/panel.php')) {
+        $errors[] = 'Truksta panel.php';
+    }
+
+    if ($moduleClass !== '' && !$moduleClassExists) {
+        $errors[] = 'Truksta modulio klases';
+    }
+
+    if (!empty($manifest['schema']) && !file_exists(infusion_schema_path($folder)) && $moduleClass === '') {
+        $errors[] = 'Truksta schema.php';
+    }
+
+    if (!is_dir(INFUSIONS . $folder . '/locale')) {
+        $warnings[] = 'Nera locale/';
+    }
+
+    if (!is_dir(INFUSIONS . $folder . '/assets')) {
+        $warnings[] = 'Nera assets/';
+    }
+
+    if (!empty($manifest['upgrade']) && !file_exists(infusion_upgrade_path($folder)) && !is_dir(infusion_migrations_dir($folder))) {
+        $warnings[] = 'Nera upgrade.php arba migrations/';
+    }
+
+    if ($errors) {
+        $status = 'error';
+        $label = 'Sveikata: klaidos';
+        $badgeClass = 'text-bg-danger';
+        $summary = implode('; ', $errors);
+    } elseif ($warnings) {
+        $status = 'warning';
+        $label = 'Sveikata: demesio';
+        $badgeClass = 'text-bg-warning';
+        $summary = implode('; ', $warnings);
+    } else {
+        $status = 'ok';
+        $label = 'Sveikata: gera';
+        $badgeClass = 'text-bg-success';
+        $summary = 'Manifest, failai ir katalogai atrodo tvarkingi';
+    }
+
+    return [
+        'status' => $status,
+        'label' => $label,
+        'badge_class' => $badgeClass,
+        'summary' => $summary,
+        'errors' => $errors,
+        'warnings' => $warnings,
+    ];
+}
+
 function list_migration_steps($folder)
 {
     $dir = infusion_migrations_dir($folder);

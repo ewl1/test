@@ -56,11 +56,11 @@
 
 ### Infusions valdymas
 - [ ] `infusions.php` prideti filtrus pagal busena: idiegta, ijungta, isjungta, turi atnaujinima.
-- [ ] Rodyti modulio suderinamuma su MiniCMS versija, PHP versija ir reikalaujamais pletiniais.
-- [ ] Rodyti modulio priklausomybes ir konfliktus.
+- [x] Rodyti modulio suderinamuma su MiniCMS versija, PHP versija ir reikalaujamais pletiniais.
+- [x] Rodyti modulio priklausomybes ir konfliktus.
 - [ ] Rodyti, ka modulis prideda: route'us, teises, paneles, paieskos saltinius, hook'us.
 - [ ] Prideti aiskesni `upgrade preview`: changelog, migracijos zingsniai, rollback pastabos.
-- [ ] Prideti modulio sveikatos patikra: ar yra manifest, locale, assets, admin failas, schema.
+- [x] Prideti modulio sveikatos patikra: ar yra manifest, locale, assets, admin failas, schema.
 - [ ] Prideti aiskius moduliu badge:
 - `SDK`
 - `Legacy`

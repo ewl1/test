@@ -438,6 +438,11 @@ code {
     letter-spacing: 0.01em;
 }
 
+.admin-module-meta {
+    color: #cbd5e1;
+    line-height: 1.45;
+}
+
 .admin-message-cell {
     color: #f8fafc !important;
     font-weight: 600;
