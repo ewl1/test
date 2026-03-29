@@ -234,8 +234,20 @@ include __DIR__ . '/themes/default/header.php';
             </div>
             <div class="col-sm-6 col-xl-12">
                 <div class="user-stat-card">
-                    <div class="small text-secondary mb-1"><?= e(__('profile.stat.joined')) ?></div>
+                    <div class="small text-secondary mb-1"><?= e(__('profile.stat.registered')) ?></div>
                     <div class="h6 mb-0"><?= e(format_dt($profile['created_at'])) ?></div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-12">
+                <div class="user-stat-card">
+                    <div class="small text-secondary mb-1"><?= e(__('profile.stat.login_date')) ?></div>
+                    <div class="h6 mb-0"><?= e(format_dt($profile['last_login_at'] ?? null, __('profile.no_data'))) ?></div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-12">
+                <div class="user-stat-card">
+                    <div class="small text-secondary mb-1"><?= e(__('profile.stat.last_visit')) ?></div>
+                    <div class="h6 mb-0"><?= e(format_dt($profile['last_visit_at'] ?? null, __('profile.no_data'))) ?></div>
                 </div>
             </div>
             <div class="col-sm-6 col-xl-12">
