@@ -23,7 +23,10 @@ $registeredStyles = get_registered_page_styles();
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
 <div class="container">
-<a class="navbar-brand" href="<?= public_path('index.php') ?>"><?= e(setting('site_name', __('site.title'))) ?></a>
+<a class="navbar-brand site-brand" href="<?= public_path('index.php') ?>">
+<img src="<?= asset_path('images/logos/minicms-logo.svg') ?>" alt="<?= e(setting('site_name', __('site.title'))) ?>" class="site-brand-logo">
+<span class="site-brand-text"><?= e(setting('site_name', __('site.title'))) ?></span>
+</a>
 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-label="<?= e(__('nav.home')) ?>">
 <span class="navbar-toggler-icon"></span>
 </button>

@@ -31,8 +31,9 @@ $canDiagnostics = $can('settings.manage') || $can('logs.view');
 <nav class="navbar navbar-expand-lg navbar-dark">
 <div class="container-fluid">
 
-<a class="navbar-brand" href="<?= public_path($adminNavVisible ? 'administration/index.php' : 'administration/login.php') ?>">
-<i class="fa-solid fa-screwdriver-wrench"></i> <?= e(__('admin.title')) ?>
+<a class="navbar-brand admin-brand" href="<?= public_path($adminNavVisible ? 'administration/index.php' : 'administration/login.php') ?>">
+<img src="<?= asset_path('images/logos/minicms-logo.svg') ?>" alt="<?= e($siteTitle) ?>" class="admin-brand-logo">
+<span class="admin-brand-text"><?= e(__('admin.title')) ?></span>
 </a>
 
 <?php if ($adminNavVisible): ?>

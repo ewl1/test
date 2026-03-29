@@ -40,6 +40,24 @@ body {
     letter-spacing: 0.35px;
 }
 
+.admin-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.admin-brand-logo {
+    width: auto;
+    height: 38px;
+    display: block;
+}
+
+.admin-brand-text {
+    color: #fff;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+}
+
 .navbar .nav-link,
 .navbar .navbar-text {
     color: #dbeafe !important;
@@ -599,5 +617,9 @@ footer {
 @media (max-width: 991.98px) {
     .card {
         border-radius: 14px;
+    }
+
+    .admin-brand-logo {
+        height: 34px;
     }
 }
