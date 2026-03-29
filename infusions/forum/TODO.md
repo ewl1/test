@@ -14,8 +14,9 @@
 - `v1.4`: logikos skaidymas i papildomas modulio klases.
 
 ## Svarbus failai
-- `bootstrap.php`: schema, CRUD, moderavimo logika, BBCode ir smailai.
-- `admin.php`: forumo strukturos valdymas.
+- `bootstrap.php`: plonas entrypoint, forumo registracija ir support failu uzkrovimas.
+- `support/`: procedurine forumo logika pagal temas (`schema`, `settings`, `meta`, `attachments`, `admin` ir pan.).
+- `admin.php`: forumo administravimo UI.
 - `classes/ForumService.php`: pagrindinis modulio servisas.
 - `assets/css/forum.css`, `assets/js/forum.js`: modulio UI assetai.
 - `locale/lt.php`: forumo tekstai ir pranesimai.
@@ -25,6 +26,7 @@
 - [x] JS perkeltas i `assets/js/forum.js`.
 - [x] Modulio tekstai perkelti i `locale/lt.php`.
 - [x] `App\\Forum\\ForumService` perkeltas i `classes/`.
+- [x] Monolitinis `feature_pack.php` pakeistas i `support/` failus pagal atsakomybe.
 
 ### Struktura ir navigacija
 - [ ] Prideti temoms ir atsakymams paieskos filtrus paciame forume.
@@ -81,4 +83,5 @@
 - [ ] Apsvarstyti kompaktini ir detalesni temu saraso rodymo rezima.
 
 ### Architektura
+- [ ] Palikti `bootstrap.php` ir `admin.php` plonus, o naujas procedurines taisykles deti i `support/`, ne i nauja monolita.
 - [ ] Toliau isskaidyti daugiau forumo logikos is `bootstrap.php` i atskiras klases.

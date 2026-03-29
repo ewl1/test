@@ -1232,7 +1232,7 @@ function forum_render_breadcrumb(array $items)
     echo '</ol></nav>';
 }
 
-require_once __DIR__ . '/feature_pack.php';
+require_once __DIR__ . '/support/load.php';
 
 forum_register_assets();
 forum_ensure_schema();

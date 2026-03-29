@@ -17,6 +17,7 @@
 - Modulio tekstai laikomi `infusions/<modulis>/locale/`.
 - Modulio CSS ir JS laikomi `infusions/<modulis>/assets/`.
 - Jei modulis turi savo klases, jos laikomos `infusions/<modulis>/classes/`.
+- Jei modulis dar turi legacy procedurine logika, ji laikoma `infusions/<modulis>/support/` ir skaidoma pagal atsakomybe.
 - Modulio schema, seed'ai ir upgrade failai laikomi paciame `infusions/<modulis>/` kataloge.
 - Tik bendri svetaines vaizdai keliauja i `/images/`.
 
@@ -24,6 +25,7 @@
 - [x] Prideti pradine `Module SDK` baze su manifest parseriu, context objektu, hook registry ir scaffold generatoriumi.
 - [x] Leisti moduliams nurodyti `module_class` ir palaipsniui pereiti nuo vien failu prie klasiu.
 - [ ] Ta pacia `assets/locale/classes` struktura pritaikyti visiems aktyviems moduliams.
+- [ ] Ta pacia `support/` skaidymo taisykle pritaikyti visiems legacy moduliams, kad neliktu monolitiniu `feature_pack` tipo failu.
 - [ ] Sukurti vieninga manifest lokalizavimo strategija.
 - [ ] Apibrezti bendra moduliu UI sutarti:
 - korteles, lenteles, tuscios busenos, info/klaidu pranesimai

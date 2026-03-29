@@ -31,6 +31,7 @@ final class ModuleScaffolder
         $files = [
             $moduleRoot . '/manifest.json' => self::manifestTemplate($folder, $name, $description, $namespace . '\\' . $moduleClass),
             $moduleRoot . '/classes/' . $moduleClass . '.php' => self::moduleClassTemplate($namespace, $moduleClass),
+            $moduleRoot . '/support/README.md' => self::supportReadmeTemplate($name),
             $moduleRoot . '/panel.php' => self::panelTemplate($name),
             $moduleRoot . '/admin.php' => self::adminTemplate($name, $folder),
             $moduleRoot . '/schema.php' => self::schemaTemplate($folder),
@@ -213,6 +214,7 @@ Sis modulis sugeneruotas per MiniCMS Module SDK scaffold.
 ## Failai
 - `manifest.json`: modulio metaduomenys ir registracija
 - `classes/`: modulio SDK klase
+- `support/`: proceduriniai helperiai pereinamajam laikotarpiui
 - `panel.php`: paneles turinys ir legacy `openside()/closeside()` apvalkalas
 - `admin.php`: admin vaizdas
 - `schema.php`: diegimo DB schema
@@ -221,6 +223,11 @@ Sis modulis sugeneruotas per MiniCMS Module SDK scaffold.
 - `uninstall.php`: pasalinimo logika
 - `locale/`: modulio tekstai
 - `assets/`: modulio CSS ir JS
+
+## Standartas
+- `bootstrap.php`, `admin.php` ir `panel.php` turi likti ploni entrypoint failai.
+- Jei modulyje laikinai dar reikia proceduriniu helperiu, jie keliauja i `support/` ir skaidomi pagal atsakomybe.
+- Jei logika tampa pakartotinai naudojamu servisu ar presenteriu, ji keliama i `classes/`.
 
 ## Migrations
 - Core automatikai uzdeda lock per install / upgrade / uninstall, todel du adminai negali paleisti to paties proceso vienu metu.
@@ -246,6 +253,20 @@ MD;
 - Jei nauju zingsniu nera, gali buti naudojamas `upgrade.php` fallback failas.
 - Install / upgrade / uninstall yra apsaugoti bendru DB lock mechanizmu.
 - Migraciju ir rollback istorija rodoma per `administration/infusions.php`.
+MD;
+    }
+
+    private static function supportReadmeTemplate(string $name): string
+    {
+        return <<<MD
+# {$name} support
+
+`support/` katalogas skirtas procedurinei modulio logikai, kuri dar neiskelta i SDK klases.
+
+## Taisykle
+- `bootstrap.php`, `admin.php` ir `panel.php` turi likti ploni entrypoint failai.
+- Proceduriniai helperiai skaidomi i mazesnius failus pagal atsakomybe.
+- Tikri servisai, presenteriai ir objektai turi keliauti i `classes/`.
 MD;
     }
 }

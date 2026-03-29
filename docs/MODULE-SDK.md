@@ -19,12 +19,14 @@
 - `upgrade.php` lieka kaip legacy fallback, jei nera vykdytinu versioned migration failu.
 - Core automatikai uzdeda DB lock per `install / upgrade / uninstall`.
 - `administration/infusions.php` rodo aktyvu migraciju lock, paskutinius zingsnius ir rollback istorija.
+- `bootstrap.php`, `admin.php` ir `panel.php` turi likti ploni, o proceduriniai helperiai turi keliauti i `support/`.
 
 ## Modulio struktura
 ```text
 infusions/<modulis>/
   manifest.json
   classes/
+  support/
   migrations/
   assets/css/
   assets/js/
@@ -172,6 +174,7 @@ C:\xampp\php\php.exe tools\make-infusion-sdk.php gallery "Galerija" "Galerijos m
 Generatorius sukuria:
 - `manifest.json`
 - `classes/<Studly>Module.php`
+- `support/README.md`
 - `panel.php` su `openside()` / `closeside()` pavyzdziu
 - `admin.php`
 - `schema.php`
@@ -189,3 +192,5 @@ Generatorius sukuria:
 - Moduliu schema, seed'ai, uninstall ir upgrade logika lieka paciuose `infusions/<modulis>/`.
 - `migrations/` katalogas yra privaloma modulio strukturos dalis, net jei pradzioje dar tuscias.
 - Naujiems moduliams rekomenduojama pirma naudoti `migrations/`, o ne visa atnaujinimo logika krauti i viena `upgrade.php`.
+- `support/` katalogas yra rekomenduojamas tada, kai modulyje dar reikia legacy proceduriniu helperiu.
+- Venkite vieno monolitinio failo kaip `feature_pack.php`: geriau skaidyti i `support/schema.php`, `support/settings.php`, `support/admin.php` ir pan.
