@@ -64,6 +64,132 @@ final class InfusionManifest
         return 'App\\' . $studly . '\\' . $studly . 'Module';
     }
 
+    private static function normalizeStringList($items): array
+    {
+        if (!is_array($items)) {
+            return [];
+        }
+
+        $normalized = [];
+        foreach ($items as $item) {
+            $item = trim((string)$item);
+            if ($item !== '') {
+                $normalized[] = $item;
+            }
+        }
+
+        return array_values(array_unique($normalized));
+    }
+
+    private static function normalizeModuleReferenceList($items): array
+    {
+        if (!is_array($items)) {
+            return [];
+        }
+
+        $normalized = [];
+        foreach ($items as $item) {
+            if (is_array($item)) {
+                $folder = trim((string)($item['folder'] ?? ''));
+                $version = trim((string)($item['version'] ?? ''));
+                if ($folder !== '') {
+                    $normalized[] = [
+                        'folder' => $folder,
+                        'version' => $version,
+                    ];
+                }
+                continue;
+            }
+
+            $folder = trim((string)$item);
+            if ($folder !== '') {
+                $normalized[] = [
+                    'folder' => $folder,
+                    'version' => '',
+                ];
+            }
+        }
+
+        return $normalized;
+    }
+
+    private static function normalizeProvides($provides): array
+    {
+        if (!is_array($provides)) {
+            return [];
+        }
+
+        $normalized = [];
+        foreach ($provides as $key => $value) {
+            if (is_int($key)) {
+                $value = trim((string)$value);
+                if ($value !== '') {
+                    $normalized[] = $value;
+                }
+                continue;
+            }
+
+            $bucket = [];
+            if (is_array($value)) {
+                $bucket = self::normalizeStringList($value);
+            } else {
+                $single = trim((string)$value);
+                if ($single !== '') {
+                    $bucket[] = $single;
+                }
+            }
+
+            $normalized[(string)$key] = $bucket;
+        }
+
+        return $normalized;
+    }
+
+    private static function normalizeChangelog($changelog): array
+    {
+        if (!is_array($changelog)) {
+            return [];
+        }
+
+        $normalized = [];
+        foreach ($changelog as $entry) {
+            if (is_string($entry)) {
+                $entry = trim($entry);
+                if ($entry !== '') {
+                    $normalized[] = [
+                        'version' => '',
+                        'title' => '',
+                        'date' => '',
+                        'notes' => [$entry],
+                    ];
+                }
+                continue;
+            }
+
+            if (!is_array($entry)) {
+                continue;
+            }
+
+            $version = trim((string)($entry['version'] ?? ''));
+            $title = trim((string)($entry['title'] ?? ''));
+            $date = trim((string)($entry['date'] ?? ''));
+            $notes = self::normalizeStringList((array)($entry['notes'] ?? []));
+
+            if ($version === '' && $title === '' && !$notes) {
+                continue;
+            }
+
+            $normalized[] = [
+                'version' => $version,
+                'title' => $title,
+                'date' => $date,
+                'notes' => $notes,
+            ];
+        }
+
+        return $normalized;
+    }
+
     private static function normalize(string $folder, array $data): array
     {
         $moduleClass = trim((string)($data['module_class'] ?? ($data['sdk']['module_class'] ?? '')));
@@ -82,13 +208,19 @@ final class InfusionManifest
             'panel' => !empty($data['panel']),
             'schema' => !empty($data['schema']),
             'upgrade' => !empty($data['upgrade']),
-            'dependencies' => is_array($data['dependencies'] ?? null) ? $data['dependencies'] : [],
+            'dependencies' => self::normalizeModuleReferenceList($data['dependencies'] ?? []),
+            'conflicts' => self::normalizeModuleReferenceList($data['conflicts'] ?? []),
             'permissions' => is_array($data['permissions'] ?? null) ? $data['permissions'] : [],
             'admin_menu' => is_array($data['admin_menu'] ?? null) ? $data['admin_menu'] : [],
             'min_core_version' => trim((string)($data['min_core_version'] ?? '1.0.0')),
+            'min_php_version' => trim((string)($data['min_php_version'] ?? '8.0.0')),
+            'required_extensions' => self::normalizeStringList($data['required_extensions'] ?? []),
             'module_class' => $moduleClass,
             'hooks' => is_array($data['hooks'] ?? null) ? $data['hooks'] : [],
-            'provides' => is_array($data['provides'] ?? null) ? $data['provides'] : [],
+            'provides' => self::normalizeProvides($data['provides'] ?? []),
+            'changelog' => self::normalizeChangelog($data['changelog'] ?? []),
+            'upgrade_notes' => self::normalizeStringList($data['upgrade_notes'] ?? []),
+            'rollback_notes' => self::normalizeStringList($data['rollback_notes'] ?? []),
             'settings_page' => trim((string)($data['settings_page'] ?? '')),
             'sdk' => [
                 'enabled' => $moduleClass !== '' || !empty($data['sdk']['enabled']),

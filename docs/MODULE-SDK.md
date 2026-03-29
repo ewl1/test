@@ -39,13 +39,45 @@ infusions/<modulis>/
 ```
 
 ## Manifest papildymas
-SDK moduliai gali nurodyti:
+SDK moduliai gali nurodyti ne tik `module_class`, bet ir reikalavimus bei galimybes:
 
 ```json
 {
-  "module_class": "App\\News\\NewsModule"
+  "module_class": "App\\News\\NewsModule",
+  "min_core_version": "1.0.0",
+  "min_php_version": "8.0.0",
+  "required_extensions": ["json", "pdo", "pdo_mysql"],
+  "dependencies": [],
+  "conflicts": [],
+  "provides": {
+    "panels": ["news"],
+    "permissions": ["news.admin"],
+    "hooks": [],
+    "search_sources": []
+  },
+  "changelog": [
+    {
+      "version": "1.1.0",
+      "title": "Stabilesne versija",
+      "date": "2026-03-29",
+      "notes": ["Atnaujintas modulis"]
+    }
+  ],
+  "upgrade_notes": [],
+  "rollback_notes": []
 }
 ```
+
+Trumpai apie laukus:
+- `min_core_version`: maziausia palaikoma MiniCMS versija
+- `min_php_version`: maziausia palaikoma PHP versija
+- `required_extensions`: privalomi PHP pletiniai
+- `dependencies`: kiti reikalingi moduliai
+- `conflicts`: moduliai, su kuriais negalima veikti kartu
+- `provides`: ka modulis prideda sistemai (`panels`, `permissions`, `hooks`, `search_sources`)
+- `changelog`: versiju istorija
+- `upgrade_notes`: svarbios pastabos pries atnaujinima
+- `rollback_notes`: svarbios pastabos rollback atvejui
 
 Jei `module_class` nenurodytas, SDK bando rasti klase pagal taisykle:
 - `App\\<StudlyFolder>\\<StudlyFolder>Module`

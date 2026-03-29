@@ -61,6 +61,7 @@
 - Apsibrezti `captcha` strategija: vietinis klausimas, honeypot, rate-limit eskalacija ir pasirenkamas isorinis provideris.
 - Prideti `Clear cache / Clear rate limits / Clear reset tokens` irankius administracijoje.
 - Diagnostikoje aiskiai suskirstyti pletinius i `butini`, `rekomenduojami`, `pasirenkami`.
+- Jei po idiegimo rastas `install.php`, rodyti kritini admin-only ispejima dashboard ir diagnostikoje su rekomendacija nedelsiant pasalinti faila.
 - Uzbaigti forumo ir shoutbox flood/spam pagrindus.
 - Sutvarkyti centralizuota klaidu ir saugumo ivykiu registravima.
 - Paruosti pirmuosius automatinius valymo darbus:
@@ -233,6 +234,12 @@
 - Infusion valdymo centras:
 - priklausomybes ir konfliktai
 - suderinamumas su MiniCMS / PHP / pletiniais
+- isplestas manifest standartas:
+- `min_core_version`, `min_php_version`
+- `required_extensions`
+- `dependencies`, `conflicts`
+- `provides`: paneles, teises, hook'ai, paieskos saltiniai
+- `changelog`, `upgrade_notes`, `rollback_notes`
 - ka modulis prideda: route'us, teises, paneles, hook'us
 - sveikatos patikra ir `upgrade preview`
 - aiskus badge rinkinys: `SDK`, `Legacy`, `Has migrations`, `Upgrade available`, `Missing manifest`
@@ -253,6 +260,19 @@
 - `includes/classes/MiniCMS/Installer/` turi likti branduolio diegimo sluoksniu
 - moduliu DB schema, seed'ai ir upgrade logika turi likti `infusions/<modulis>/`
 - core diegimas tik paruosta bazine sistema, po kurios moduliai diegiasi ar atsinaujina savo keliu
+- `install.php` turi tureti aisku vedli su tabais / meniu:
+- `Introduction`
+- `System Requirements`
+- `Database Settings`
+- `Primary Admin Details`
+- `Configure Core System`
+- pakartotinai paleidus `install.php`, turi veikti `Recovery mode` su aiskiais veiksmais:
+- `Cancel and Exit this Installer`
+- `Change Primary Account Details`
+- `Core System Installer`
+- `Rebuild .htaccess`
+- `Clean Installation`
+- `Recovery mode` turi padeti atkurti diegima nepermaisant branduolio ir moduliu atsakomybiu
 - Branduolio paslaugos ir registrai:
 - system settings registry
 - feature flags

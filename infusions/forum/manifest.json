@@ -9,19 +9,62 @@
   "schema": true,
   "upgrade": false,
   "default_position": "right",
-  "default_panel_name": "Forumo panelė",
+  "default_panel_name": "Forumo panele",
   "min_core_version": "1.0.0",
+  "min_php_version": "8.0.0",
+  "required_extensions": [
+    "json",
+    "mbstring",
+    "pdo",
+    "pdo_mysql",
+    "fileinfo"
+  ],
   "dependencies": [],
+  "conflicts": [],
+  "provides": {
+    "panels": [
+      "forum"
+    ],
+    "permissions": [
+      "forum.view",
+      "forum.admin"
+    ],
+    "hooks": [
+      "forum.topic.created",
+      "forum.reply.created"
+    ],
+    "search_sources": [
+      "forum_topics",
+      "forum_posts"
+    ]
+  },
+  "changelog": [
+    {
+      "version": "2.0.0",
+      "title": "Forumo brandinimo etapas",
+      "date": "2026-03-29",
+      "notes": [
+        "Isplestas forumo valdymas ir meta nustatymai.",
+        "Manifest papildytas reikalavimu ir galimybiu laukais."
+      ]
+    }
+  ],
+  "upgrade_notes": [
+    "Pries upgrade rekomenduojama pasidaryti DB kopija."
+  ],
+  "rollback_notes": [
+    "Rollback metu patikrinkite forumo papildomu lenteliu ir failu suderinamuma."
+  ],
   "permissions": [
     {
-      "name": "Forumo peržiūra",
+      "name": "Forumo perziura",
       "slug": "forum.view",
-      "description": "Leidžia matyti forumo turinį"
+      "description": "Leidzia matyti forumo turini"
     },
     {
       "name": "Forumo administravimas",
       "slug": "forum.admin",
-      "description": "Leidžia valdyti forumo struktūrą"
+      "description": "Leidzia valdyti forumo struktura"
     }
   ],
   "admin_menu": [

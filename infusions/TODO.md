@@ -39,13 +39,13 @@
 - [ ] Apibrezti bendras `install / upgrade / rollback` taisykles visiems moduliams.
 - [ ] Sutarti, kad core Installer iraso tik branduolio DB, o moduliai savo lenteles ir nustatymus susikuria per savo install/upgrade mechanizma.
 - [ ] Po SDK branduolio pradeti perkelti esamus modulius i klases po viena, pradedant nuo `news`, tada `shoutbox`, o po to `forum`.
-- [ ] Isplesti manifest standarta papildomais laukais:
+- [x] Isplesti manifest standarta papildomais laukais:
 - `min_core_version`
 - `min_php_version`
 - `required_extensions`
 - `dependencies`
 - `conflicts`
-- `provides`: paneles, route'ai, teises, hook'ai, paieskos saltiniai
+- `provides`: paneles, teises, hook'ai, paieskos saltiniai
 - `changelog`
 - `upgrade_notes`
 - `rollback_notes`

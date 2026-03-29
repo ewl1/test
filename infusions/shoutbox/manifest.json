@@ -1,6 +1,6 @@
 {
-  "name": "Šaukykla",
-  "description": "Šaukyklos infusion su BBCode ir smailais.",
+  "name": "Shoutbox",
+  "description": "Shoutbox infusion su BBCode ir smailais.",
   "version": "1.0.0",
   "author": "OpenAI",
   "admin": true,
@@ -9,19 +9,53 @@
   "schema": true,
   "upgrade": false,
   "default_position": "right",
-  "default_panel_name": "Šaukykla",
+  "default_panel_name": "Shoutbox",
   "min_core_version": "1.0.0",
+  "min_php_version": "8.0.0",
+  "required_extensions": [
+    "json",
+    "mbstring",
+    "pdo",
+    "pdo_mysql"
+  ],
   "dependencies": [],
+  "conflicts": [],
+  "provides": {
+    "panels": [
+      "shoutbox"
+    ],
+    "permissions": [
+      "shoutbox.moderate"
+    ],
+    "hooks": [
+      "shoutbox.message.created"
+    ],
+    "search_sources": [
+      "shoutbox_messages"
+    ]
+  },
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "title": "Pradine shoutbox SDK versija",
+      "date": "2026-03-29",
+      "notes": [
+        "Manifest papildytas reikalavimu ir galimybiu laukais."
+      ]
+    }
+  ],
+  "upgrade_notes": [],
+  "rollback_notes": [],
   "permissions": [
     {
-      "name": "Šaukyklos moderavimas",
+      "name": "Shoutbox moderavimas",
       "slug": "shoutbox.moderate",
-      "description": "Leidžia moderuoti šaukyklos žinutes"
+      "description": "Leidzia moderuoti shoutbox zinutes"
     }
   ],
   "admin_menu": [
     {
-      "title": "Šaukykla",
+      "title": "Shoutbox",
       "slug": "shoutbox-admin",
       "permission": "shoutbox.moderate",
       "sort_order": 120

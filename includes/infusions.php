@@ -61,9 +61,16 @@ function scan_infusions()
                 'schema' => file_exists($dir . '/schema.php'),
                 'upgrade' => file_exists($dir . '/upgrade.php'),
                 'dependencies' => [],
+                'conflicts' => [],
                 'permissions' => [],
                 'admin_menu' => [],
                 'min_core_version' => '1.0.0',
+                'min_php_version' => '8.0.0',
+                'required_extensions' => [],
+                'provides' => [],
+                'changelog' => [],
+                'upgrade_notes' => [],
+                'rollback_notes' => [],
             ];
         }
         $manifest['directory'] = $dir;
@@ -286,7 +293,7 @@ function get_infusion_developer_snapshot($folder, $infusionId = 0, ?array $manif
     }
 
     $dependencies = [];
-    foreach ((array)($rawManifest['dependencies'] ?? $manifest['dependencies'] ?? []) as $dependency) {
+    foreach ((array)($manifest['dependencies'] ?? []) as $dependency) {
         if (is_array($dependency)) {
             $folderName = trim((string)($dependency['folder'] ?? ''));
             $version = trim((string)($dependency['version'] ?? ''));
@@ -303,7 +310,16 @@ function get_infusion_developer_snapshot($folder, $infusionId = 0, ?array $manif
     }
 
     $conflicts = [];
-    foreach ((array)($rawManifest['conflicts'] ?? []) as $conflict) {
+    foreach ((array)($manifest['conflicts'] ?? []) as $conflict) {
+        if (is_array($conflict)) {
+            $folderName = trim((string)($conflict['folder'] ?? ''));
+            $version = trim((string)($conflict['version'] ?? ''));
+            if ($folderName !== '') {
+                $conflicts[] = $version !== '' ? ($folderName . ' @ ' . $version) : $folderName;
+            }
+            continue;
+        }
+
         $conflict = trim((string)$conflict);
         if ($conflict !== '') {
             $conflicts[] = $conflict;
@@ -391,10 +407,15 @@ function get_infusion_developer_snapshot($folder, $infusionId = 0, ?array $manif
         'admin_menu' => $adminMenu,
         'dependencies' => $dependencies,
         'conflicts' => $conflicts,
-        'required_extensions' => array_values(array_filter(array_map('strval', (array)($rawManifest['required_extensions'] ?? [])))),
+        'required_extensions' => array_values((array)($manifest['required_extensions'] ?? [])),
         'declared_hooks' => $declaredHooks,
         'registered_hooks' => get_infusion_registered_hooks($folder, (int)($installed['id'] ?? $infusionId), $manifest),
         'provides' => $provides,
+        'min_core_version' => trim((string)($manifest['min_core_version'] ?? '1.0.0')),
+        'min_php_version' => trim((string)($manifest['min_php_version'] ?? '8.0.0')),
+        'changelog' => (array)($manifest['changelog'] ?? []),
+        'upgrade_notes' => (array)($manifest['upgrade_notes'] ?? []),
+        'rollback_notes' => (array)($manifest['rollback_notes'] ?? []),
         'settings_page' => trim((string)($rawManifest['settings_page'] ?? $manifest['settings_page'] ?? '')),
         'diagnostics_page' => trim((string)($rawManifest['diagnostics_page'] ?? '')),
     ];
@@ -729,6 +750,21 @@ function get_infusion_core_version()
 
 function validate_infusion_dependencies(array $manifest)
 {
+    if (version_compare(get_infusion_core_version(), $manifest['min_core_version'], '<')) {
+        throw new RuntimeException('Per sena branduolio versija siai infusion. Reikia bent ' . $manifest['min_core_version'] . '.');
+    }
+
+    if (version_compare(PHP_VERSION, (string)($manifest['min_php_version'] ?? '8.0.0'), '<')) {
+        throw new RuntimeException('Per sena PHP versija siai infusion. Reikia bent ' . $manifest['min_php_version'] . '.');
+    }
+
+    foreach ((array)($manifest['required_extensions'] ?? []) as $extension) {
+        $extension = trim((string)$extension);
+        if ($extension !== '' && !extension_loaded($extension)) {
+            throw new RuntimeException('Truksta reikalingo PHP pletinio: ' . $extension);
+        }
+    }
+
     foreach ($manifest['dependencies'] as $dep) {
         $folder = trim((string)($dep['folder'] ?? ''));
         $version = trim((string)($dep['version'] ?? ''));
@@ -747,8 +783,16 @@ function validate_infusion_dependencies(array $manifest)
         }
     }
 
-    if (version_compare(get_infusion_core_version(), $manifest['min_core_version'], '<')) {
-        throw new RuntimeException('Per sena branduolio versija šiai infusion. Reikia bent ' . $manifest['min_core_version'] . '.');
+    foreach ((array)($manifest['conflicts'] ?? []) as $conflict) {
+        $folder = trim((string)($conflict['folder'] ?? ''));
+        if ($folder === '') {
+            continue;
+        }
+
+        $installed = get_installed_infusion_by_folder($folder);
+        if ($installed && (int)$installed['is_installed'] === 1 && (int)$installed['is_enabled'] === 1) {
+            throw new RuntimeException('Infusion konfliktuoja su aktyviu moduliu: ' . $folder);
+        }
     }
 }
 

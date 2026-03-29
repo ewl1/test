@@ -365,6 +365,9 @@ include THEMES . 'default/admin_header.php';
                                     <?php endif; ?>
                                 </div>
                                 <div class="small admin-page-subtitle">
+                                    Core / PHP: <?= e($snapshot['min_core_version']) ?> / <?= e($snapshot['min_php_version']) ?>
+                                </div>
+                                <div class="small admin-page-subtitle">
                                     Leidimai: <?= e($snapshot['permissions'] ? implode(', ', $snapshot['permissions']) : '-') ?>
                                 </div>
                                 <div class="small admin-page-subtitle">
@@ -378,6 +381,9 @@ include THEMES . 'default/admin_header.php';
                                 </div>
                                 <div class="small admin-page-subtitle">
                                     PHP pletiniai: <?= e($snapshot['required_extensions'] ? implode(', ', $snapshot['required_extensions']) : '-') ?>
+                                </div>
+                                <div class="small admin-page-subtitle">
+                                    Changelog / upgrade / rollback: <?= e((string)count($snapshot['changelog'])) ?> / <?= e((string)count($snapshot['upgrade_notes'])) ?> / <?= e((string)count($snapshot['rollback_notes'])) ?>
                                 </div>
                             </div>
                         </div>

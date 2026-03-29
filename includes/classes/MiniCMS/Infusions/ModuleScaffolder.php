@@ -71,8 +71,11 @@ final class ModuleScaffolder
             'default_position' => 'right',
             'default_panel_name' => $name,
             'min_core_version' => '1.0.0',
+            'min_php_version' => '8.0.0',
+            'required_extensions' => ['json', 'pdo', 'pdo_mysql'],
             'module_class' => $moduleClass,
             'dependencies' => [],
+            'conflicts' => [],
             'permissions' => [
                 [
                     'name' => $name . ' administravimas',
@@ -80,6 +83,24 @@ final class ModuleScaffolder
                     'description' => 'Leidzia valdyti ' . mb_strtolower($name),
                 ],
             ],
+            'provides' => [
+                'panels' => [$folder],
+                'permissions' => [$folder . '.admin'],
+                'hooks' => [],
+                'search_sources' => [],
+            ],
+            'changelog' => [
+                [
+                    'version' => '1.0.0',
+                    'title' => 'Pradine SDK versija',
+                    'date' => date('Y-m-d'),
+                    'notes' => [
+                        'Sugeneruotas pradinis modulio karkasas.',
+                    ],
+                ],
+            ],
+            'upgrade_notes' => [],
+            'rollback_notes' => [],
             'admin_menu' => [
                 [
                     'title' => $name,

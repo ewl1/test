@@ -1,6 +1,6 @@
 {
   "name": "Naujienos",
-  "description": "Pavyzdinė naujienų infusion.",
+  "description": "Pavyzdine naujienu infusion.",
   "version": "1.1.0",
   "author": "OpenAI",
   "admin": true,
@@ -10,19 +10,52 @@
   "upgrade": true,
   "module_class": "App\\News\\NewsModule",
   "default_position": "left",
-  "default_panel_name": "Naujienų panelė",
+  "default_panel_name": "Naujienu panele",
   "min_core_version": "1.0.0",
+  "min_php_version": "8.0.0",
+  "required_extensions": [
+    "json",
+    "mbstring",
+    "pdo",
+    "pdo_mysql"
+  ],
   "dependencies": [],
+  "conflicts": [],
+  "provides": {
+    "panels": [
+      "news"
+    ],
+    "permissions": [
+      "news.view",
+      "news.admin"
+    ],
+    "hooks": [],
+    "search_sources": [
+      "news_items"
+    ]
+  },
+  "changelog": [
+    {
+      "version": "1.1.0",
+      "title": "SDK perejimo etapas",
+      "date": "2026-03-29",
+      "notes": [
+        "Naujienu modulis turi SDK klase ir isplesta manifest struktura."
+      ]
+    }
+  ],
+  "upgrade_notes": [],
+  "rollback_notes": [],
   "permissions": [
     {
-      "name": "Naujienų infusion peržiūra",
+      "name": "Naujienu infusion perziura",
       "slug": "news.view",
-      "description": "Leidžia matyti naujienų infusion duomenis"
+      "description": "Leidzia matyti naujienu infusion duomenis"
     },
     {
-      "name": "Naujienų infusion administravimas",
+      "name": "Naujienu infusion administravimas",
       "slug": "news.admin",
-      "description": "Leidžia valdyti naujienų infusion"
+      "description": "Leidzia valdyti naujienu infusion"
     }
   ],
   "admin_menu": [
