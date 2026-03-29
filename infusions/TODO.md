@@ -66,7 +66,7 @@
 - parodyti kiek duomenu bus paliesta
 - reikalauti papildomo patvirtinimo rizikingiems salinimams
 - [ ] Apibrezti moduliu `import / export` krypti nustatymams, seed'ams ar lokaliems presetams.
-- [ ] Apibrezti `developer mode`, kuriame modulis rodo:
+- [x] Apibrezti `developer mode`, kuriame modulis rodo:
 - `module_class`
 - registruotus hook'us
 - migraciju sarasa
