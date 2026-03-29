@@ -34,7 +34,11 @@
 - ikonografijos taisykles moduliams: navigacija, statusai, veiksmai ir media tipai
 - layout integracijos taisykles moduliams: kaip modulis isikabina i `content`, `sidebar`, `full-width` ir paneliu zonas
 - [ ] Susitarti, kaip moduliai naudos bendrus temos `design token` ir kada jiems leidziami nuosavi CSS variantai.
-- [ ] Susitarti, kaip moduliai naudos bendra ikon biblioteka ir kada galima papildoma rinkini naudoti lokaliai.
+- [x] Susitarti, kaip moduliai naudos bendra ikon biblioteka ir kada galima papildoma rinkini naudoti lokaliai.
+- pagrindine bendra biblioteka moduliams yra `Font Awesome 7`, kraunama is `includes/plugins/webicon/fa7/`
+- modulis gali naudoti lokalu papildoma ikon rinkini tik jei bendra biblioteka neturi reikiamu ikon ir yra aiski produkto priezastis
+- papildomas rinkinys turi buti kraunamas tik to modulio ribose, ne globaliai visai svetainei ar admin daliai
+- modulis negali perrasyti bendru `fa-*` klasiu ir neturi dubliuoti visos antros pilnos ikon bibliotekos be labai aiskaus poreikio
 - [x] Vienodai rodyti `installed version`, `manifest version` ir `available upgrade`.
 - [x] Apibrezti bendras `install / upgrade / rollback` taisykles visiems moduliams.
 - [ ] Sutarti, kad core Installer iraso tik branduolio DB, o moduliai savo lenteles ir nustatymus susikuria per savo install/upgrade mechanizma.

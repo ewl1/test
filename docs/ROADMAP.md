@@ -242,6 +242,7 @@
 - `ModuleEventContract` jau apibreztas SDK lygyje ir `developer mode` rodo, ar modulis deklaruoja `notifications / activity feed` ivykius ir kokiais kanalais jie keliauja.
 - `ModuleSearchContract` jau apibreztas SDK lygyje ir `developer mode` rodo, ar modulis deklaruoja paieskos saltinius, indeksuojamus laukus, permission filter ir svori.
 - `ModulePresentationContract` jau apibreztas SDK lygyje ir `developer mode` rodo, ar modulis deklaruoja korteles badge, meta laukus, santraukas ir detalias sekcijas.
+- moduliu ikonografijos taisykle jau sutarta: bendras pasirinkimas yra `Font Awesome 7`, o papildomas lokalus rinkinys leidziamas tik esant aiskiai produkto priezasciai ir tik modulio ribose.
 - moduliu gyvenimo ciklo hook'ai jau dispatch'inami per `before/after install|upgrade|uninstall`, kartu su modulio-specifiniais `.<folder>` variantais.
 - `developer mode` jau rodo `module_class`, registruotus runtime hook'us, migraciju sarasa, manifest laukus ir diagnostikos santrauka.
 - `safe uninstall` taisykles jau apibreztos: admin puslapis tikrina priklausomus modulius, rodo paveikiamu irasu santrauka ir rizikingiems salinimams reikalauja papildomo `folder` patvirtinimo.

@@ -38,6 +38,20 @@
 - Jei `diagnostics_page` nenurodytas, `administration/infusions.php` kaip bendra fallback sveikatos perziura naudoja `developer mode` detale su anchor `#infusion-dev-<folder>`.
 - Branduolio UI modulio veiksmus rodo vienoda tvarka: `Admin`, `Settings`, `Health`, `Upgrade`.
 
+## Ikonografijos taisykles moduliams
+- Pagrindine bendra ikon biblioteka visiems moduliams yra `Font Awesome 7`.
+- Bendra biblioteka kraunama is `includes/plugins/webicon/fa7/` ir turi buti naudojama navigacijai, busenoms, veiksmams ir tipiniams media simboliams.
+- Jei modulis naudoja ikonu klases konfiguracijoje ar DB, pirmenybe teikiama `fa-*` klasems, kad visas UI liktu nuoseklus.
+- Papildomas lokalus ikon rinkinys leidziamas tik tada, kai `Font Awesome 7` neturi reikiamu ikon ir yra aiski funkcine arba produkto priezastis.
+- Papildomas ikon rinkinys turi buti kraunamas tik to modulio ribose:
+- per jo `admin.php`, `panel.php`, viesa `bootstrap` arba modulio `assets/`
+- jis negali buti prijungtas globaliai visai temai ar visai admin daliai be atskiro branduolio sprendimo
+- Modulis negali perrasyti bendru `fa-*` klasiu, `webfonts` keliu ar bendru temos ikon stiliu.
+- Jei modulis naudoja papildoma rinkinį, jis turi:
+- tai aprasyti savo dokumentacijoje ir `TODO`
+- apriboti CSS selektorius modulio prefiksu ar konteineriu
+- neitempti antros pilnos globalios bibliotekos vien del keliu ikon
+
 ## ModuleSettingsContract
 Jei modulis nori ne tik tureti `settings_page`, bet ir vienodai deklaruoti savo nustatymu struktura, jis gali papildomai igyvendinti `ModuleSettingsContract`.
 

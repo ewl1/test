@@ -1636,12 +1636,12 @@ function get_infusion_prefixed_tables($folder)
         return [];
     }
 
-    $prefix = infusion_escape_like_pattern('infusion_' . $folder) . '%';
+    $prefix = 'infusion_' . $folder;
     $stmt = $GLOBALS['pdo']->prepare("
         SELECT TABLE_NAME
         FROM information_schema.TABLES
         WHERE TABLE_SCHEMA = DATABASE()
-          AND TABLE_NAME LIKE :prefix ESCAPE '\\'
+          AND LOCATE(:prefix, TABLE_NAME) = 1
         ORDER BY TABLE_NAME ASC
     ");
     $stmt->execute([':prefix' => $prefix]);
