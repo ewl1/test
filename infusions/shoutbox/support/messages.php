@@ -78,6 +78,10 @@ function shoutbox_create_message($message)
     if ($message === '') {
         return [false, __('shoutbox.message.empty')];
     }
+    [$messageOk, $messageError] = badwords_validate($message, 'Zinuteje');
+    if (!$messageOk) {
+        return [false, $messageError];
+    }
 
     $stmt = $GLOBALS['pdo']->prepare("
         INSERT INTO " . shoutbox_table_name() . " (user_id, message, created_at, updated_at)

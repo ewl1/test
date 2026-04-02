@@ -23,6 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'content_comments_rate_limit_count',
         'content_comments_rate_limit_window_seconds',
         'content_comments_badwords',
+        'badwords_enabled',
+        'badwords_list',
         'security_headers_enabled',
         'security_header_hsts',
         'security_header_frame_options',
@@ -171,9 +173,21 @@ admin_render_page_header([
                 <input class="form-control" type="number" min="30" max="86400" name="content_comments_rate_limit_window_seconds" value="<?= e(setting('content_comments_rate_limit_window_seconds', '300')) ?>">
             </div>
             <div class="col-12">
+                <label class="form-label">Globalus badwords filtras</label>
+                <select class="form-select" name="badwords_enabled">
+                    <option value="1" <?= setting('badwords_enabled', '1') === '1' ? 'selected' : '' ?>>Ijungtas</option>
+                    <option value="0" <?= setting('badwords_enabled', '1') === '0' ? 'selected' : '' ?>>Isjungtas</option>
+                </select>
+            </div>
+            <div class="col-12">
+                <label class="form-label">Globalus badwords sarasas</label>
+                <textarea class="form-control" name="badwords_list" rows="4" placeholder="zodis1&#10;zodis2&#10;zodis3"><?= e(setting('badwords_list', setting('content_comments_badwords', ''))) ?></textarea>
+                <div class="form-text">Sis sarasas naudojamas komentarams, forumui ir saukyklai.</div>
+            </div>
+            <div class="col-12">
                 <label class="form-label">Komentaru badwords</label>
                 <textarea class="form-control" name="content_comments_badwords" rows="4" placeholder="zodis1&#10;zodis2&#10;zodis3"><?= e(setting('content_comments_badwords', '')) ?></textarea>
-                <div class="form-text">Po viena zodi eiluteje arba atskirkite kableliais.</div>
+                <div class="form-text">Legacy fallback komentarams. Jei globalus sarasas uzpildytas, jis turi prioriteta.</div>
             </div>
         </div>
     </div>

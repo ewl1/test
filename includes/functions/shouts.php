@@ -25,6 +25,10 @@ function create_shout(PDO $pdo, $message)
     }
 
     $message = mb_substr($message, 0, 500);
+    [$messageOk, $messageError] = badwords_validate($message, 'Zinuteje');
+    if (!$messageOk) {
+        return [false, $messageError];
+    }
     $stmt = $pdo->prepare("INSERT INTO shouts (user_id, message, created_at, updated_at) VALUES (:user_id, :message, NOW(), NOW())");
     $stmt->execute([
         ':user_id' => (int)$user['id'],

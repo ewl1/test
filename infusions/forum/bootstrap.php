@@ -801,6 +801,14 @@ function forum_create_topic($forumId, $title, $content, $moodId = 0, array $file
     if ($content === '') {
         return [false, __('forum.validation.topic_content'), null];
     }
+    [$titleOk, $titleMessage] = badwords_validate($title, 'Temos pavadinime');
+    if (!$titleOk) {
+        return [false, $titleMessage, null];
+    }
+    [$contentOk, $contentMessage] = badwords_validate($content, 'Temos tekste');
+    if (!$contentOk) {
+        return [false, $contentMessage, null];
+    }
     if ($moodId > 0 && !forum_get_mood($moodId)) {
         $moodId = 0;
     }
@@ -867,6 +875,10 @@ function forum_create_reply($topicId, $content, array $files = [])
     $content = forum_prepare_body($content, 15000);
     if ($content === '') {
         return [false, __('forum.validation.reply_content'), null];
+    }
+    [$contentOk, $contentMessage] = badwords_validate($content, 'Atsakyme');
+    if (!$contentOk) {
+        return [false, $contentMessage, null];
     }
 
     $postId = 0;

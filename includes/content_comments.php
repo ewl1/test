@@ -63,21 +63,7 @@ function content_comment_rate_limit_window_setting()
 
 function content_comment_badwords_setting()
 {
-    $raw = trim((string)setting('content_comments_badwords', ''));
-    if ($raw === '') {
-        return [];
-    }
-
-    $parts = preg_split('/[\r\n,;]+/u', $raw) ?: [];
-    $words = [];
-    foreach ($parts as $part) {
-        $word = trim(mb_strtolower((string)$part));
-        if ($word !== '') {
-            $words[] = $word;
-        }
-    }
-
-    return array_values(array_unique($words));
+    return function_exists('badwords_terms') ? badwords_terms() : [];
 }
 
 function content_comment_allowed_tags()
@@ -223,10 +209,12 @@ function validate_content_comment_submission($contentType, $contentId, $authorUs
         }
     }
 
-    $badword = content_comment_badwords_match($content);
-    if ($badword !== null) {
+    [$badwordsOk, $badwordsMessage] = function_exists('badwords_validate')
+        ? badwords_validate($content, 'Komentare')
+        : [true, null];
+    if (!$badwordsOk) {
         rate_limit_hit(content_comment_rate_limit_targets($contentType, $authorUserId));
-        return [false, 'Komentare yra neleistinas zodis: ' . $badword . '.'];
+        return [false, $badwordsMessage];
     }
 
     if (content_comment_spam_score($content) >= 2) {

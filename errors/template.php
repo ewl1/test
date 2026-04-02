@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!headers_sent()) {
     header_remove('X-Powered-By');
 }
@@ -44,8 +44,8 @@ $escape = static fn($value) => htmlspecialchars((string)$value, ENT_QUOTES | ENT
             <h1 class="h2 mb-3"><?= $escape($errorTitle) ?></h1>
             <p class="text-secondary fs-5 mb-4"><?= $escape($errorMessage) ?></p>
             <div class="d-flex flex-wrap gap-2">
-                <a class="btn btn-primary" href="<?= $escape($errorBackUrl) ?>">Grįžti į pradžią</a>
-                <a class="btn btn-outline-secondary" href="<?= $escape($backUrl) ?>">Grįžti atgal</a>
+                <a class="btn btn-primary" href="<?= $escape($errorBackUrl) ?>">Grizti i pradzia</a>
+                <a class="btn btn-outline-secondary" href="<?= $escape($backUrl) ?>">Grizti atgal</a>
             </div>
         </div>
     </div>

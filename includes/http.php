@@ -1,17 +1,17 @@
-<?php
+﻿<?php
 function http_error_defaults($code)
 {
     $code = (int)$code;
 
     return match ($code) {
-        400 => ['title' => 'Netinkama užklausa', 'message' => 'Užklausa negalėjo būti apdorota. Patikrinkite įvestus duomenis ir bandykite dar kartą.'],
-        401 => ['title' => 'Reikalingas prisijungimas', 'message' => 'Norint pasiekti šį puslapį, reikia prisijungti.'],
-        403 => ['title' => 'Prieiga uždrausta', 'message' => 'Neturite teisių atlikti šio veiksmo.'],
-        404 => ['title' => 'Puslapis nerastas', 'message' => 'Ieškomas puslapis neegzistuoja arba buvo perkeltas.'],
-        408 => ['title' => 'Užklausos laikas baigėsi', 'message' => 'Serveris per ilgai laukė užklausos. Pabandykite dar kartą.'],
-        500 => ['title' => 'Vidinė serverio klaida', 'message' => 'Įvyko nenumatyta klaida. Ji užregistruota žurnale.'],
-        502 => ['title' => 'Serverio ryšio klaida', 'message' => 'Nepavyko gauti atsakymo iš vidinės sistemos arba duomenų bazės.'],
-        default => ['title' => 'Klaida', 'message' => 'Įvyko klaida apdorojant jūsų užklausą.'],
+        400 => ['title' => 'Netinkama uzklausa', 'message' => 'Uzklausa negalejo buti apdorota. Patikrinkite ivestus duomenis ir bandykite dar karta.'],
+        401 => ['title' => 'Reikalingas prisijungimas', 'message' => 'Norint pasiekti si puslapi, reikia prisijungti.'],
+        403 => ['title' => 'Prieiga uzdrausta', 'message' => 'Neturite teisiu atlikti sio veiksmo.'],
+        404 => ['title' => 'Puslapis nerastas', 'message' => 'Ieskomas puslapis neegzistuoja arba buvo perkeltas.'],
+        408 => ['title' => 'Uzklausos laikas baigesi', 'message' => 'Serveris per ilgai lauke uzklausos. Pabandykite dar karta.'],
+        500 => ['title' => 'Vidine serverio klaida', 'message' => 'Ivyko nenumatyta klaida. Ji uzregistruota zurnale.'],
+        502 => ['title' => 'Serverio rysio klaida', 'message' => 'Nepavyko gauti atsakymo is vidines sistemos arba duomenu bazes.'],
+        default => ['title' => 'Klaida', 'message' => 'Ivyko klaida apdorojant jusu uzklausa.'],
     };
 }
 
