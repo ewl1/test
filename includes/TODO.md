@@ -119,7 +119,7 @@
 - [ ] Prideti komentaru redagavimo langa, `edited at` ir `edited reason`.
 - [ ] Prideti komentaru `quote / mention / reaction / report` galimybes.
 - [ ] Prideti komentaru rusiavima: naujausi, seniausi, populiariausi.
-- [ ] Prideti komentaru puslapiavima ir nustatyma, kiek komentaru rodyti.
+- [x] Prideti komentaru puslapiavima ir nustatyma, kiek komentaru rodyti.
 - [ ] Prideti komentaru `flood control`, rate limits ir anti-spam tikrinimus.
 - [ ] Prideti komentaru prenumeratas ir pranesimu centro ivykius.
 - [ ] Prideti komentaru autoriaus role/badge/status rodyma prie komentaro korteles.

@@ -485,11 +485,18 @@ function fetch_profile_comment($commentId)
     return $stmt->fetch() ?: null;
 }
 
-function fetch_profile_comments($profileUserId, $limit = 20)
+function profile_comments_per_page_setting()
+{
+    $value = (int)setting('profile_comments_per_page', 10);
+    return max(1, min(100, $value));
+}
+
+function fetch_profile_comments($profileUserId, $limit = 20, $offset = 0)
 {
     ensure_user_profile_schema();
 
     $limit = max(1, min(100, (int)$limit));
+    $offset = max(0, (int)$offset);
     $stmt = $GLOBALS['pdo']->prepare('
         SELECT c.*,
                author.username AS author_username,
@@ -501,7 +508,7 @@ function fetch_profile_comments($profileUserId, $limit = 20)
         LEFT JOIN users profile_user ON profile_user.id = c.profile_user_id
         WHERE c.profile_user_id = :profile_user_id
         ORDER BY c.created_at DESC, c.id DESC
-        LIMIT ' . $limit
+        LIMIT ' . $limit . ' OFFSET ' . $offset
     );
     $stmt->execute([':profile_user_id' => (int)$profileUserId]);
 

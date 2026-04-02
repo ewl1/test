@@ -17,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'show_banners',
         'show_banners_visibility',
         'show_sublinks',
+        'profile_comments_per_page',
         'security_headers_enabled',
         'security_header_hsts',
         'security_header_frame_options',
@@ -143,6 +144,10 @@ admin_render_page_header([
                     <option value="0" <?= setting('show_sublinks', '1') === '0' ? 'selected' : '' ?>>Isjungta</option>
                     <option value="1" <?= setting('show_sublinks', '1') === '1' ? 'selected' : '' ?>>Ijungta</option>
                 </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Profilio komentaru per puslapi</label>
+                <input class="form-control" type="number" min="1" max="100" name="profile_comments_per_page" value="<?= e(setting('profile_comments_per_page', '10')) ?>">
             </div>
         </div>
     </div>

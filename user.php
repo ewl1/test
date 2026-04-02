@@ -52,7 +52,10 @@ $forumMessageCount = count_user_forum_messages((int)$profile['id']);
 $ratingSummary = fetch_profile_rating_summary((int)$profile['id']);
 $viewerRating = $viewer ? fetch_profile_rating_for_viewer((int)$profile['id'], (int)$viewer['id']) : 0;
 $profileCommentCount = count_profile_comments((int)$profile['id']);
-$profileComments = fetch_profile_comments((int)$profile['id'], 20);
+$commentPage = max(1, (int)($_GET['page'] ?? 1));
+$commentsPerPage = profile_comments_per_page_setting();
+$profileCommentPager = paginate($profileCommentCount, $commentsPerPage, $commentPage);
+$profileComments = fetch_profile_comments((int)$profile['id'], $profileCommentPager['per_page'], $profileCommentPager['offset']);
 $successMessage = flash('profile_success');
 $statusLabels = [
     'active' => 'Aktyvus',
@@ -208,6 +211,11 @@ include __DIR__ . '/themes/default/header.php';
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </div>
+                <?php if (($profileCommentPager['pages'] ?? 0) > 1): ?>
+                    <div class="mt-4">
+                        <?= render_pagination(user_profile_url((int)$profile['id']), $profileCommentPager) ?>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
