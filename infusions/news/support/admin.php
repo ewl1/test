@@ -32,7 +32,7 @@ function news_handle_admin_request()
 function news_render_admin_page()
 {
     if (news_editor_mode() === 'tinymce' || news_editor_mode() === 'mixed') {
-        register_page_script('includes/js/tinymce/tinymce.min.js');
+        editor_register_tinymce_assets();
     }
     register_page_script('infusions/news/assets/js/news.js');
 
@@ -90,7 +90,14 @@ function news_render_admin_page()
                             <?php endforeach; ?>
                         </div>
                     <?php endif; ?>
-                    <textarea class="form-control" id="news-summary" name="summary" rows="10" data-news-editor-mode="<?= e($editorMode) ?>"></textarea>
+                    <textarea
+                        class="form-control"
+                        id="news-summary"
+                        name="summary"
+                        rows="10"
+                        data-news-editor-mode="<?= e($editorMode) ?>"
+                        data-news-tinymce-config="<?= e(editor_tinymce_config_json()) ?>"
+                    ></textarea>
                 </div>
                 <div class="col-12">
                     <button class="btn btn-primary"><?= e(__('news.action.create')) ?></button>

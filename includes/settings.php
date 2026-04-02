@@ -6,7 +6,7 @@ function settings_table_name()
         return $table;
     }
 
-    foreach (['site_settings', 'settings'] as $candidate) {
+    foreach (['settings', 'site_settings'] as $candidate) {
         try {
             $stmt = $GLOBALS['pdo']->prepare("SHOW TABLES LIKE :table_name");
             $stmt->execute([':table_name' => $candidate]);

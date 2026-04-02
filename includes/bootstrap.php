@@ -148,6 +148,7 @@ require_once INCLUDES . 'db.php';
 require_once INCLUDES . 'system.php';
 require_once INCLUDES . 'assets.php';
 require_once INCLUDES . 'formatting.php';
+require_once INCLUDES . 'editor.php';
 require_once INCLUDES . 'security.php';
 require_once INCLUDES . 'settings.php';
 require_once INCLUDES . 'locale.php';

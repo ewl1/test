@@ -43,18 +43,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     textarea.dataset.newsTinyReady = '1';
-    window.tinymce.init({
-      target: textarea,
-      menubar: false,
-      branding: false,
-      promotion: false,
-      height: 320,
-      plugins: 'link lists image code emoticons',
-      toolbar: 'undo redo | bold italic underline | bullist numlist blockquote | link image emoticons | removeformat code',
-      block_formats: 'Paragraph=p;Heading 2=h2;Heading 3=h3',
-      convert_urls: false,
-      relative_urls: false
-    });
+    var config = {};
+    try {
+      config = JSON.parse(textarea.getAttribute('data-news-tinymce-config') || '{}');
+    } catch (error) {
+      config = {};
+    }
+
+    config.target = textarea;
+    window.tinymce.init(config);
   }
 
   var textarea = document.querySelector('#news-summary[data-news-editor-mode]');

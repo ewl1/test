@@ -17,8 +17,7 @@ function news_save_setting($key, $value)
 
 function news_editor_mode()
 {
-    $mode = trim((string)news_setting('editor_mode', 'bbcode'));
-    return in_array($mode, ['bbcode', 'tinymce', 'mixed'], true) ? $mode : 'bbcode';
+    return editor_normalize_mode(news_setting('editor_mode', 'bbcode'));
 }
 
 function news_allowed_bbcode_tags()
