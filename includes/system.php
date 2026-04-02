@@ -89,7 +89,7 @@ function app_runtime_diagnostics()
 {
     $logDir = BASEDIR . 'logs';
     $uploadDir = BASEDIR . 'uploads';
-    $avatarDir = $uploadDir . '/avatars';
+    $avatarDir = BASEDIR . 'images/avatars';
 
     return [
         'application' => [

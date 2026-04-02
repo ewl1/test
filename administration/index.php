@@ -1,13 +1,66 @@
 <?php
 require_once __DIR__ . '/_guard.php';
 include THEMES . 'default/admin_header.php';
+
+$adminCountTableRows = static function (string $table): int {
+    try {
+        $stmt = $GLOBALS['pdo']->prepare('SHOW TABLES LIKE :table');
+        $stmt->execute([':table' => $table]);
+        if (!$stmt->fetchColumn()) {
+            return 0;
+        }
+
+        return (int)$GLOBALS['pdo']->query("SELECT COUNT(*) FROM {$table}")->fetchColumn();
+    } catch (Throwable $e) {
+        return 0;
+    }
+};
+
+$dashboardStats = [
+    [
+        'label' => 'Nariai',
+        'value' => $adminCountTableRows('users'),
+        'tone' => 'info',
+        'icon' => 'fa-solid fa-users',
+    ],
+    [
+        'label' => 'Forumo žinutės',
+        'value' => $adminCountTableRows('infusion_forum_posts'),
+        'tone' => 'info',
+        'icon' => 'fa-solid fa-comments',
+    ],
+    [
+        'label' => 'Šaukyklos žinutės',
+        'value' => $adminCountTableRows('infusion_shoutbox_messages'),
+        'tone' => 'info',
+        'icon' => 'fa-solid fa-comment-dots',
+    ],
+    [
+        'label' => 'Komentarai',
+        'value' => $adminCountTableRows('user_profile_comments'),
+        'tone' => 'info',
+        'icon' => 'fa-solid fa-message',
+    ],
+    [
+        'label' => 'Siuntiniai',
+        'value' => $adminCountTableRows('infusion_downloads'),
+        'tone' => 'info',
+        'icon' => 'fa-solid fa-download',
+    ],
+    [
+        'label' => 'Naujienos',
+        'value' => $adminCountTableRows('infusion_news'),
+        'tone' => 'info',
+        'icon' => 'fa-solid fa-newspaper',
+    ],
+];
 ?>
 <div class="<?= e(admin_layout_preset_class('dashboard')) ?>">
 <?php
 admin_render_page_header([
     'variant' => 'dashboard',
     'title' => __('admin.dashboard'),
-    'subtitle' => 'Mini CMS v' . app_version() . ' | PHP ' . PHP_VERSION,
+    'subtitle' => 'Pagrindiniai svetainės aktyvumo skaitikliai vienoje vietoje.',
     'actions' => [
         [
             'label' => __('admin.site'),
@@ -18,26 +71,7 @@ admin_render_page_header([
     ],
 ]);
 
-admin_render_stat_strip([
-    [
-        'label' => 'Versija',
-        'value' => 'v' . app_version(),
-        'tone' => 'info',
-        'icon' => 'fa-solid fa-code-branch',
-    ],
-    [
-        'label' => 'PHP',
-        'value' => PHP_VERSION,
-        'tone' => 'info',
-        'icon' => 'fa-brands fa-php',
-    ],
-    [
-        'label' => 'OPcache',
-        'value' => is_opcache_enabled() ? 'Ijungta' : 'Isjungta',
-        'tone' => is_opcache_enabled() ? 'success' : 'warning',
-        'icon' => 'fa-solid fa-gauge-high',
-    ],
-]);
+admin_render_stat_strip($dashboardStats);
 ?>
 
 <div class="row g-3 admin-dashboard-grid admin-layout-dashboard-grid">

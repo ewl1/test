@@ -6,7 +6,7 @@
 - tik `/themes/`
 - `maincore.php` centralizuoja branduolį ir kelius
 - `install.php` nebedubliuoja kelio logikos
-- `site_settings` iškelti į DB
+- `settings` iškelti į DB
 - atskiri temos pasirinkimai svetainei ir administracijai
 - `images/favicons/`
 - `showMemoryUsage()`, `showcounter()`, `showbanners()`, `showcopyright()`

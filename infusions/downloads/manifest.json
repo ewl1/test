@@ -62,7 +62,7 @@
                 "Visi UI tekstai perkelti į locale/lt.php, naudojama __() funkcija.",
                 "Pridėta failo tipo ikona pagal plėtinį (FA7): pdf, zip, exe, dmg, apk, iso ir kt.",
                 "Pridėta išorinių URL palaikymas šalia failo įkėlimo.",
-                "Modulio nustatymai (maks. failo dydis, thumbnail) saugomi site_settings lentelėje.",
+                "Modulio nustatymai (maks. failo dydis, thumbnail) saugomi settings lentelėje.",
                 "downloads_file_icon() helper funkcija pridėta į bootstrap.php."
             ]
         },

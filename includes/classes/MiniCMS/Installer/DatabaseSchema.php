@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS users (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 SQL,
             <<<'SQL'
-CREATE TABLE IF NOT EXISTS site_settings (
+CREATE TABLE IF NOT EXISTS settings (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     setting_key VARCHAR(120) NOT NULL UNIQUE,
     setting_value TEXT DEFAULT NULL
@@ -349,7 +349,7 @@ SQL,
         $statements[] = "INSERT IGNORE INTO role_permissions (role_id, permission_id) SELECT 2, id FROM permissions WHERE slug IN ('admin.access','posts.create','posts.edit','posts.delete','users.manage','permissions.manage','audit.view','logs.view','ipban.manage','settings.manage','themes.manage','navigation.manage','infusions.manage','panels.manage','roles.manage','users.view','users.create','users.edit','users.status','users.delete')";
         $statements[] = "INSERT IGNORE INTO role_permissions (role_id, permission_id) SELECT 3, id FROM permissions WHERE slug IN ('users.view','audit.view')";
 
-        $statements[] = $this->buildInsertSql('site_settings', ['setting_key', 'setting_value'], [
+        $statements[] = $this->buildInsertSql('settings', ['setting_key', 'setting_value'], [
             ['setting_key' => 'site_name', 'setting_value' => 'Mini CMS Pro'],
             ['setting_key' => 'site_description', 'setting_value' => 'Mini CMS Pro svetaine'],
             ['setting_key' => 'site_keywords', 'setting_value' => 'cms, php, mysql'],

@@ -68,7 +68,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             $message = __('downloads.settings.max_file_size.min_error');
             $messageType = 'danger';
         } else {
-            // Save to site_settings using ModuleSettings
+            // Save to settings using ModuleSettings
             $settings->set('max_file_size', (string)$max_size);
             $settings->set('show_thumbnails', (string)$show_thumbs);
 
