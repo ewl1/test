@@ -1,12 +1,19 @@
 <?php
 
 return [
-    'news.admin.title' => 'Naujienu infusion administravimas',
-    'news.admin.created' => 'Naujiena prideta.',
+    'news.admin.title' => 'Naujienų infusion administravimas',
+    'news.admin.created' => 'Naujiena pridėta.',
     'news.admin.title_required' => 'Pavadinimas yra privalomas.',
+    'news.admin.settings_saved' => 'Naujienų nustatymai išsaugoti.',
     'news.field.title' => 'Pavadinimas',
     'news.field.summary' => 'Santrauka',
-    'news.action.create' => 'Prideti',
+    'news.field.editor_mode' => 'Redaktoriaus režimas',
+    'news.field.editor_mode_help' => 'Galite naudoti tik BBCode, tik TinyMCE arba TinyMCE kartu su greitais BBCode mygtukais.',
+    'news.editor_mode.bbcode' => 'Tik BBCode',
+    'news.editor_mode.tinymce' => 'Tik TinyMCE',
+    'news.editor_mode.mixed' => 'TinyMCE + BBCode',
+    'news.action.create' => 'Pridėti',
+    'news.action.save_settings' => 'Išsaugoti nustatymus',
     'news.manifest.name' => 'Naujienos',
     'news.manifest.description' => 'Pavyzdinė naujienų infusion.',
     'news.manifest.default_panel_name' => 'Naujienų panelė',
