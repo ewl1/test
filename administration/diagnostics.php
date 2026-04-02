@@ -25,6 +25,17 @@ $badgeClass = static function ($ok) {
     return $ok ? 'text-bg-success' : 'text-bg-secondary';
 };
 
+$tabs = [
+    'overview' => 'Apzvalga',
+    'environment' => 'Aplinka',
+    'security' => 'Saugumas',
+    'tools' => 'Irankiai',
+];
+$activeTab = (string)($_GET['tab'] ?? 'overview');
+if (!array_key_exists($activeTab, $tabs)) {
+    $activeTab = 'overview';
+}
+
 include THEMES . 'default/admin_header.php';
 ?>
 <div class="<?= e(admin_layout_preset_class('diagnostics', 'admin-layout-diagnostics-shell')) ?>">
@@ -35,11 +46,6 @@ admin_render_page_header([
     'title' => 'Serverio diagnostika',
     'subtitle' => 'Branduolio ir serverio busena vienoje vietoje',
     'badge_html' => '<span class="badge text-bg-dark">v' . e(app_version()) . '</span>',
-    'actions_html' => '<form method="post" class="d-inline-block">'
-        . csrf_field()
-        . '<input type="hidden" name="action" value="rebuild_sitemap">'
-        . '<button type="submit" class="btn btn-outline-primary admin-action-button"' . ($canRebuildSitemap ? '' : ' disabled title="Reikia settings.manage teises"') . '><i class="fa-solid fa-sitemap me-2"></i>Perkurti sitemap.xml</button>'
-        . '</form>',
 ]);
 
 if ($message): ?>
@@ -68,7 +74,16 @@ admin_render_stat_strip([
 ]);
 ?>
 
+<ul class="nav nav-tabs mb-4">
+    <?php foreach ($tabs as $tabKey => $tabLabel): ?>
+        <li class="nav-item">
+            <a class="nav-link <?= $activeTab === $tabKey ? 'active' : '' ?>" href="?tab=<?= e($tabKey) ?>"><?= e($tabLabel) ?></a>
+        </li>
+    <?php endforeach; ?>
+</ul>
+
 <div class="row g-4 admin-layout-diagnostics-grid">
+    <?php if ($activeTab === 'overview'): ?>
     <div class="col-lg-6">
         <div class="card h-100">
             <div class="card-header">Programa</div>
@@ -157,7 +172,9 @@ admin_render_stat_strip([
             </div>
         </div>
     </div>
+    <?php endif; ?>
 
+    <?php if ($activeTab === 'environment'): ?>
     <div class="col-lg-6">
         <div class="card h-100">
             <div class="card-header">Pletiniai</div>
@@ -202,7 +219,9 @@ admin_render_stat_strip([
             </div>
         </div>
     </div>
+    <?php endif; ?>
 
+    <?php if ($activeTab === 'security'): ?>
     <div class="col-12">
         <div class="card">
             <div class="card-header">Saugumo indikatoriai</div>
@@ -247,6 +266,39 @@ admin_render_stat_strip([
             </div>
         </div>
     </div>
+    <?php endif; ?>
+
+    <?php if ($activeTab === 'tools'): ?>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">Sitemap.xml</div>
+            <div class="card-body">
+                <p class="text-secondary mb-3">Perkurkite `sitemap.xml`, kai keiciasi viesi puslapiai, forumai, temos ar profiliu turinys.</p>
+                <div class="d-flex flex-wrap gap-3 align-items-center">
+                    <form method="post" class="d-inline-block">
+                        <?= csrf_field() ?>
+                        <input type="hidden" name="action" value="rebuild_sitemap">
+                        <button type="submit" class="btn btn-outline-primary admin-action-button"<?= $canRebuildSitemap ? '' : ' disabled title="Reikia settings.manage teises"' ?>>
+                            <i class="fa-solid fa-sitemap me-2"></i>Perkurti sitemap.xml
+                        </button>
+                    </form>
+                    <code class="admin-path-code admin-path-code-strong"><?= e(sitemap_path()) ?></code>
+                    <span class="badge <?= $badgeClass(is_file(sitemap_path())) ?>"><?= is_file(sitemap_path()) ? 'Failas yra' : 'Failas dar nesukurtas' ?></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">Numatyti irankiai</div>
+            <div class="card-body">
+                <div class="alert alert-info mb-0">
+                    Cia veliau logiskai tilps `clear cache`, `clear reset tokens`, `clear rate limits`, `broken links check` ir kiti administravimo irankiai.
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
 </div>
 </div>
 <?php include THEMES . 'default/admin_footer.php'; ?>
