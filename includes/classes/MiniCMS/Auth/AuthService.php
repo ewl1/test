@@ -11,19 +11,21 @@ class AuthService
 
     public function attemptLogin(string $email, string $password): array
     {
-        if (!\function_exists('attempt_login')) {
+        if (!\function_exists('login')) {
             return [false, null, 'Auth login service is unavailable.'];
         }
 
-        return \attempt_login($email, $password);
+        $ok = \login($email, $password);
+        return [$ok, $ok ? $this->currentUser() : null, $ok ? null : (\auth_error() ?: 'Prisijungti nepavyko.')];
     }
 
     public function attemptAdminLogin(string $email, string $password): array
     {
-        if (!\function_exists('attempt_admin_login')) {
+        if (!\function_exists('login_admin')) {
             return [false, null, 'Admin auth service is unavailable.'];
         }
 
-        return \attempt_admin_login($email, $password);
+        $ok = \login_admin($email, $password);
+        return [$ok, $ok ? $this->currentUser() : null, $ok ? null : (\auth_error() ?: 'Administratoriaus prisijungimas nepavyko.')];
     }
 }
