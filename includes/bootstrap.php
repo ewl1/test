@@ -113,6 +113,7 @@ require_once INCLUDES . 'assets.php';
 require_once INCLUDES . 'formatting.php';
 require_once INCLUDES . 'editor.php';
 require_once INCLUDES . 'security.php';
+require_once INCLUDES . 'media_uploads.php';
 require_once INCLUDES . 'badwords.php';
 require_once INCLUDES . 'locale.php';
 require_once INCLUDES . 'audit.php';
