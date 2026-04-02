@@ -217,6 +217,37 @@ admin_render_stat_strip([
             </div>
         </div>
     </div>
+
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">Security headers manager</div>
+            <div class="card-body">
+                <?php $securityHeaders = $diagnostics['server']['security_headers'] ?? []; ?>
+                <?php if ($securityHeaders === []): ?>
+                    <div class="alert alert-warning mb-0">Security headers manager siuo metu isjungtas arba neinicijuotas.</div>
+                <?php else: ?>
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <?php foreach (array_keys($securityHeaders) as $headerName): ?>
+                            <span class="badge text-bg-success"><?= e($headerName) ?></span>
+                        <?php endforeach; ?>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle mb-0 admin-table-strong">
+                            <thead><tr><th>Header</th><th>Reiksme</th></tr></thead>
+                            <tbody>
+                            <?php foreach ($securityHeaders as $headerName => $headerValue): ?>
+                                <tr>
+                                    <td><code class="admin-path-code admin-path-code-strong"><?= e($headerName) ?></code></td>
+                                    <td><code class="admin-path-code"><?= e($headerValue) ?></code></td>
+                                </tr>
+                            <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
 </div>
 </div>
 <?php include THEMES . 'default/admin_footer.php'; ?>

@@ -117,6 +117,7 @@ function app_runtime_diagnostics()
             'document_root' => (string)($_SERVER['DOCUMENT_ROOT'] ?? ''),
             'https' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
             'opcache' => opcache_summary(),
+            'security_headers' => function_exists('security_headers_active_list') ? security_headers_active_list() : [],
         ],
         'paths' => [
             'config' => path_status(BASEDIR . 'config.php'),

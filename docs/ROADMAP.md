@@ -319,7 +319,8 @@
 - `cache warmup`
 - `search reindex`
 - `sitemap rebuild` jau turi bazini branduolio helperi, `sitemap.xml` generavima ir rankini admin paleidima per diagnostika
-- `broken links check`
+- `security headers manager` jau turi bendra branduolio sluoksni, `settings` valdyma ir diagnostikos perziura
+  - `broken links check`
 - `database backup before update`
 - `forum maintenance`
 - `news maintenance`

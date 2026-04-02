@@ -38,47 +38,6 @@ function configure_session_security()
 configure_session_security();
 session_start();
 
-function send_security_headers()
-{
-    if (headers_sent()) {
-        return;
-    }
-
-    header_remove('X-Powered-By');
-    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
-    header('Pragma: no-cache');
-    header('Expires: 0');
-    header('Cross-Origin-Opener-Policy: same-origin');
-    header('Cross-Origin-Resource-Policy: same-site');
-
-    $csp = implode('; ', [
-        "default-src 'self'",
-        "base-uri 'self'",
-        "form-action 'self'",
-        "frame-ancestors 'self'",
-        "img-src 'self' data: https:",
-        "style-src 'self'",
-        "style-src-elem 'self'",
-        "style-src-attr 'none'",
-        "script-src 'self'",
-        "script-src-elem 'self'",
-        "script-src-attr 'none'",
-        "font-src 'self' data:",
-        "connect-src 'self'",
-        "frame-src 'self' https://www.youtube-nocookie.com",
-        "manifest-src 'self'",
-        "media-src 'self'",
-        "object-src 'none'",
-    ]);
-    header('Content-Security-Policy: ' . $csp);
-
-    if (request_is_secure()) {
-        header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
-    }
-}
-
-send_security_headers();
-
 require_once dirname(__DIR__) . '/maincore.php';
 foreach ([INCLUDES . 'vendor/autoload.php', BASEDIR . 'vendor/autoload.php'] as $autoloadPath) {
     if (is_file($autoloadPath)) {
@@ -145,13 +104,15 @@ if (PHP_SAPI !== 'cli') {
 }
 
 require_once INCLUDES . 'db.php';
+require_once INCLUDES . 'settings.php';
+require_once INCLUDES . 'security_headers.php';
+send_security_headers();
 require_once INCLUDES . 'system.php';
 require_once INCLUDES . 'seo.php';
 require_once INCLUDES . 'assets.php';
 require_once INCLUDES . 'formatting.php';
 require_once INCLUDES . 'editor.php';
 require_once INCLUDES . 'security.php';
-require_once INCLUDES . 'settings.php';
 require_once INCLUDES . 'locale.php';
 require_once INCLUDES . 'audit.php';
 require_once INCLUDES . 'security_log.php';

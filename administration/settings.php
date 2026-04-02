@@ -17,6 +17,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'show_banners',
         'show_banners_visibility',
         'show_sublinks',
+        'security_headers_enabled',
+        'security_header_hsts',
+        'security_header_frame_options',
+        'security_header_content_type_options',
+        'security_header_referrer_policy',
+        'security_header_permissions_policy',
+        'security_header_coop',
+        'security_header_corp',
     ] as $key) {
         save_setting($key, $_POST[$key] ?? '');
     }
@@ -135,6 +143,56 @@ admin_render_page_header([
                     <option value="0" <?= setting('show_sublinks', '1') === '0' ? 'selected' : '' ?>>Isjungta</option>
                     <option value="1" <?= setting('show_sublinks', '1') === '1' ? 'selected' : '' ?>>Ijungta</option>
                 </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">Saugumo antrastes</div>
+        <div class="card-body row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Security headers manager</label>
+                <select class="form-select" name="security_headers_enabled">
+                    <option value="1" <?= setting('security_headers_enabled', '1') === '1' ? 'selected' : '' ?>>Ijungtas</option>
+                    <option value="0" <?= setting('security_headers_enabled', '1') === '0' ? 'selected' : '' ?>>Isjungtas</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">HSTS</label>
+                <select class="form-select" name="security_header_hsts">
+                    <option value="1" <?= setting('security_header_hsts', '1') === '1' ? 'selected' : '' ?>>Ijungtas</option>
+                    <option value="0" <?= setting('security_header_hsts', '1') === '0' ? 'selected' : '' ?>>Isjungtas</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">X-Frame-Options</label>
+                <select class="form-select" name="security_header_frame_options">
+                    <option value="1" <?= setting('security_header_frame_options', '1') === '1' ? 'selected' : '' ?>>SAMEORIGIN</option>
+                    <option value="0" <?= setting('security_header_frame_options', '1') === '0' ? 'selected' : '' ?>>Isjungta</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">X-Content-Type-Options</label>
+                <select class="form-select" name="security_header_content_type_options">
+                    <option value="1" <?= setting('security_header_content_type_options', '1') === '1' ? 'selected' : '' ?>>nosniff</option>
+                    <option value="0" <?= setting('security_header_content_type_options', '1') === '0' ? 'selected' : '' ?>>Isjungta</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Referrer-Policy</label>
+                <input class="form-control" name="security_header_referrer_policy" value="<?= e(setting('security_header_referrer_policy', 'strict-origin-when-cross-origin')) ?>">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Permissions-Policy</label>
+                <input class="form-control" name="security_header_permissions_policy" value="<?= e(setting('security_header_permissions_policy', 'camera=(), microphone=(), geolocation=()')) ?>">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Cross-Origin-Opener-Policy</label>
+                <input class="form-control" name="security_header_coop" value="<?= e(setting('security_header_coop', 'same-origin')) ?>">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Cross-Origin-Resource-Policy</label>
+                <input class="form-control" name="security_header_corp" value="<?= e(setting('security_header_corp', 'same-site')) ?>">
             </div>
         </div>
     </div>

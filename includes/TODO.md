@@ -85,7 +85,7 @@
 - [ ] Apibrezti `captcha` providerius: vietinis klausimas, honeypot ir pasirenkamas isorinis provideris.
 - [ ] Prideti `captcha` eskalavima po rate-limit ar itartinos veiklos.
 - [ ] Integruoti `captcha` i registracija, password reset, komentarus, abuse/report ir pasirenkamai login forma.
-- [ ] Ivesti `security headers manager`.
+- [x] Ivesti `security headers manager`.
 - [ ] Prideti `login alerts`.
 - [ ] Prideti `suspicious activity detector`.
 - [ ] Prideti `password reset audit`.
