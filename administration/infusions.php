@@ -11,6 +11,16 @@ if ($developerModeParam !== null) {
 $developerMode = !empty($_SESSION['infusions_developer_mode']);
 $developerToggleUrl = 'infusions.php?developer=' . ($developerMode ? '0' : '1');
 $redirectTarget = 'infusions.php';
+$tabs = [
+    'status' => 'Busena',
+    'available' => 'Rasti moduliai',
+    'installed' => 'Idiegti moduliai',
+    'developer' => 'Developer mode',
+];
+$activeTab = (string)($_GET['tab'] ?? 'status');
+if (!array_key_exists($activeTab, $tabs)) {
+    $activeTab = 'status';
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verify_csrf();
@@ -141,6 +151,15 @@ include THEMES . 'default/admin_header.php';
 <?php if ($error): ?><div class="alert alert-danger"><?= e($error) ?></div><?php endif; ?>
 <?php if ($msg = flash('success')): ?><div class="alert alert-success"><?= e($msg) ?></div><?php endif; ?>
 
+<ul class="nav nav-tabs mb-4">
+    <?php foreach ($tabs as $tabKey => $tabLabel): ?>
+        <li class="nav-item">
+            <a class="nav-link <?= $activeTab === $tabKey ? 'active' : '' ?>" href="infusions.php?tab=<?= e($tabKey) ?>"><?= e($tabLabel) ?></a>
+        </li>
+    <?php endforeach; ?>
+</ul>
+
+<?php if ($activeTab === 'status'): ?>
 <div class="card mb-4">
     <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
         <span>Migracij&#371; b&#363;sena</span>
@@ -205,9 +224,12 @@ include THEMES . 'default/admin_header.php';
         <?php endif; ?>
     </div>
 </div>
+<?php endif; ?>
 
+<?php if ($activeTab === 'available' || $activeTab === 'installed'): ?>
 <div class="row g-4">
-    <div class="col-lg-5">
+    <?php if ($activeTab === 'available'): ?>
+    <div class="col-12">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
                 <span>Neidiegti infusion moduliai</span>
@@ -348,8 +370,10 @@ include THEMES . 'default/admin_header.php';
             </div>
         </div>
     </div>
+    <?php endif; ?>
 
-    <div class="col-lg-7">
+    <?php if ($activeTab === 'installed'): ?>
+    <div class="col-12">
         <div class="card">
             <div class="card-header"><?= e(__('infusions.installed')) ?></div>
             <div class="table-responsive">
@@ -488,15 +512,18 @@ include THEMES . 'default/admin_header.php';
             </div>
         </div>
     </div>
+    <?php endif; ?>
 </div>
+<?php endif; ?>
 
-<?php if ($developerMode): ?>
+<?php if ($activeTab === 'developer'): ?>
 <div class="card mb-4 mt-4">
     <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
         <span>Developer mode</span>
         <span class="badge text-bg-info"><?= e(count($developerSnapshots)) ?> moduliai</span>
     </div>
     <div class="card-body">
+        <?php if ($developerMode): ?>
         <p class="mb-4 text-secondary">Si perziura skirta greitam modulio SDK, manifest, migraciju ir runtime hook&apos;u auditui. Jei modulis isjungtas, hook&apos;ai gali buti nerodomi, nes jie registruojami tik `boot` metu.</p>
 
         <div class="admin-dev-grid">
@@ -723,10 +750,14 @@ include THEMES . 'default/admin_header.php';
                 </details>
             <?php endforeach; ?>
         </div>
+        <?php else: ?>
+            <div class="alert alert-info mb-0">Developer mode isjungtas. Paspauskite virsuje `Ijungti developer mode`, kad matytumete modulio klases, hook&apos;us, migracijas ir manifest detales.</div>
+        <?php endif; ?>
     </div>
 </div>
 <?php endif; ?>
 
+<?php if ($activeTab === 'status'): ?>
 <div class="row g-4 mt-1">
     <div class="col-lg-7">
         <div class="card h-100">
@@ -809,4 +840,5 @@ include THEMES . 'default/admin_header.php';
         </div>
     </div>
 </div>
+<?php endif; ?>
 <?php include THEMES . 'default/admin_footer.php'; ?>
