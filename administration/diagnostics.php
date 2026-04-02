@@ -29,18 +29,17 @@ include THEMES . 'default/admin_header.php';
 ?>
 <div class="<?= e(admin_layout_preset_class('diagnostics', 'admin-layout-diagnostics-shell')) ?>">
 <?php
+$canRebuildSitemap = has_permission($GLOBALS['pdo'], (int)(current_user()['id'] ?? 0), 'settings.manage');
 admin_render_page_header([
     'variant' => 'diagnostics',
     'title' => 'Serverio diagnostika',
     'subtitle' => 'Branduolio ir serverio busena vienoje vietoje',
     'badge_html' => '<span class="badge text-bg-dark">v' . e(app_version()) . '</span>',
-    'actions_html' => has_permission($GLOBALS['pdo'], (int)(current_user()['id'] ?? 0), 'settings.manage')
-        ? '<form method="post" class="d-inline-block">'
-            . csrf_field()
-            . '<input type="hidden" name="action" value="rebuild_sitemap">'
-            . '<button type="submit" class="btn btn-outline-primary admin-action-button"><i class="fa-solid fa-sitemap me-2"></i>Perkurti sitemap.xml</button>'
-            . '</form>'
-        : '',
+    'actions_html' => '<form method="post" class="d-inline-block">'
+        . csrf_field()
+        . '<input type="hidden" name="action" value="rebuild_sitemap">'
+        . '<button type="submit" class="btn btn-outline-primary admin-action-button"' . ($canRebuildSitemap ? '' : ' disabled title="Reikia settings.manage teises"') . '><i class="fa-solid fa-sitemap me-2"></i>Perkurti sitemap.xml</button>'
+        . '</form>',
 ]);
 
 if ($message): ?>
