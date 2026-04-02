@@ -23,6 +23,7 @@
     "pdo_mysql",
     "fileinfo"
   ],
+  "module_class": "App\\Forum\\ForumModule",
   "dependencies": [],
   "conflicts": [],
   "provides": {
