@@ -126,6 +126,7 @@ require_once INCLUDES . 'bbcode.php';
 require_once INCLUDES . 'permissions.php';
 require_once INCLUDES . 'panels.php';
 require_once INCLUDES . 'user_profiles.php';
+require_once INCLUDES . 'content_comments.php';
 require_once INCLUDES . 'functions/pagination.php';
 require_once INCLUDES . 'functions/output.php';
 require_once INCLUDES . 'functions/posts.php';

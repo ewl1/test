@@ -48,6 +48,9 @@ require_permission('downloads.view');
 
 $pdo = $GLOBALS['pdo'];
 $user = current_user();
+$detail_id = (int)($_GET['view'] ?? 0);
+$commentError = null;
+$commentDraft = '';
 
 // Active tab: 'all' or 'mine'
 $tab = ($user && isset($_GET['tab']) && $_GET['tab'] === 'mine') ? 'mine' : 'all';
@@ -73,6 +76,44 @@ $downloads_raw = $pdo->query("
     LEFT JOIN users u ON u.id = d.download_user
     ORDER BY d.download_datestamp DESC
 ")->fetchAll(PDO::FETCH_ASSOC);
+
+$downloadDetail = null;
+if ($detail_id > 0) {
+    $detailStmt = $pdo->prepare("
+        SELECT d.*, u.username AS uploader_name
+        FROM " . DB_DOWNLOADS . " d
+        LEFT JOIN users u ON u.id = d.download_user
+        WHERE d.download_id = :id
+        LIMIT 1
+    ");
+    $detailStmt->execute([':id' => $detail_id]);
+    $downloadDetail = $detailStmt->fetch(PDO::FETCH_ASSOC) ?: null;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    verify_csrf();
+    if (!$user) {
+        abort_http(401, 'Prisijungimas reikalingas.');
+    }
+
+    $commentAction = (string)($_POST['comment_action'] ?? '');
+    if ($commentAction === 'create') {
+        $commentDraft = (string)($_POST['comment'] ?? '');
+        [$ok, $message, $commentId] = create_content_comment('download', (int)($_POST['content_id'] ?? 0), (int)$user['id'], $commentDraft);
+        if ($ok) {
+            flash('content_comment_success', $message);
+            redirect(public_path('downloads.php?view=' . (int)($_POST['content_id'] ?? 0) . '#content-comment-' . (int)$commentId));
+        }
+        $commentError = $message;
+    } elseif ($commentAction === 'delete') {
+        [$ok, $message, $meta] = delete_content_comment((int)($_POST['comment_id'] ?? 0), $user);
+        if ($ok) {
+            flash('content_comment_success', $message);
+            redirect(public_path('downloads.php?view=' . (int)($meta['content_id'] ?? 0)));
+        }
+        $commentError = $message;
+    }
+}
 
 // Group by category
 $by_cat = [];
@@ -103,6 +144,98 @@ if (isset($by_cat[0])) {
 include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
 ?>
 <div class="container my-4">
+    <?php if ($downloadDetail): ?>
+        <?php
+        $successMessage = flash('content_comment_success');
+        $downloadCommentCount = content_comments_count('download', (int)$downloadDetail['download_id']);
+        $downloadCommentPage = max(1, (int)($_GET['page'] ?? 1));
+        $downloadCommentPager = paginate($downloadCommentCount, content_comments_per_page_setting(), $downloadCommentPage);
+        $downloadComments = fetch_content_comments('download', (int)$downloadDetail['download_id'], $downloadCommentPager['per_page'], $downloadCommentPager['offset']);
+        $downloadActionUrl = public_path('downloads.php?action=download&id=' . (int)$downloadDetail['download_id']);
+        ?>
+        <?php if ($successMessage): ?><div class="alert alert-success"><?= e($successMessage) ?></div><?php endif; ?>
+        <?php if ($commentError): ?><div class="alert alert-danger"><?= e($commentError) ?></div><?php endif; ?>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
+                    <div>
+                        <h1 class="h3 mb-2"><?= e($downloadDetail['download_title']) ?></h1>
+                        <div class="small text-secondary mb-3">
+                            Ikelta: <?= e(date('Y-m-d', (int)$downloadDetail['download_datestamp'])) ?>
+                            · Ikeles: <?= e($downloadDetail['uploader_name'] ?? '—') ?>
+                            · Atsisiusta: <?= (int)$downloadDetail['download_count'] ?>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a class="btn btn-primary" href="<?= e($downloadActionUrl) ?>">Atsisiusti</a>
+                        <a class="btn btn-outline-secondary" href="<?= public_path('downloads.php') ?>">Visi siuntiniai</a>
+                    </div>
+                </div>
+                <?php if (!empty($downloadDetail['download_description'])): ?>
+                    <div class="mt-3"><?= nl2br(e((string)$downloadDetail['download_description'])) ?></div>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">Komentarai (<?= (int)$downloadCommentCount ?>)</div>
+            <div class="card-body">
+                <?php if (!$user): ?>
+                    <div class="alert alert-info">Komentuoti gali tik prisijunge nariai.</div>
+                <?php else: ?>
+                    <form method="post" class="mb-4">
+                        <?= csrf_field() ?>
+                        <input type="hidden" name="comment_action" value="create">
+                        <input type="hidden" name="content_id" value="<?= (int)$downloadDetail['download_id'] ?>">
+                        <div class="mb-3">
+                            <label class="form-label" for="download-comment">Komentaras</label>
+                            <textarea class="form-control" id="download-comment" name="comment" rows="5" maxlength="3000" required><?= e($commentDraft) ?></textarea>
+                        </div>
+                        <button class="btn btn-primary">Paskelbti komentara</button>
+                    </form>
+                <?php endif; ?>
+
+                <div class="profile-comments-list">
+                    <?php if (!$downloadComments): ?>
+                        <div class="text-secondary">Komentaru dar nera.</div>
+                    <?php else: ?>
+                        <?php foreach ($downloadComments as $comment): ?>
+                            <article class="profile-comment-item" id="content-comment-<?= (int)$comment['id'] ?>">
+                                <div class="d-flex align-items-start gap-3">
+                                    <a href="<?= user_profile_url((int)$comment['author_user_id']) ?>" class="text-decoration-none">
+                                        <img src="<?= escape_url(user_avatar_url(['avatar' => $comment['author_avatar'] ?? null, 'email' => $comment['author_email'] ?? null])) ?>" alt="" class="member-panel-avatar">
+                                    </a>
+                                    <div class="min-w-0 flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
+                                            <div>
+                                                <a class="fw-semibold text-decoration-none" href="<?= user_profile_url((int)$comment['author_user_id']) ?>"><?= e($comment['author_username'] ?? __('member.none')) ?></a>
+                                                <div class="small text-secondary"><?= e(format_dt($comment['created_at'])) ?></div>
+                                            </div>
+                                            <?php if (can_manage_content_comment($comment, $user)): ?>
+                                                <form method="post">
+                                                    <?= csrf_field() ?>
+                                                    <input type="hidden" name="comment_action" value="delete">
+                                                    <input type="hidden" name="comment_id" value="<?= (int)$comment['id'] ?>">
+                                                    <button class="btn btn-sm btn-outline-danger" type="submit">Trinti</button>
+                                                </form>
+                                            <?php endif; ?>
+                                        </div>
+                                        <div class="profile-comment-body mt-2"><?= content_comment_render_body($comment['content']) ?></div>
+                                    </div>
+                                </div>
+                            </article>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+                <?php if (($downloadCommentPager['pages'] ?? 0) > 1): ?>
+                    <div class="mt-4">
+                        <?= render_pagination(public_path('downloads.php?view=' . (int)$downloadDetail['download_id']), $downloadCommentPager) ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    <?php else: ?>
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h1 class="h3 mb-0"><?= __('downloads.frontend.page.title') ?></h1>
     </div>
@@ -246,6 +379,7 @@ include THEMES . setting('current_theme', CURRENT_THEME) . '/header.php';
     <?php endif; ?>
 </div>
 <?php
+    endif;
 include THEMES . setting('current_theme', CURRENT_THEME) . '/footer.php';
 
 // -------------------------------------------------------------------------
@@ -270,6 +404,7 @@ function render_downloads_table(array $rows): string
             <?php foreach ($rows as $dl): ?>
                 <?php
                     $is_url = !empty($dl['download_url']);
+                    $detail_link = public_path('downloads.php?view=' . (int)$dl['download_id']);
                     $link   = public_path('downloads.php?action=download&id=' . (int)$dl['download_id']);
                     $thumb  = $dl['download_thumbnail'] ?? '';
                 ?>
@@ -286,12 +421,17 @@ function render_downloads_table(array $rows): string
                         <?php endif; ?>
                     </td>
                     <td>
-                        <a href="<?= e($link) ?>"<?= $is_url ? ' target="_blank" rel="noopener noreferrer"' : '' ?>>
+                        <a href="<?= e($detail_link) ?>">
                             <?= e($dl['download_title']) ?>
                         </a>
                         <?php if (!empty($dl['download_description'])): ?>
                             <div class="text-muted small"><?= e($dl['download_description']) ?></div>
                         <?php endif; ?>
+                        <div class="mt-1">
+                            <a class="small text-decoration-none" href="<?= e($link) ?>"<?= $is_url ? ' target="_blank" rel="noopener noreferrer"' : '' ?>>Atsisiusti</a>
+                            <span class="text-muted">·</span>
+                            <a class="small text-decoration-none" href="<?= e($detail_link) ?>">Perziureti</a>
+                        </div>
                     </td>
                     <td class="text-nowrap"><?= $is_url ? '<span class="text-muted">—</span>' : e(format_bytes_human((int)$dl['download_size'])) ?></td>
                     <td><?= (int)$dl['download_count'] ?></td>

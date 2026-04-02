@@ -295,6 +295,19 @@ CREATE TABLE IF NOT EXISTS user_profile_comments (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 SQL,
             <<<'SQL'
+CREATE TABLE IF NOT EXISTS content_comments (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    content_type VARCHAR(50) NOT NULL,
+    content_id INT UNSIGNED NOT NULL,
+    author_user_id INT UNSIGNED NOT NULL,
+    content TEXT NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    KEY idx_content_comments_target (content_type, content_id, created_at, id),
+    KEY idx_content_comments_author (author_user_id, created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+SQL,
+            <<<'SQL'
 CREATE TABLE IF NOT EXISTS ip_bans (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     ip_address VARBINARY(16) NOT NULL,
@@ -364,6 +377,7 @@ SQL,
             ['setting_key' => 'show_banners_visibility', 'setting_value' => 'all'],
             ['setting_key' => 'show_sublinks', 'setting_value' => '1'],
             ['setting_key' => 'profile_comments_per_page', 'setting_value' => '10'],
+            ['setting_key' => 'content_comments_per_page', 'setting_value' => '10'],
             ['setting_key' => 'copyright_text', 'setting_value' => '© Mini CMS Pro'],
             ['setting_key' => 'current_theme', 'setting_value' => 'default'],
             ['setting_key' => 'admin_theme', 'setting_value' => 'default'],

@@ -258,6 +258,7 @@
 - legacy moduliu struktura jau sutarta: `forum`, `news` ir `shoutbox` turi naudoti plonus entrypoint failus ir `support/` skaidyma pagal atsakomybe vietoj monolitiniu `feature_pack` tipo failu.
 - aktyviu moduliu katalogu struktura jau suvienodinama: `forum`, `news` ir `shoutbox` turi ta pacia bazine `assets/`, `locale/` ir `classes/` krypti.
 - manifest lokalizavimo strategija jau sutarta: moduliai naudoja `locale_prefix` ir `*_key / *_keys` laukus, o branduolys lokalizuoja top-level laukus, leidimus, admin meniu, changelog bei `upgrade / rollback` pastabas su fallback i literal manifest tekstus.
+- seed strategija dar laukia: reikia atskirti `default seed`, `demo seed`, lokalizuotus seed duomenis ir saugu seed paleidima per install/upgrade srautus, kad moduliai vienodai pildytu pradines kategorijas, nustatymus ir pavyzdinius irasus.
 - media/embed taisykle jau sutarta: modulis savo leidimus vietiniams paveiksliukams, YouTube embed'ams, limitams ir validacijoms deklaruoja per `manifest.media`, o vykdymas eina per bendra branduolio media sluoksni.
 - vizualiniu busenu taisykle jau sutarta: `featured`, `new`, `locked`, `disabled`, `warning`, `needs_update` pateikiamos per `ModulePresentationContract` badge ir meta laukus, su vienodu ikon ir `tone` zemelapiu viesam bei admin rodiniui.
 - bendra moduliu UI sutartis jau sutarta: moduliai korteles, lenteles, tuscias busenas, pranesimus, antrastes, meta juostas ir integracija i `content/sidebar/full-width` turi gristi bendrais temos komponentais ir neperrasyti puslapio karkaso savavaliskai.

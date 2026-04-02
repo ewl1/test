@@ -72,6 +72,7 @@
 - [ ] Prideti `draft / preview engine`.
 - [ ] Prideti `trash / recycle bin`.
 - [ ] Paruosti `hook debugger` ir `dependency graph` duomenu sluoksni.
+- [ ] Paruosti bendra seed strategija branduoliui ir moduliams: default duomenys, demo duomenys, lokalizuoti seed ir saugus paleidimas per install/upgrade.
 - [ ] Atnaujinti `install.php` vedlio eiga su aiskiais tabais: `Introduction`, `System Requirements`, `Database Settings`, `Primary Admin Details`, `Configure Core System`.
 - [ ] Paruosti `install.php` `Recovery mode`, kuris pakartotinio paleidimo metu rodytu veiksmus: `Cancel and Exit this Installer`, `Change Primary Account Details`, `Core System Installer`, `Rebuild .htaccess`, `Clean Installation`.
 - [ ] Paruosti bendra multi-kalbiu palaikymo branduolio sluoksni: aktyvi kalba, fallback grandine, locale resolveris ir nustatymo API moduliams.

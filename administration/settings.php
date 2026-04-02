@@ -18,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'show_banners_visibility',
         'show_sublinks',
         'profile_comments_per_page',
+        'content_comments_per_page',
         'security_headers_enabled',
         'security_header_hsts',
         'security_header_frame_options',
@@ -148,6 +149,10 @@ admin_render_page_header([
             <div class="col-md-6">
                 <label class="form-label">Profilio komentaru per puslapi</label>
                 <input class="form-control" type="number" min="1" max="100" name="profile_comments_per_page" value="<?= e(setting('profile_comments_per_page', '10')) ?>">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Turinio komentaru per puslapi</label>
+                <input class="form-control" type="number" min="1" max="100" name="content_comments_per_page" value="<?= e(setting('content_comments_per_page', '10')) ?>">
             </div>
         </div>
     </div>
