@@ -1,6 +1,8 @@
 {
   "name": "Naujienos",
+  "name_key": "news.manifest.name",
   "description": "Pavyzdine naujienu infusion.",
+  "description_key": "news.manifest.description",
   "locale_prefix": "news.manifest",
   "version": "1.1.0",
   "author": "OpenAI",
@@ -12,6 +14,7 @@
   "module_class": "App\\News\\NewsModule",
   "default_position": "left",
   "default_panel_name": "Naujienu panele",
+  "default_panel_name_key": "news.manifest.default_panel_name",
   "min_core_version": "1.0.0",
   "min_php_version": "8.0.0",
   "required_extensions": [
@@ -54,18 +57,23 @@
   "permissions": [
     {
       "name": "Naujienu infusion perziura",
+      "name_key": "news.manifest.permissions.news_view.name",
       "slug": "news.view",
-      "description": "Leidzia matyti naujienu infusion duomenis"
+      "description": "Leidzia matyti naujienu infusion duomenis",
+      "description_key": "news.manifest.permissions.news_view.description"
     },
     {
       "name": "Naujienu infusion administravimas",
+      "name_key": "news.manifest.permissions.news_admin.name",
       "slug": "news.admin",
-      "description": "Leidzia valdyti naujienu infusion"
+      "description": "Leidzia valdyti naujienu infusion",
+      "description_key": "news.manifest.permissions.news_admin.description"
     }
   ],
   "admin_menu": [
     {
       "title": "Naujienos",
+      "title_key": "news.manifest.admin_menu.news_admin.title",
       "slug": "news-admin",
       "permission": "news.admin",
       "sort_order": 100

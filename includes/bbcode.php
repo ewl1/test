@@ -16,6 +16,40 @@ function site_smiley_defaults()
     ];
 }
 
+function site_smiley_default_value_for_code($code)
+{
+    $code = site_smiley_normalize_code($code);
+    if ($code === '') {
+        return '';
+    }
+
+    $builtin = [
+        ':)' => html_entity_decode('&#128578;', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+        ';)' => html_entity_decode('&#128521;', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+        ':D' => html_entity_decode('&#128516;', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+        ':(' => html_entity_decode('&#128577;', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+        ':|' => html_entity_decode('&#128528;', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+        ':P' => html_entity_decode('&#128539;', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+        '<3' => html_entity_decode('&#10084;&#65039;', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+    ];
+
+    if (isset($builtin[$code])) {
+        return $builtin[$code];
+    }
+
+    foreach (site_smiley_defaults() as $smiley) {
+        if (($smiley['type'] ?? 'emoji') !== 'emoji') {
+            continue;
+        }
+
+        if (site_smiley_normalize_code($smiley['code'] ?? '') === $code) {
+            return (string)($smiley['value'] ?? '');
+        }
+    }
+
+    return '';
+}
+
 function ensure_site_smiley_schema()
 {
     static $ensured = false;
@@ -274,6 +308,15 @@ function save_site_smiley(array $data, array $imageFile = [], $id = 0)
     } else {
         $value = trim((string)($data['emoji_value'] ?? ''));
         $value = preg_replace('/[\x00-\x1F\x7F]/u', '', $value);
+        if ($value === '' && $existing && ($existing['type'] ?? '') === 'emoji' && !empty($existing['value'])) {
+            $value = trim((string)$existing['value']);
+        }
+        if ($value === '') {
+            $value = site_smiley_default_value_for_code($code);
+        }
+        if ($value === '' && preg_match('/[^\x20-\x7E]/u', $code)) {
+            $value = $code;
+        }
         if ($value === '') {
             return [false, 'Jaustukas yra privalomas.', null];
         }

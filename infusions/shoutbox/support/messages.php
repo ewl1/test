@@ -89,6 +89,9 @@ function shoutbox_create_message($message)
     ]);
 
     audit_log((int)$user['id'], 'shoutbox_post', 'infusion_shoutbox_messages', (int)$GLOBALS['pdo']->lastInsertId());
+    if (function_exists('shoutbox_bot_try_respond')) {
+        shoutbox_bot_try_respond($message);
+    }
     return [true, __('shoutbox.message.created')];
 }
 

@@ -1,6 +1,8 @@
 {
   "name": "Forumas",
+  "name_key": "forum.manifest.name",
   "description": "Pilnas forumo modulis su kategorijomis, subforumais, temomis ir atsakymais.",
+  "description_key": "forum.manifest.description",
   "locale_prefix": "forum.manifest",
   "version": "2.0.0",
   "author": "OpenAI",
@@ -11,6 +13,7 @@
   "upgrade": false,
   "default_position": "right",
   "default_panel_name": "Forumo panele",
+  "default_panel_name_key": "forum.manifest.default_panel_name",
   "min_core_version": "1.0.0",
   "min_php_version": "8.0.0",
   "required_extensions": [
@@ -71,18 +74,23 @@
   "permissions": [
     {
       "name": "Forumo perziura",
+      "name_key": "forum.manifest.permissions.forum_view.name",
       "slug": "forum.view",
-      "description": "Leidzia matyti forumo turini"
+      "description": "Leidzia matyti forumo turini",
+      "description_key": "forum.manifest.permissions.forum_view.description"
     },
     {
       "name": "Forumo administravimas",
+      "name_key": "forum.manifest.permissions.forum_admin.name",
       "slug": "forum.admin",
-      "description": "Leidzia valdyti forumo struktura"
+      "description": "Leidzia valdyti forumo struktura",
+      "description_key": "forum.manifest.permissions.forum_admin.description"
     }
   ],
   "admin_menu": [
     {
       "title": "Forumas",
+      "title_key": "forum.manifest.admin_menu.forum_admin.title",
       "slug": "forum-admin",
       "permission": "forum.admin",
       "sort_order": 110

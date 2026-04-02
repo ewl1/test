@@ -1,16 +1,19 @@
 {
-  "name": "Shoutbox",
-  "description": "Shoutbox infusion su BBCode ir smailais.",
+  "name": "Šaukykla",
+  "name_key": "shoutbox.manifest.name",
+  "description": "Šaukyklos modulis su BBCode ir smailais.",
+  "description_key": "shoutbox.manifest.description",
   "locale_prefix": "shoutbox.manifest",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "OpenAI",
   "admin": true,
   "bootstrap": true,
   "panel": true,
   "schema": true,
-  "upgrade": false,
+  "upgrade": true,
   "default_position": "right",
-  "default_panel_name": "Shoutbox",
+  "default_panel_name": "Šaukykla",
+  "default_panel_name_key": "shoutbox.manifest.default_panel_name",
   "min_core_version": "1.0.0",
   "min_php_version": "8.0.0",
   "required_extensions": [
@@ -50,18 +53,24 @@
     }
   ],
   "upgrade_notes": [],
+  "upgrade_notes": [
+    "Pries atnaujinant rekomenduojama prasukti shoutbox migracijas, kad bot lenteles ir stulpeliai butu suderinti."
+  ],
   "rollback_notes": [],
-  "settings_page": "infusion-admin.php?folder=shoutbox#shoutbox-settings",
+  "settings_page": "infusion-admin.php?folder=shoutbox&tab=settings#shoutbox-settings",
   "permissions": [
     {
-      "name": "Shoutbox moderavimas",
+      "name": "Šaukyklos moderavimas",
+      "name_key": "shoutbox.manifest.permissions.shoutbox_moderate.name",
       "slug": "shoutbox.moderate",
-      "description": "Leidzia moderuoti shoutbox zinutes"
+      "description": "Leidžia moderuoti šaukyklos žinutes",
+      "description_key": "shoutbox.manifest.permissions.shoutbox_moderate.description"
     }
   ],
   "admin_menu": [
     {
-      "title": "Shoutbox",
+      "title": "Šaukykla",
+      "title_key": "shoutbox.manifest.admin_menu.shoutbox_admin.title",
       "slug": "shoutbox-admin",
       "permission": "shoutbox.moderate",
       "sort_order": 120

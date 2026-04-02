@@ -32,3 +32,6 @@
 - [ ] Prideti locale raktus naujienu papildomoms funkcijoms: tagams, planuotam publikavimui, RSS, SEO laukams.
 - [ ] Paruosti struktura papildomoms kalboms (`en`, `pl` ar kt.), jei ju reikes.
 - [ ] Prideti nustatyma administracijoje aktyviai kalbai pasirinkti.
+- [ ] Paruosti pilna multi-kalbiu kalbu strategija: aktyvi kalba, numatytoji kalba, fallback grandine ir locale nustatymas sesijoje / profilyje.
+- [ ] Nuspresti, kurie turinio tipai bus verciami atskirose lentelese, o kurie liks vienakalbiai su lokalizuotu UI.
+- [ ] Paruosti moduliu ir branduolio locale testavimo taisykles, kad nauji raktai nepatektu be vertimu.

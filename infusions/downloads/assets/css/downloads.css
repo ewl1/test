@@ -1,0 +1,29 @@
+/* Downloads Module Styles */
+
+.sdk-module-panel {
+    display: grid;
+    gap: 0.5rem;
+}
+
+/* Tab Styling */
+.downloads-nav-tabs {
+    border-bottom: 2px solid #dee2e6;
+    margin-bottom: 1rem;
+}
+
+.downloads-nav-tabs .nav-link {
+    border: none;
+    color: #6c757d;
+    border-bottom: 3px solid transparent;
+    padding: 0.75rem 1rem;
+    font-weight: 500;
+}
+
+.downloads-nav-tabs .nav-link:hover {
+    color: #495057;
+}
+
+.downloads-nav-tabs .nav-link.active {
+    border-bottom-color: #495057;
+    color: #212529;
+}

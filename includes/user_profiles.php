@@ -70,6 +70,20 @@ function ensure_user_profile_schema()
     }
 
     try {
+        if (!profile_column_exists('users', 'last_login_at')) {
+            $GLOBALS['pdo']->exec('ALTER TABLE users ADD COLUMN last_login_at DATETIME NULL AFTER created_at');
+        }
+    } catch (Throwable $e) {
+    }
+
+    try {
+        if (!profile_column_exists('users', 'last_visit_at')) {
+            $GLOBALS['pdo']->exec('ALTER TABLE users ADD COLUMN last_visit_at DATETIME NULL AFTER last_login_at');
+        }
+    } catch (Throwable $e) {
+    }
+
+    try {
         $GLOBALS['pdo']->exec("
             CREATE TABLE IF NOT EXISTS " . profile_rating_table() . " (
                 id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -239,6 +253,68 @@ function count_user_forum_messages($userId)
     $replies = (int)$replyStmt->fetchColumn();
 
     return $topics + $replies;
+}
+
+function count_authored_profile_comments($userId)
+{
+    $userId = (int)$userId;
+    if ($userId < 1) {
+        return 0;
+    }
+
+    ensure_user_profile_schema();
+
+    $stmt = $GLOBALS['pdo']->prepare('
+        SELECT COUNT(*)
+        FROM ' . profile_comment_table() . '
+        WHERE author_user_id = :user_id
+    ');
+    $stmt->execute([':user_id' => $userId]);
+
+    return (int)$stmt->fetchColumn();
+}
+
+function fetch_user_reputation_summary($userId)
+{
+    $userId = (int)$userId;
+    $shoutboxCount = count_user_shoutbox_messages($userId);
+    $forumCount = count_user_forum_messages($userId);
+    $commentCount = count_authored_profile_comments($userId);
+
+    return [
+        'shoutbox' => $shoutboxCount,
+        'forum' => $forumCount,
+        'comments' => $commentCount,
+        'total' => $shoutboxCount + $forumCount + $commentCount,
+    ];
+}
+
+function user_membership_status_meta(array $user)
+{
+    $roleSlug = strtolower((string)($user['role_slug'] ?? ''));
+    $userId = (int)($user['id'] ?? 0);
+
+    if ($userId > 0 && has_permission($GLOBALS['pdo'], $userId, 'admin.access')) {
+        return [
+            'label' => __('member.status.admin'),
+            'icon' => 'fa-solid fa-crown',
+            'class' => 'is-admin',
+        ];
+    }
+
+    if ($roleSlug === 'moderator') {
+        return [
+            'label' => __('member.status.moderator'),
+            'icon' => 'fa-solid fa-user-shield',
+            'class' => 'is-moderator',
+        ];
+    }
+
+    return [
+        'label' => __('member.status.member'),
+        'icon' => 'fa-solid fa-user',
+        'class' => 'is-member',
+    ];
 }
 
 function profile_rating_options()

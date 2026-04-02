@@ -6,6 +6,33 @@ function render_member_panel()
         return '';
     }
 
+    $isAdmin = has_permission($GLOBALS['pdo'], (int)$user['id'], 'admin.access');
+    $status = user_membership_status_meta($user);
+    $reputation = fetch_user_reputation_summary((int)$user['id']);
+    $dashboardUrl = $isAdmin ? public_path('administration/index.php') : public_path('index.php');
+    $menuLinks = [
+        [
+            'href' => public_path('profile.php'),
+            'label' => __('member.profile.edit'),
+            'icon' => 'fa-solid fa-user-pen',
+        ],
+        [
+            'href' => public_path('messages.php'),
+            'label' => __('member.messages'),
+            'icon' => 'fa-solid fa-envelope',
+        ],
+        [
+            'href' => public_path('members.php'),
+            'label' => __('member.members'),
+            'icon' => 'fa-solid fa-users',
+        ],
+        [
+            'href' => $dashboardUrl,
+            'label' => __('member.dashboard'),
+            'icon' => 'fa-solid fa-gauge-high',
+        ],
+    ];
+
     $html = '<div class="card mb-3 member-panel">';
     $html .= '<div class="card-header">' . e(__('member.panel')) . '</div>';
     $html .= '<div class="card-body">';
@@ -15,17 +42,28 @@ function render_member_panel()
     $html .= '</a>';
     $html .= '<div class="member-panel-meta">';
     $html .= '<a class="member-panel-name text-decoration-none" href="' . e(user_profile_url((int)$user['id'])) . '">' . e($user['username']) . '</a>';
-    $html .= '<div class="text-secondary small">' . e($user['email']) . '</div>';
+    $html .= '<div class="member-panel-status"><span class="member-status-badge ' . e($status['class']) . '"><i class="' . e($status['icon']) . '"></i> ' . e($status['label']) . '</span></div>';
     $html .= '</div></div>';
+    $html .= '<div class="member-panel-reputation mb-3">';
+    $html .= '<div class="member-panel-reputation-label">' . e(__('member.reputation')) . '</div>';
+    $html .= '<div class="member-panel-reputation-total">' . (int)$reputation['total'] . '</div>';
+    $html .= '<div class="member-panel-reputation-breakdown">' . e(__('member.reputation.breakdown', [
+        'shoutbox' => (int)$reputation['shoutbox'],
+        'forum' => (int)$reputation['forum'],
+        'comments' => (int)$reputation['comments'],
+    ])) . '</div>';
+    $html .= '</div>';
+    $html .= '<div class="member-panel-section-title">' . e(__('member.menu')) . '</div>';
     $html .= '<div class="list-group list-group-flush member-panel-links">';
-    if (has_permission($GLOBALS['pdo'], (int)$user['id'], 'admin.access')) {
-        $html .= '<a class="list-group-item list-group-item-action" href="' . e(public_path('administration/index.php')) . '">' . e(__('nav.admin.dashboard')) . '</a>';
+    foreach ($menuLinks as $menuLink) {
+        $html .= '<a class="list-group-item list-group-item-action" href="' . e($menuLink['href']) . '">';
+        $html .= '<i class="member-panel-link-icon ' . e($menuLink['icon']) . '"></i>';
+        $html .= '<span>' . e($menuLink['label']) . '</span>';
+        $html .= '</a>';
     }
-    $html .= '<a class="list-group-item list-group-item-action" href="' . e(public_path('profile.php')) . '">' . e(__('member.profile.edit')) . '</a>';
-    $html .= '<a class="list-group-item list-group-item-action" href="' . e(user_profile_url((int)$user['id'])) . '">' . e(__('member.profile.public')) . '</a>';
     $html .= '<form method="post" action="' . e(public_path('logout.php')) . '" class="mt-3">';
     $html .= csrf_field();
-    $html .= '<button class="btn btn-outline-secondary w-100" type="submit">' . e(__('member.logout')) . '</button>';
+    $html .= '<button class="btn btn-outline-secondary w-100" type="submit"><i class="fa-solid fa-right-from-bracket me-2"></i>' . e(__('member.logout')) . '</button>';
     $html .= '</form>';
     $html .= '</div></div></div>';
 

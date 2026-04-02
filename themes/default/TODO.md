@@ -18,7 +18,7 @@
 ## Svarbus failai
 - `header.php`, `footer.php`: viesas karkasas ir globalus assetai.
 - `admin_header.php`, `admin_footer.php`: administracijos karkasas.
-- `style.css`, `admin.css`: bendri stiliai.
+- `styles.css`, `admin.css`: bendri stiliai.
 
 ## Likusieji darbai
 
@@ -64,7 +64,7 @@
 - neutralus `Admin / Settings / Health` veiksmai palikti tekstiniai, o ikonos islaikytos tik `Install / Upgrade / Enable / Disable / Uninstall` srautuose
 - [ ] `Danger` veiksmus administracijoje vizualiai atskirti nuo neutraliu: ne tik spalva, bet ir vieta, kad `disable / uninstall` nebutu sumaisyti su `admin / settings / health`.
 - [ ] `Infusions` kortelese suvienodinti viena statuso juosta ir viena veiksmu juosta, o perteklines technines badge juostas perkelti i detalu rodini.
-- [ ] Toliau isskaidyti papildomu moduliu stilius is bendro `style.css`.
+- [ ] Toliau isskaidyti papildomu moduliu stilius is bendro `styles.css`.
 - [ ] Apibrezti breakpoint'us viesai ir admin daliai, kad elgsena butu prognozuojama, o ne atsitiktine.
 - [x] Paruosti admin layout sablonus: `dashboard`, `table view`, `form view`, `split settings` ir `diagnostics`.
 - bendra admin layout baze dabar yra `themes/default/admin_layout.php` ir `docs/ADMIN-LAYOUTS.md`

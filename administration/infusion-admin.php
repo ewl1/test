@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/_guard.php';
 require_permission('infusions.manage');
+ob_start();
 
 $folder = trim((string)($_GET['folder'] ?? ''));
 if ($folder === '') {
@@ -25,3 +26,4 @@ try {
 }
 
 include THEMES . 'default/admin_footer.php';
+ob_end_flush();

@@ -50,15 +50,17 @@ $form = [
 
 include THEMES . 'default/admin_header.php';
 ?>
-<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+<div class="mb-4">
     <div>
         <h1 class="h3 mb-1">Šypsenėlių valdymas</h1>
         <div class="admin-page-subtitle">Bendros šypsenėlės forumui, šaukyklai ir profilio komentarams.</div>
     </div>
+    <?php if (false): ?>
     <div class="d-flex flex-wrap gap-2">
         <a class="btn btn-outline-secondary admin-action-button" href="index.php">Admin Dashboard</a>
         <a class="btn btn-outline-primary admin-action-button" href="infusion-admin.php?folder=shoutbox">Šaukyklos administravimas</a>
     </div>
+    <?php endif; ?>
 </div>
 
 <?php if ($message = flash('success')): ?>
@@ -73,14 +75,14 @@ include THEMES . 'default/admin_header.php';
         <div class="card admin-smiley-form-card">
             <div class="card-header"><?= $form['id'] > 0 ? 'Redaguoti šypsenėlę' : 'Nauja šypsenėlė' ?></div>
             <div class="card-body">
-                <form method="post" enctype="multipart/form-data" class="row g-3">
+                <form method="post" enctype="multipart/form-data" class="row g-3" data-smiley-form>
                     <?= csrf_field() ?>
                     <input type="hidden" name="action" value="save">
                     <input type="hidden" name="id" value="<?= (int)$form['id'] ?>">
 
                     <div class="col-md-6">
                         <label class="form-label">Kodas</label>
-                        <input class="form-control" type="text" name="code" maxlength="32" value="<?= e($form['code']) ?>" placeholder=":)">
+                        <input class="form-control" type="text" name="code" maxlength="32" value="<?= e($form['code']) ?>" placeholder=":)" id="smiley-code" data-smiley-code-input>
                         <div class="form-text">Pvz. <code>:)</code>, <code>:D</code>, <code>&lt;3</code>.</div>
                     </div>
 
@@ -91,7 +93,7 @@ include THEMES . 'default/admin_header.php';
 
                     <div class="col-md-6">
                         <label class="form-label">Tipas</label>
-                        <select class="form-select" name="type">
+                        <select class="form-select" name="type" id="smiley-type" data-smiley-type-input>
                             <option value="emoji" <?= $form['type'] === 'emoji' ? 'selected' : '' ?>>Emoji / simbolis</option>
                             <option value="image" <?= $form['type'] === 'image' ? 'selected' : '' ?>>Paveikslėlis</option>
                         </select>
@@ -104,8 +106,8 @@ include THEMES . 'default/admin_header.php';
 
                     <div class="col-12">
                         <label class="form-label">Emoji reikšmė</label>
-                        <input class="form-control" type="text" name="emoji_value" maxlength="32" value="<?= e($form['emoji_value']) ?>" placeholder="🙂">
-                        <div class="form-text">Naudojama tik tada, kai tipas yra <strong>Emoji / simbolis</strong>.</div>
+                        <input class="form-control" type="text" name="emoji_value" maxlength="32" value="<?= e($form['emoji_value']) ?>" placeholder="🙂" id="smiley-emoji-value" data-smiley-emoji-input>
+                        <div class="form-text">Naudojama tik tada, kai tipas yra <strong>Emoji / simbolis</strong>. Jei paliksite tuščią ir kodas bus standartinis, pvz. <code>:)</code>, sistema parinks emoji automatiškai.</div>
                     </div>
 
                     <div class="col-12">

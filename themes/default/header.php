@@ -1,6 +1,6 @@
 <?php
 $me = current_user();
-$themeCss = defined('IN_ADMIN') ? 'themes/default/admin.css' : 'themes/default/style.css';
+$themeCss = defined('IN_ADMIN') ? 'themes/default/admin.css' : 'themes/default/styles.css';
 $registeredStyles = get_registered_page_styles();
 $brandLabel = 'Mini CMS';
 $memberStatus = $me ? user_membership_status_meta($me) : null;
@@ -20,7 +20,7 @@ $memberDashboardUrl = ($me && has_permission($GLOBALS['pdo'], (int)$me['id'], 'a
 <link rel="icon" type="image/png" sizes="32x32" href="<?= public_path('images/favicons/favicon-32x32.png') ?>">
 <link rel="apple-touch-icon" href="<?= public_path('images/favicons/apple-touch-icon.png') ?>">
 <link rel="stylesheet" href="<?= asset_path('themes/default/bootstrap.min.css') ?>">
-<link rel="stylesheet" href="<?= asset_path('themes/default/css/all.min.css') ?>">
+<link rel="stylesheet" href="<?= asset_path('includes/plugins/webicon/fa7/css/all.min.css') ?>">
 <link rel="stylesheet" href="<?= asset_path($themeCss) ?>">
 <?php foreach ($registeredStyles as $stylePath): ?>
 <link rel="stylesheet" href="<?= asset_path($stylePath) ?>">
@@ -39,6 +39,9 @@ $memberDashboardUrl = ($me && has_permission($GLOBALS['pdo'], (int)$me['id'], 'a
 <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="<?= public_path('index.php') ?>"><?= e(__('nav.home')) ?></a></li>
 <li class="nav-item"><a class="nav-link" href="<?= public_path('shoutbox.php') ?>"><?= e(__('nav.shoutbox')) ?></a></li>
+<?php if ($me): ?>
+<li class="nav-item"><a class="nav-link" href="<?= public_path('downloads.php') ?>"><?= e(__('nav.downloads')) ?></a></li>
+<?php endif; ?>
 <li class="nav-item"><a class="nav-link" href="<?= public_path('search.php') ?>"><?= e(__('nav.search')) ?></a></li>
 <?php
 try {

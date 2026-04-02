@@ -50,7 +50,9 @@ CREATE TABLE IF NOT EXISTS users (
     status ENUM('active','inactive','blocked','deleted') NOT NULL DEFAULT 'inactive',
     avatar VARCHAR(255) DEFAULT NULL,
     signature TEXT DEFAULT NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_login_at DATETIME DEFAULT NULL,
+    last_visit_at DATETIME DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 SQL,
             <<<'SQL'

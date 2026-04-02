@@ -34,6 +34,7 @@
 - manifest lokalizacija remiasi `locale_prefix` ir `*_key / *_keys` laukais, o fallback lieka literal tekstai is `manifest.json`
 - lokalizuojami top-level laukai, leidimu pavadinimai/aprasymai, admin meniu pavadinimai, changelog ir `upgrade / rollback` pastabos
 - locale raktai gyvena `infusions/<modulis>/locale/<locale>.php`, ne root `locale/`
+- [ ] Paruosti moduliu multi-kalbiu palaikymo krypti: ne tik UI locale failus, bet ir taisykles, kaip ateityje versis moduliu turinys, kategorijos, nustatymai ir admin formu laukai.
 - [x] Apibrezti bendra moduliu UI sutarti:
 - korteles, lenteles, tuscios busenos ir info/klaidu pranesimai turi remtis bendrais temos komponentais, o ne modulio atsitiktiniais vienkartiniais stiliais
 - admin veiksmu mygtukai ir sveikatos badge turi naudoti vienoda `tone`, ikonografijos ir isdestymo kalba

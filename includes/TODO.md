@@ -72,11 +72,15 @@
 - [ ] Prideti `draft / preview engine`.
 - [ ] Prideti `trash / recycle bin`.
 - [ ] Paruosti `hook debugger` ir `dependency graph` duomenu sluoksni.
+- [ ] Atnaujinti `install.php` vedlio eiga su aiskiais tabais: `Introduction`, `System Requirements`, `Database Settings`, `Primary Admin Details`, `Configure Core System`.
+- [ ] Paruosti `install.php` `Recovery mode`, kuris pakartotinio paleidimo metu rodytu veiksmus: `Cancel and Exit this Installer`, `Change Primary Account Details`, `Core System Installer`, `Rebuild .htaccess`, `Clean Installation`.
+- [ ] Paruosti bendra multi-kalbiu palaikymo branduolio sluoksni: aktyvi kalba, fallback grandine, locale resolveris ir nustatymo API moduliams.
 
 ### Saugumas
 - [ ] Toliau mazinti hardcoded tekstus helperiuose ir baigti locale perkelima.
 - [ ] Prideti daugiau smoke test helperiu svarbiausiems srautams.
 - [ ] Ivesti vieninga cache sluoksni su `APCu` arba failu fallback.
+- [ ] Prideti branduolio helperi, kuris aptinka palikta `install.php` po idiegimo ir leidzia rodyti admin-only kritini ispejima.
 - [ ] Paruosti bendra `captcha` sluoksni branduoliui su galimybe ijungti ji atskiroms formoms.
 - [ ] Apibrezti `captcha` providerius: vietinis klausimas, honeypot ir pasirenkamas isorinis provideris.
 - [ ] Prideti `captcha` eskalavima po rate-limit ar itartinos veiklos.

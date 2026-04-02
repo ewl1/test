@@ -240,6 +240,69 @@ function fetch_user_for_session($userId)
     return $stmt->fetch() ?: null;
 }
 
+function record_user_login_activity($userId)
+{
+    $userId = (int)$userId;
+    if ($userId < 1) {
+        return;
+    }
+
+    if (function_exists('ensure_user_profile_schema')) {
+        ensure_user_profile_schema();
+    }
+
+    try {
+        $stmt = $GLOBALS['pdo']->prepare('
+            UPDATE users
+            SET last_login_at = NOW(),
+                last_visit_at = NOW()
+            WHERE id = :id
+        ');
+        $stmt->execute([':id' => $userId]);
+    } catch (Throwable $e) {
+    }
+
+    $_SESSION['user_activity_touch'][$userId] = time();
+    if (!empty($_SESSION['user']['id']) && (int)$_SESSION['user']['id'] === $userId) {
+        $now = date('Y-m-d H:i:s');
+        $_SESSION['user']['last_login_at'] = $now;
+        $_SESSION['user']['last_visit_at'] = $now;
+    }
+}
+
+function touch_current_user_visit($userId = null)
+{
+    static $handled = [];
+
+    $userId = $userId !== null ? (int)$userId : (int)($_SESSION['user']['id'] ?? 0);
+    if ($userId < 1 || isset($handled[$userId])) {
+        return;
+    }
+    $handled[$userId] = true;
+
+    $now = time();
+    $lastTouch = (int)($_SESSION['user_activity_touch'][$userId] ?? 0);
+    if ($lastTouch > 0 && ($now - $lastTouch) < 300) {
+        return;
+    }
+
+    if (function_exists('ensure_user_profile_schema')) {
+        ensure_user_profile_schema();
+    }
+
+    try {
+        $stmt = $GLOBALS['pdo']->prepare('UPDATE users SET last_visit_at = NOW() WHERE id = :id');
+        $stmt->execute([':id' => $userId]);
+    } catch (Throwable $e) {
+        return;
+    }
+
+    $_SESSION['user_activity_touch'][$userId] = $now;
+    if (!empty($_SESSION['user']['id']) && (int)$_SESSION['user']['id'] === $userId) {
+        $_SESSION['user']['last_visit_at'] = date('Y-m-d H:i:s', $now);
+    }
+}
+
 function login($email, $password)
 {
     $email = normalize_email($email);
@@ -291,6 +354,7 @@ function login($email, $password)
     session_regenerate_id(true);
     $_SESSION['user'] = $user;
     unset($_SESSION['admin_authenticated']);
+    record_user_login_activity((int)$user['id']);
     audit_log((int)$user['id'], 'login_success', 'users', (int)$user['id']);
     return true;
 }
@@ -351,6 +415,7 @@ function login_admin($email, $password)
     session_regenerate_id(true);
     $_SESSION['user'] = $user;
     $_SESSION['admin_authenticated'] = true;
+    record_user_login_activity((int)$user['id']);
     audit_log((int)$user['id'], 'admin_login_success', 'users', (int)$user['id']);
     return true;
 }
@@ -459,6 +524,10 @@ function current_user()
 
     if (!$resolved) {
         $cached = empty($_SESSION['user']['id']) ? null : sync_session_user((int)$_SESSION['user']['id']);
+        if ($cached) {
+            touch_current_user_visit((int)$cached['id']);
+            $cached = $_SESSION['user'] ?? $cached;
+        }
         $resolved = true;
     }
 

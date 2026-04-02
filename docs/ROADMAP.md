@@ -11,6 +11,7 @@
 - `v1.3` skirtas moduliu brandinimui: forumui, naujienoms, komentarams ir reakcijoms.
 - `v1.4` skirtas branduolio paslaugoms, versijoms ir atnaujinimu platformai.
 - `v1.5` skirtas SEO, GEO/AI-friendly turiniui ir optimizacijai.
+- Greta siu etapu toliau brandinama locale kryptis iki pilno multi-kalbiu palaikymo branduolyje ir moduliuose.
 
 ## Horizontali dizaino ir UX kryptis
 

@@ -1,0 +1,91 @@
+{
+    "name": "Atsisiuntimai",
+    "description": "Failų atsisiuntimų modulis",
+    "locale_prefix": "downloads.manifest",
+    "version": "1.0.1",
+    "author": "MiniCMS SDK",
+    "admin": true,
+    "bootstrap": true,
+    "panel": true,
+    "main_page": "downloads.php",
+    "schema": true,
+    "upgrade": true,
+    "default_position": "right",
+    "default_panel_name": "Atsisiuntimai",
+    "min_core_version": "1.0.0",
+    "min_php_version": "8.0.0",
+    "required_extensions": [
+        "json",
+        "pdo",
+        "pdo_mysql"
+    ],
+    "module_class": "App\\Downloads\\DownloadsModule",
+    "dependencies": [],
+    "conflicts": [],
+    "permissions": [
+        {
+            "name": "Leidzia matyti atsisiuntimus",
+            "slug": "downloads.view",
+            "description": "Leidzia matyti atsisiuntimų sąrašą"
+        },
+        {
+            "name": "Leidzia įkelti atsisiuntimus",
+            "slug": "downloads.upload",
+            "description": "Leidžia įkelti naujus failus į atsisiuntimų modulį"
+        },
+        {
+            "name": "Atsisiuntimų administravimas",
+            "slug": "downloads.admin",
+            "description": "Leidžia valdyti atsisiuntimų modulį: kategorijas, failus, nustatymus"
+        }
+    ],
+    "provides": {
+        "panels": [
+            "downloads"
+        ],
+        "permissions": [
+            "downloads.view",
+            "downloads.upload",
+            "downloads.admin"
+        ],
+        "hooks": [],
+        "search_sources": ["downloads"]
+    },
+    "changelog": [
+        {
+            "version": "1.0.1",
+            "title": "Pilnas perrašymas ir lokalizacija",
+            "date": "2026-04-01",
+            "notes": [
+                "Modulis perrašytas iš naujo: pašalintos Gemini klaidos, perdirbta admin, frontend ir panel logika.",
+                "Admin puslapis suskaidytas į tris Bootstrap 5 korteles: kategorijos, atsisiuntimai, nustatymai.",
+                "Visi UI tekstai perkelti į locale/lt.php, naudojama __() funkcija.",
+                "Pridėta failo tipo ikona pagal plėtinį (FA7): pdf, zip, exe, dmg, apk, iso ir kt.",
+                "Pridėta išorinių URL palaikymas šalia failo įkėlimo.",
+                "Modulio nustatymai (maks. failo dydis, thumbnail) saugomi site_settings lentelėje.",
+                "downloads_file_icon() helper funkcija pridėta į bootstrap.php."
+            ]
+        },
+        {
+            "version": "1.0.0",
+            "title": "Pradinė versija",
+            "date": "2026-03-30",
+            "notes": [
+                "Sukurtas pradinis modulio karkasas (DB schema, manifest, teisės)."
+            ]
+        }
+    ],
+    "upgrade_notes": [],
+    "rollback_notes": [],
+    "settings_page": "infusion-admin.php?folder=downloads#settings",
+    "diagnostics_page": "infusions.php?developer=1#infusion-dev-downloads",
+    "admin_menu": [
+        {
+            "title": "Atsisiuntimų valdymas",
+            "slug": "downloads-admin",
+            "url": "administration/infusion-admin.php?folder=downloads",
+            "permission": "downloads.admin",
+            "sort_order": 200
+        }
+    ]
+}
