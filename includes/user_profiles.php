@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/content_comments.php';
+
 function profile_table_exists($table)
 {
     static $cache = [];
@@ -116,6 +118,8 @@ function ensure_user_profile_schema()
         ");
     } catch (Throwable $e) {
     }
+
+    migrate_legacy_profile_comments();
 }
 
 function clean_user_signature($signature, $maxLength = 500)
@@ -266,10 +270,14 @@ function count_authored_profile_comments($userId)
 
     $stmt = $GLOBALS['pdo']->prepare('
         SELECT COUNT(*)
-        FROM ' . profile_comment_table() . '
-        WHERE author_user_id = :user_id
+        FROM ' . content_comments_table() . '
+        WHERE content_type = :content_type
+          AND author_user_id = :user_id
     ');
-    $stmt->execute([':user_id' => $userId]);
+    $stmt->execute([
+        ':content_type' => 'profile',
+        ':user_id' => $userId,
+    ]);
 
     return (int)$stmt->fetchColumn();
 }
@@ -351,12 +359,7 @@ function profile_prepare_comment_body($content, $maxLength = 2000)
 
 function profile_render_comment_body($content)
 {
-    $html = bbcode_to_html((string)$content, [
-        'allowed_tags' => profile_comment_allowed_tags(),
-        'max_length' => 2000,
-    ]);
-
-    return apply_site_smileys($html, 'profile-comment-smiley');
+    return content_comment_render_body((string)$content);
 }
 
 function profile_comment_excerpt($content, $length = 120)
@@ -456,10 +459,14 @@ function count_profile_comments($profileUserId)
 
     $stmt = $GLOBALS['pdo']->prepare('
         SELECT COUNT(*)
-        FROM ' . profile_comment_table() . '
-        WHERE profile_user_id = :profile_user_id
+        FROM ' . content_comments_table() . '
+        WHERE content_type = :content_type
+          AND content_id = :profile_user_id
     ');
-    $stmt->execute([':profile_user_id' => (int)$profileUserId]);
+    $stmt->execute([
+        ':content_type' => 'profile',
+        ':profile_user_id' => (int)$profileUserId,
+    ]);
 
     return (int)$stmt->fetchColumn();
 }
@@ -473,22 +480,31 @@ function fetch_profile_comment($commentId)
                author.username AS author_username,
                author.avatar AS author_avatar,
                author.email AS author_email,
-               profile_user.username AS profile_username
-        FROM ' . profile_comment_table() . ' c
+               profile_user.username AS profile_username,
+               c.content_id AS profile_user_id
+        FROM ' . content_comments_table() . ' c
         LEFT JOIN users author ON author.id = c.author_user_id
-        LEFT JOIN users profile_user ON profile_user.id = c.profile_user_id
+        LEFT JOIN users profile_user ON profile_user.id = c.content_id
         WHERE c.id = :id
+          AND c.content_type = :content_type
         LIMIT 1
     ');
-    $stmt->execute([':id' => (int)$commentId]);
+    $stmt->execute([
+        ':id' => (int)$commentId,
+        ':content_type' => 'profile',
+    ]);
 
     return $stmt->fetch() ?: null;
 }
 
 function profile_comments_per_page_setting()
 {
-    $value = (int)setting('profile_comments_per_page', 10);
-    return max(1, min(100, $value));
+    $legacyValue = (int)setting('profile_comments_per_page', 0);
+    if ($legacyValue > 0) {
+        return max(1, min(100, $legacyValue));
+    }
+
+    return content_comments_per_page_setting();
 }
 
 function fetch_profile_comments($profileUserId, $limit = 20, $offset = 0)
@@ -502,15 +518,20 @@ function fetch_profile_comments($profileUserId, $limit = 20, $offset = 0)
                author.username AS author_username,
                author.avatar AS author_avatar,
                author.email AS author_email,
-               profile_user.username AS profile_username
-        FROM ' . profile_comment_table() . ' c
+               profile_user.username AS profile_username,
+               c.content_id AS profile_user_id
+        FROM ' . content_comments_table() . ' c
         LEFT JOIN users author ON author.id = c.author_user_id
-        LEFT JOIN users profile_user ON profile_user.id = c.profile_user_id
-        WHERE c.profile_user_id = :profile_user_id
+        LEFT JOIN users profile_user ON profile_user.id = c.content_id
+        WHERE c.content_type = :content_type
+          AND c.content_id = :profile_user_id
         ORDER BY c.created_at DESC, c.id DESC
         LIMIT ' . $limit . ' OFFSET ' . $offset
     );
-    $stmt->execute([':profile_user_id' => (int)$profileUserId]);
+    $stmt->execute([
+        ':content_type' => 'profile',
+        ':profile_user_id' => (int)$profileUserId,
+    ]);
 
     return $stmt->fetchAll();
 }
@@ -525,10 +546,12 @@ function fetch_latest_profile_comments($limit = 5)
                author.username AS author_username,
                author.avatar AS author_avatar,
                author.email AS author_email,
-               profile_user.username AS profile_username
-        FROM ' . profile_comment_table() . ' c
+               profile_user.username AS profile_username,
+               c.content_id AS profile_user_id
+        FROM ' . content_comments_table() . ' c
         LEFT JOIN users author ON author.id = c.author_user_id
-        LEFT JOIN users profile_user ON profile_user.id = c.profile_user_id
+        LEFT JOIN users profile_user ON profile_user.id = c.content_id
+        WHERE c.content_type = \'profile\'
         ORDER BY c.created_at DESC, c.id DESC
         LIMIT ' . $limit
     );
@@ -569,20 +592,10 @@ function create_profile_comment($profileUserId, $authorUserId, $content)
         return [false, __('profile.comment.empty'), null];
     }
 
-    $stmt = $GLOBALS['pdo']->prepare('
-        INSERT INTO ' . profile_comment_table() . ' (profile_user_id, author_user_id, content, created_at, updated_at)
-        VALUES (:profile_user_id, :author_user_id, :content, NOW(), NOW())
-    ');
-    $stmt->execute([
-        ':profile_user_id' => $profileUserId,
-        ':author_user_id' => $authorUserId,
-        ':content' => $content,
-    ]);
-
-    $commentId = (int)$GLOBALS['pdo']->lastInsertId();
-    audit_log($authorUserId, 'profile_comment_create', profile_comment_table(), $commentId, [
-        'profile_user_id' => $profileUserId,
-    ]);
+    [$ok, $message, $commentId] = create_content_comment('profile', $profileUserId, $authorUserId, $content);
+    if (!$ok) {
+        return [false, $message, null];
+    }
 
     return [true, __('profile.comment.saved'), $commentId];
 }
@@ -599,11 +612,14 @@ function delete_profile_comment($commentId, $actor = null)
         return [false, __('profile.comment.delete_denied'), null];
     }
 
-    $stmt = $GLOBALS['pdo']->prepare('DELETE FROM ' . profile_comment_table() . ' WHERE id = :id');
-    $stmt->execute([':id' => (int)$comment['id']]);
+    $stmt = $GLOBALS['pdo']->prepare('DELETE FROM ' . content_comments_table() . ' WHERE id = :id AND content_type = :content_type');
+    $stmt->execute([
+        ':id' => (int)$comment['id'],
+        ':content_type' => 'profile',
+    ]);
 
     $actorId = $actor['id'] ?? current_user()['id'] ?? null;
-    audit_log($actorId, 'profile_comment_delete', profile_comment_table(), (int)$comment['id'], [
+    audit_log($actorId, 'profile_comment_delete', content_comments_table(), (int)$comment['id'], [
         'profile_user_id' => (int)$comment['profile_user_id'],
     ]);
     if ($actorId && ((int)$actorId !== (int)$comment['author_user_id'] || has_permission($GLOBALS['pdo'], (int)$actorId, 'admin.access'))) {
@@ -619,6 +635,40 @@ function delete_profile_comment($commentId, $actor = null)
     }
 
     return [true, __('profile.comment.deleted'), (int)$comment['profile_user_id']];
+}
+
+function migrate_legacy_profile_comments()
+{
+    static $migrated = false;
+    if ($migrated) {
+        return;
+    }
+
+    $migrated = true;
+
+    if (!profile_table_exists(profile_comment_table())) {
+        return;
+    }
+
+    ensure_content_comments_schema();
+
+    try {
+        $GLOBALS['pdo']->exec('
+            INSERT INTO ' . content_comments_table() . ' (content_type, content_id, author_user_id, content, created_at, updated_at)
+            SELECT \'profile\', legacy.profile_user_id, legacy.author_user_id, legacy.content, legacy.created_at, legacy.updated_at
+            FROM ' . profile_comment_table() . ' legacy
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM ' . content_comments_table() . ' cc
+                WHERE cc.content_type = \'profile\'
+                  AND cc.content_id = legacy.profile_user_id
+                  AND cc.author_user_id = legacy.author_user_id
+                  AND cc.content = legacy.content
+                  AND cc.created_at = legacy.created_at
+            )
+        ');
+    } catch (Throwable $e) {
+    }
 }
 
 function render_profile_rating_stars($averageRating, $ratingCount)
