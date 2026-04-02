@@ -5,6 +5,11 @@ function content_comments_table()
     return 'content_comments';
 }
 
+function content_comment_editable_types()
+{
+    return ['profile', 'news', 'download'];
+}
+
 function ensure_content_comments_schema()
 {
     static $ensured = false;
@@ -38,6 +43,43 @@ function content_comments_per_page_setting()
     return max(1, min(100, $value));
 }
 
+function content_comment_flood_window_setting()
+{
+    $value = (int)setting('content_comments_flood_seconds', 30);
+    return max(3, min(3600, $value));
+}
+
+function content_comment_rate_limit_setting()
+{
+    $value = (int)setting('content_comments_rate_limit_count', 5);
+    return max(1, min(100, $value));
+}
+
+function content_comment_rate_limit_window_setting()
+{
+    $value = (int)setting('content_comments_rate_limit_window_seconds', 300);
+    return max(30, min(86400, $value));
+}
+
+function content_comment_badwords_setting()
+{
+    $raw = trim((string)setting('content_comments_badwords', ''));
+    if ($raw === '') {
+        return [];
+    }
+
+    $parts = preg_split('/[\r\n,;]+/u', $raw) ?: [];
+    $words = [];
+    foreach ($parts as $part) {
+        $word = trim(mb_strtolower((string)$part));
+        if ($word !== '') {
+            $words[] = $word;
+        }
+    }
+
+    return array_values(array_unique($words));
+}
+
 function content_comment_allowed_tags()
 {
     return ['b', 'i', 'u', 'quote', 'url', 'img', 'youtube'];
@@ -57,6 +99,142 @@ function content_comment_render_body($content)
     ]);
 
     return apply_site_smileys($html, 'content-comment-smiley');
+}
+
+function content_comment_rate_limit_targets($contentType, $authorUserId)
+{
+    $targets = [];
+    $authorUserId = (int)$authorUserId;
+    $ip = rate_limit_client_ip();
+    $maxAttempts = content_comment_rate_limit_setting();
+    $windowSeconds = content_comment_rate_limit_window_setting();
+
+    if ($authorUserId > 0) {
+        $targets[] = [
+            'scope' => 'content_comment.user.' . trim((string)$contentType),
+            'identifier' => (string)$authorUserId,
+            'max_attempts' => $maxAttempts,
+            'window_seconds' => $windowSeconds,
+            'lockout_seconds' => $windowSeconds,
+        ];
+    }
+
+    if ($ip !== '') {
+        $targets[] = [
+            'scope' => 'content_comment.ip.' . trim((string)$contentType),
+            'identifier' => $ip,
+            'max_attempts' => $maxAttempts,
+            'window_seconds' => $windowSeconds,
+            'lockout_seconds' => $windowSeconds,
+        ];
+    }
+
+    return $targets;
+}
+
+function fetch_latest_content_comment_timestamp($contentType, $authorUserId)
+{
+    ensure_content_comments_schema();
+
+    $stmt = $GLOBALS['pdo']->prepare('
+        SELECT created_at
+        FROM ' . content_comments_table() . '
+        WHERE content_type = :content_type
+          AND author_user_id = :author_user_id
+        ORDER BY id DESC
+        LIMIT 1
+    ');
+    $stmt->execute([
+        ':content_type' => (string)$contentType,
+        ':author_user_id' => (int)$authorUserId,
+    ]);
+
+    return $stmt->fetchColumn() ?: null;
+}
+
+function content_comment_badwords_match($content)
+{
+    $haystack = mb_strtolower(trim((string)$content));
+    if ($haystack === '') {
+        return null;
+    }
+
+    foreach (content_comment_badwords_setting() as $word) {
+        if ($word !== '' && mb_stripos($haystack, $word) !== false) {
+            return $word;
+        }
+    }
+
+    return null;
+}
+
+function content_comment_spam_score($content)
+{
+    $score = 0;
+    $content = trim((string)$content);
+    if ($content === '') {
+        return $score;
+    }
+
+    if (preg_match_all('~https?://~i', $content) >= 3) {
+        $score += 2;
+    }
+
+    if (preg_match('/(.)\\1{7,}/u', $content)) {
+        $score += 1;
+    }
+
+    if (preg_match('/[A-ZĄČĘĖĮŠŲŪŽ]{12,}/u', $content)) {
+        $score += 1;
+    }
+
+    if (mb_strlen($content) > 0) {
+        $upper = preg_match_all('/\p{Lu}/u', $content);
+        $letters = preg_match_all('/\p{L}/u', $content);
+        if ($letters > 0 && ($upper / $letters) > 0.7) {
+            $score += 1;
+        }
+    }
+
+    return $score;
+}
+
+function validate_content_comment_submission($contentType, $contentId, $authorUserId, $content)
+{
+    $contentType = trim((string)$contentType);
+    $contentId = (int)$contentId;
+    $authorUserId = (int)$authorUserId;
+
+    if ($contentType === '' || $contentId < 1 || $authorUserId < 1) {
+        return [false, 'Komentuoti galima tik prisijungus ir ant esamo turinio.'];
+    }
+
+    $rateLimit = rate_limit_status(content_comment_rate_limit_targets($contentType, $authorUserId));
+    if (!empty($rateLimit['blocked'])) {
+        return [false, 'Komentuojate per daznai. Palaukite ' . format_wait_time((int)$rateLimit['retry_after']) . '.'];
+    }
+
+    $lastCreatedAt = fetch_latest_content_comment_timestamp($contentType, $authorUserId);
+    if ($lastCreatedAt) {
+        $lastTs = strtotime((string)$lastCreatedAt) ?: 0;
+        $wait = content_comment_flood_window_setting() - (time() - $lastTs);
+        if ($wait > 0) {
+            return [false, 'Tarp komentaru turi buti bent ' . content_comment_flood_window_setting() . ' s pertrauka. Likusios ' . $wait . ' s.'];
+        }
+    }
+
+    $badword = content_comment_badwords_match($content);
+    if ($badword !== null) {
+        rate_limit_hit(content_comment_rate_limit_targets($contentType, $authorUserId));
+        return [false, 'Komentare yra neleistinas zodis: ' . $badword . '.'];
+    }
+
+    if (content_comment_spam_score($content) >= 2) {
+        rate_limit_hit(content_comment_rate_limit_targets($contentType, $authorUserId));
+        return [false, 'Komentaras atrodo kaip spam arba triuksmingas tekstas. Pataisykite ji ir bandykite dar karta.'];
+    }
+
+    return [true, null];
 }
 
 function content_comments_count($contentType, $contentId)
@@ -132,11 +310,13 @@ function create_content_comment($contentType, $contentId, $authorUserId, $conten
     $authorUserId = (int)$authorUserId;
     $content = content_comment_prepare_body($content, 3000);
 
-    if ($contentType === '' || $contentId < 1 || $authorUserId < 1) {
-        return [false, 'Komentuoti galima tik prisijungus ir ant esamo turinio.', null];
-    }
     if ($content === '') {
         return [false, 'Komentaras negali buti tuscias.', null];
+    }
+
+    [$valid, $error] = validate_content_comment_submission($contentType, $contentId, $authorUserId, $content);
+    if (!$valid) {
+        return [false, $error, null];
     }
 
     $stmt = $GLOBALS['pdo']->prepare('
@@ -155,6 +335,7 @@ function create_content_comment($contentType, $contentId, $authorUserId, $conten
         'content_type' => $contentType,
         'content_id' => $contentId,
     ]);
+    rate_limit_hit(content_comment_rate_limit_targets($contentType, $authorUserId));
 
     return [true, 'Komentaras paskelbtas.', $commentId];
 }
@@ -204,4 +385,3 @@ function delete_content_comment($commentId, $actor = null)
         'content_id' => (int)$comment['content_id'],
     ]];
 }
-

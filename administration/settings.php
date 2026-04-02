@@ -19,6 +19,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'show_sublinks',
         'profile_comments_per_page',
         'content_comments_per_page',
+        'content_comments_flood_seconds',
+        'content_comments_rate_limit_count',
+        'content_comments_rate_limit_window_seconds',
+        'content_comments_badwords',
         'security_headers_enabled',
         'security_header_hsts',
         'security_header_frame_options',
@@ -153,6 +157,23 @@ admin_render_page_header([
             <div class="col-md-6">
                 <label class="form-label">Turinio komentaru per puslapi</label>
                 <input class="form-control" type="number" min="1" max="100" name="content_comments_per_page" value="<?= e(setting('content_comments_per_page', '10')) ?>">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Komentaru flood tarpas sekundemis</label>
+                <input class="form-control" type="number" min="3" max="3600" name="content_comments_flood_seconds" value="<?= e(setting('content_comments_flood_seconds', '30')) ?>">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Komentaru limitas lange</label>
+                <input class="form-control" type="number" min="1" max="100" name="content_comments_rate_limit_count" value="<?= e(setting('content_comments_rate_limit_count', '5')) ?>">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Komentaru rate limit langas sekundemis</label>
+                <input class="form-control" type="number" min="30" max="86400" name="content_comments_rate_limit_window_seconds" value="<?= e(setting('content_comments_rate_limit_window_seconds', '300')) ?>">
+            </div>
+            <div class="col-12">
+                <label class="form-label">Komentaru badwords</label>
+                <textarea class="form-control" name="content_comments_badwords" rows="4" placeholder="zodis1&#10;zodis2&#10;zodis3"><?= e(setting('content_comments_badwords', '')) ?></textarea>
+                <div class="form-text">Po viena zodi eiluteje arba atskirkite kableliais.</div>
             </div>
         </div>
     </div>

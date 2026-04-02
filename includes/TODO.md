@@ -121,7 +121,8 @@
 - [ ] Prideti komentaru `quote / mention / reaction / report` galimybes.
 - [ ] Prideti komentaru rusiavima: naujausi, seniausi, populiariausi.
 - [x] Prideti komentaru puslapiavima ir nustatyma, kiek komentaru rodyti.
-- [ ] Prideti komentaru `flood control`, rate limits ir anti-spam tikrinimus.
+- [x] Prideti komentaru `flood control`, rate limits ir anti-spam tikrinimus.
+- [x] Prideti komentaru `badwords` filtra per nustatymus.
 - [ ] Prideti komentaru prenumeratas ir pranesimu centro ivykius.
 - [ ] Prideti komentaru autoriaus role/badge/status rodyma prie komentaro korteles.
 - [ ] Prideti komentaru paieskos ir administracinio filtravimo sluoksni.

@@ -201,7 +201,7 @@
 - `flat` ir `threaded` scenarijai pagal poreiki
 - moderavimo busenos ir `soft delete / restore`
 - `quote`, `mention`, `reaction`, `report`
-- komentaru puslapiavimas ir limito nustatymas jau veikia; liko rusiavimas ir bendras comments engine suvienodinimas
+- komentaru puslapiavimas, limitai, bendras comments engine, `flood control`, `rate limits`, anti-spam ir `badwords` filtras jau veikia; liko rusiavimas ir gilesne moderavimo/notification logika
 - prenumeratos ir pranesimu centro ivykiu sluoksnis
 - komentaru `policy` sluoksnis: ar modulis leidzia komentarus, kokias teises ir koki renderi naudoja
 - reactions
