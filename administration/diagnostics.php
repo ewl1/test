@@ -2,6 +2,22 @@
 require_once __DIR__ . '/_guard.php';
 require_any_permission(['settings.manage', 'logs.view']);
 
+$message = null;
+$messageType = 'success';
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && (string)($_POST['action'] ?? '') === 'rebuild_sitemap') {
+    verify_csrf();
+    require_permission('settings.manage');
+
+    $result = sitemap_rebuild();
+    if ($result['ok']) {
+        $message = 'Sitemap perkurta: ' . (int)$result['entries'] . ' URL, ' . (int)$result['bytes'] . ' B.';
+        $messageType = 'success';
+    } else {
+        $message = 'Sitemap nepavyko perkurti.';
+        $messageType = 'danger';
+    }
+}
+
 $diagnostics = app_runtime_diagnostics();
 $opcache = $diagnostics['server']['opcache'];
 
@@ -18,7 +34,18 @@ admin_render_page_header([
     'title' => 'Serverio diagnostika',
     'subtitle' => 'Branduolio ir serverio busena vienoje vietoje',
     'badge_html' => '<span class="badge text-bg-dark">v' . e(app_version()) . '</span>',
+    'actions_html' => has_permission($GLOBALS['pdo'], (int)(current_user()['id'] ?? 0), 'settings.manage')
+        ? '<form method="post" class="d-inline-block">'
+            . csrf_field()
+            . '<input type="hidden" name="action" value="rebuild_sitemap">'
+            . '<button type="submit" class="btn btn-outline-primary admin-action-button"><i class="fa-solid fa-sitemap me-2"></i>Perkurti sitemap.xml</button>'
+            . '</form>'
+        : '',
 ]);
+
+if ($message): ?>
+    <div class="alert alert-<?= e($messageType) ?> mb-4"><?= e($message) ?></div>
+<?php endif;
 
 admin_render_stat_strip([
     [
@@ -165,6 +192,11 @@ admin_render_stat_strip([
                                 <td><span class="badge <?= $badgeClass($pathInfo['writable']) ?>"><?= $pathInfo['writable'] ? 'Taip' : 'Ne' ?></span></td>
                             </tr>
                         <?php endforeach; ?>
+                        <tr>
+                            <td><code class="admin-path-code admin-path-code-strong"><?= e(sitemap_path()) ?></code></td>
+                            <td><span class="badge <?= $badgeClass(is_file(sitemap_path())) ?>"><?= is_file(sitemap_path()) ? 'Taip' : 'Ne' ?></span></td>
+                            <td><span class="badge <?= $badgeClass(is_writable(dirname(sitemap_path()))) ?>"><?= is_writable(dirname(sitemap_path())) ? 'Taip' : 'Ne' ?></span></td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>

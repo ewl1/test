@@ -60,7 +60,7 @@
 - [ ] Prideti laikinu failu ir pasibaigusiu tokenu valyma.
 - [ ] Prideti `cache warmup`.
 - [ ] Prideti `search reindex`.
-- [ ] Prideti `sitemap rebuild`.
+- [x] Prideti `sitemap rebuild`.
 - [ ] Prideti `broken links` periodini tikrinima.
 - [ ] Prideti `database backup before update`.
 - [ ] Prideti `forum maintenance` ir `news maintenance`.

@@ -318,7 +318,7 @@
 - `temporary files cleanup`
 - `cache warmup`
 - `search reindex`
-- `sitemap rebuild`
+- `sitemap rebuild` jau turi bazini branduolio helperi, `sitemap.xml` generavima ir rankini admin paleidima per diagnostika
 - `broken links check`
 - `database backup before update`
 - `forum maintenance`
